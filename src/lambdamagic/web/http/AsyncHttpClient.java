@@ -45,15 +45,14 @@ public class AsyncHttpClient {
 	private CompletableFuture<HttpResponse> sendRequestAsync(String methodName, String urlString, Map<String, String> requestHeaderFields) {
 		CompletableFuture<HttpResponse> result = new CompletableFuture<HttpResponse>();
 
-		executor.submit(() -> {
+		CompletableFuture.runAsync(() -> {
 			try {
-				System.out.println(methodName);
 				HttpResponse response = (HttpResponse)HttpClient.class.getMethod(methodName, String.class, Map.class).invoke(httpClient, urlString, requestHeaderFields);
 				result.complete(response);
 			} catch (Exception ex) {
 				result.completeExceptionally(ex);
 			}
-		});
+		}, executor);
 
 		return result;
 	}

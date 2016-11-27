@@ -11,7 +11,9 @@ import java.io.Writer;
 import lambdamagic.NullArgumentException;
 
 /**
- * Utility class for I/O operations.
+ * This class contains various methods for I/O operation.
+ * 
+ *  <p>The methods in this class all throw a {@code IOException}.
  * 
  * @author koiketakayuki
  */
@@ -21,7 +23,7 @@ public final class IOOperations {
 	public static final int CHAR_BUFFER_LENGTH = 1024;
 
 	/**
-	 * Copies bytes from the input stream to the output stream.
+	 * Copy bytes from the input stream to the output stream.
 	 * Maximum byte length to be copied is specified as the third argument.
 	 * 
 	 * Note that bytes count read from the input stream

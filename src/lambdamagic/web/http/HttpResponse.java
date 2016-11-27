@@ -36,7 +36,7 @@ public final class HttpResponse implements Closeable {
 	
 	public InputStream getInputStream() {
 		if (text != null)
-			throw new IllegalStateException("input stream is already read by getText method");
+			throw new IllegalStateException("input stream has already been read by \"getText\" before invoking \"getInputStream\"");
 		
 		return inputStream;
 	}
