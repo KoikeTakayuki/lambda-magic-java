@@ -2,9 +2,9 @@ package lambdamagic.data;
 
 /**
  * Interface that indicates given object has time depending information
- * and it is updatable.
+ * and it can be updated.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  */
 public interface Updatable {
 

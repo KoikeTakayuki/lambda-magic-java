@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * Iterator that will iterate over the values in the specified array.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  *
  * @param <T> Type of Array element
  */

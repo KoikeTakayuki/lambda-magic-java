@@ -15,7 +15,7 @@ import lambdamagic.NullArgumentException;
  * 
  *  <p>The methods in this class all throw a {@code IOException}.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  */
 public final class IOOperations {
 

@@ -3,7 +3,7 @@ package lambdamagic.data;
 /**
  * An interface for transforming an value of type T1 to type T2.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  *
  * @param <T1> input type of object
  * @param <T2> output type of object

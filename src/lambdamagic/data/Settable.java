@@ -5,7 +5,7 @@ package lambdamagic.data;
  * and it can be set by specifying the property of type T1 and its value of type T2.
  * Typically, type T1 is String.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  *
  * @param <T1> type of property
  * @param <T2> type of setting value

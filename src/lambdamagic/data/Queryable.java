@@ -5,7 +5,7 @@ package lambdamagic.data;
  * query of type T1 and return the value of type T2 depending on the query.
  * Typically, type T1 is String.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  *
  * @param <T1> query type
  * @param <T2> output type of query

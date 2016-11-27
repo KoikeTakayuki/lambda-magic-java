@@ -5,10 +5,29 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
+/**
+ * This class contains utility methods for concurrent process.
+ * 
+ * @author KoikeTakayuki
+ */
 public class Futures {
-	
+
+	/**
+	 * Interval time taken after polling all processes.
+	 * Time unit is milliseconds.
+	 */
 	private static int INTERVAL = 100;
 
+	/**
+	 * Produce new {@link CompletableFuture} which iterate over all the tasks
+	 * in the specified collection.
+	 * 
+	 * New future task will be fulfilled when all the tasks in the collections are fulfilled,
+	 * and be passed all the result.
+	 * 
+	 * @param tasks
+	 * @return new future task which is fulfilled when all tasks are fulfilled
+	 */
 	public static <T> CompletableFuture<Collection<T>> all(Collection<CompletableFuture<T>> tasks) {
 
 		CompletableFuture<Collection<T>> future = new CompletableFuture<Collection<T>>();
@@ -16,6 +35,7 @@ public class Futures {
 
 		CompletableFuture.runAsync(() -> {
 
+			// ask all processes is done
 			while (!tasks.stream().allMatch(isDone)) {
 				try {
 					Thread.sleep(INTERVAL);
@@ -25,7 +45,7 @@ public class Futures {
 			}
 
 			Collection<T> result = new ArrayList<T>();
-			
+
 			for (CompletableFuture<T> t : tasks) {
 				result.add(t.getNow(null));
 			}
@@ -35,25 +55,38 @@ public class Futures {
 		
 		return future;
 	}
-	
+
+	/**
+	 * Produce new {@link CompletableFuture} which iterate over all the tasks
+	 * in the specified collection.
+	 * 
+	 * New future task will be fulfilled when any of the tasks in the collections are fulfilled,
+	 * and be passed the result of the one task.
+	 * 
+	 * When fulfilled, all the tasks in the collection is cancelled.
+	 * 
+	 * @param tasks
+	 * @return new future task which is fulfilled when any one of the tasks are fulfilled
+	 */
 	public static <T> CompletableFuture<T> any(Collection<CompletableFuture<T>> tasks) {
 		CompletableFuture<T> future = new CompletableFuture<T>();
 
 		CompletableFuture.runAsync(() -> {
 			
-			boolean isFinish = false;
-			
-			while (!isFinish) {
+			boolean isDone = false;
+
+			// ask any process is done
+			while (!isDone) {
 				for (CompletableFuture<T> t : tasks) {
 					if (t.isDone()) {
 						future.complete(t.getNow(null));
 						tasks.forEach(task -> {
 							task.cancel(true);
 						});
-						isFinish = true;
+						isDone = true;
 					}
 				}
-				
+
 				try {
 					Thread.sleep(INTERVAL);
 				} catch (InterruptedException ex) {

@@ -4,7 +4,7 @@ package lambdamagic.data;
  * An interface that indicates that given object
  * represents some process which can be cancelled.
  * 
- * @author koiketakayuki
+ * @author KoikeTakayuki
  */
 public interface Cancellable {
 
