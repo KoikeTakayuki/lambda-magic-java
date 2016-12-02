@@ -1,4 +1,4 @@
-package lambdamagic.io.csv;
+package lambdamagic.csv;
 
 import lambdamagic.io.DataFormatException;
 

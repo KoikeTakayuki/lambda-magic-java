@@ -26,7 +26,7 @@ public class Futures {
 	 * and be passed all the result.
 	 * 
 	 * @param tasks
-	 * @return new future task which is fulfilled when all tasks are fulfilled
+	 * @return new future task which will be fulfilled when all tasks are fulfilled
 	 */
 	public static <T> CompletableFuture<Collection<T>> all(Collection<CompletableFuture<T>> tasks) {
 
@@ -66,7 +66,7 @@ public class Futures {
 	 * When fulfilled, all the tasks in the collection is cancelled.
 	 * 
 	 * @param tasks
-	 * @return new future task which is fulfilled when any one of the tasks are fulfilled
+	 * @return new future task which will be fulfilled when any one of the tasks are fulfilled
 	 */
 	public static <T> CompletableFuture<T> any(Collection<CompletableFuture<T>> tasks) {
 		CompletableFuture<T> future = new CompletableFuture<T>();

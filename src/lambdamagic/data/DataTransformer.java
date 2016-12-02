@@ -5,9 +5,10 @@ package lambdamagic.data;
  * 
  * @author KoikeTakayuki
  *
- * @param <T1> input type of object
- * @param <T2> output type of object
+ * @param <T1> input type
+ * @param <T2> output type
  */
+@FunctionalInterface
 public interface DataTransformer<T1, T2> {
 
 	/**
