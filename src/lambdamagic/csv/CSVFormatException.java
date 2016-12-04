@@ -1,13 +1,14 @@
 package lambdamagic.csv;
 
 import lambdamagic.io.DataFormatException;
+import lambdamagic.text.TextPosition;
 
 public class CSVFormatException extends DataFormatException {
 
 	private static final long serialVersionUID = 634559429018164809L;
 
-	public CSVFormatException(int line, int offset) {
-		super(String.format("Invalid CSV format at line %d, offset %d.", line, offset));
+	public CSVFormatException(TextPosition position) {
+		super("Invalid CSV format at " + position);
 	}
 
 	protected CSVFormatException(String message) {

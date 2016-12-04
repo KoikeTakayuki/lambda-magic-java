@@ -1,4 +1,4 @@
-package lambdamagic.parsing.monadic;
+package lambdamagic.parsing.combinator;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,11 +12,11 @@ import lambdamagic.parsing.Parser;
 import lambdamagic.text.TextPosition;
 
 public class SequentialParser<T> implements Parser<List<T>> {
-	
+
 	private List<Parser<T>> parsers;
 
-	@SafeVarargs
-	public SequentialParser(Parser<T>...parsers) {
+	@SuppressWarnings("unchecked")
+	public SequentialParser(Parser<T>... parsers) {
 		this.parsers = Arrays.asList(parsers);
 	}
 

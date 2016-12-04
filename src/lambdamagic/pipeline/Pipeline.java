@@ -19,8 +19,8 @@ import lambdamagic.pipeline.composite.ZippedDataSource;
  * 
  * @author KoikeTakayuki
  *
- * @param <I> type of pipeline input
- * @param <O> type of pipeline output
+ * @param <I> the type of the pipeline input
+ * @param <O> the type of the pipeline output
  */
 public class Pipeline<I, O> implements DataSource<O> {
 

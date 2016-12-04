@@ -1,21 +1,21 @@
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
-import lambdamagic.csv.CSVRow;
+import lambdamagic.collection.iterator.Iterables;
+import lambdamagic.csv.CSVDataSource;
 import lambdamagic.csv.CSVWriter;
+import lambdamagic.pipeline.DataSource;
 import lambdamagic.pipeline.Pipeline;
 
 public class Main {
+	
+	public static void main(String[] args) throws IOException {
+		DataSource<List<String>> dataSource = new CSVDataSource("/Users/koiketakayuki/Desktop/ken.CSV");
+		Pipeline.from(dataSource)
+				.print()
+				.to(new CSVWriter("/Users/koiketakayuki/Desktop/test.csv"))
+				.execute();
 
-	public static void main(String[] args) throws FileNotFoundException, IOException {
-
-		Pipeline.from(() -> Optional.of(new CSVRow("test", "test2", "\"ok\"")))
-			.trim(20)
-			.to(new CSVWriter("/Users/koiketakayuki/Desktop/test.csv"))
-			.print()
-			.execute();
-			
+		dataSource.close();
 	}
 }

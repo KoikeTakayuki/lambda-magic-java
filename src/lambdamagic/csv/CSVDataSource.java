@@ -6,42 +6,48 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.data.functional.Either;
 import lambdamagic.parsing.ParseResult;
 import lambdamagic.pipeline.DataSource;
 import lambdamagic.text.TextPosition;
 
-public class CSVDataSource implements DataSource<CSVRow>{
+public class CSVDataSource implements DataSource<List<String>>{
 
 	private CSVParser parser;
 	private InputStream inputStream;
 	private TextPosition position;
 
 	public CSVDataSource(String filePath) throws FileNotFoundException {
+		if (filePath == null)
+			throw new NullArgumentException("filePath");
+
 		inputStream = new BufferedInputStream(new FileInputStream(new File(filePath)));
+		parser = new CSVParser();
+		position = TextPosition.initialize();
 	}
 
 	@Override
-	public Optional<CSVRow> readData() {
-		Either<ParseResult<CSVRow>, Exception> rowOrException = parser.parse(inputStream, position);
+	public Optional<List<String>> readData() {
+		Either<ParseResult<List<String>>, Exception> rowOrException = parser.parse(inputStream, position);
 
-		if (rowOrException.isRight())
+
+		if (rowOrException.isRight()) {
+			rowOrException.getRight().printStackTrace(System.err);
 			return Optional.empty();
+		}
 
-		ParseResult<CSVRow> result = rowOrException.getLeft();
+		ParseResult<List<String>> result = rowOrException.getLeft();
 		position = result.getPosition();
 
 		return Optional.of(result.getResult());
 	}
 
 	@Override
-	public void close() {
-		try {
-			inputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void close() throws IOException {
+		inputStream.close();
 	}
 }

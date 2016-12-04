@@ -7,16 +7,16 @@ package lambdamagic.data;
  * 
  * @author KoikeTakayuki
  *
- * @param <T1> type of property
- * @param <T2> type of setting value
+ * @param <T> type of property
+ * @param <S> type of setting value
  */
-public interface Settable<T1, T2> {
+public interface Settable<T, S> {
 
 	/**
-	 * Set the property of type T1 to the value of type T2.
+	 * Set the property of type T to the value of type S.
 	 * 
-	 * @param propertyName property of type T1
-	 * @param value setting value of type T2
+	 * @param propertyName property of type T
+	 * @param value setting value of type S
 	 */
-	void set(T1 propertyName, T2 value);
+	void set(T propertyName, S value);
 }

@@ -20,6 +20,10 @@ public final class TextPosition {
 		this.lineNumber = lineNumber;
 		this.columnNumber = columnNumber;
 	}
+	
+	public static TextPosition initialize() {
+		return new TextPosition(1, 0);
+	}
 
 	@Override
 	public boolean equals(Object obj) {

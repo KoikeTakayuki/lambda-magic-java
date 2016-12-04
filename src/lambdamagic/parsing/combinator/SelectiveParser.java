@@ -1,4 +1,4 @@
-package lambdamagic.parsing.monadic;
+package lambdamagic.parsing.combinator;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ public class SelectiveParser<T> implements Parser<T> {
 
 	private Iterable<Parser<T>> parsers;
 
-	@SafeVarargs
+	@SuppressWarnings("unchecked")
 	public SelectiveParser(Parser<T>... parsers) {
 		this.parsers = Arrays.asList(parsers);
 	}
@@ -30,7 +30,7 @@ public class SelectiveParser<T> implements Parser<T> {
 				Exception e = result.getRight();
 
 				if (!(e instanceof ParseException)) {
-					return Either.right(new Exception("SelectiveParser: exception which isn't ParseException occured", e));
+					return Either.right(new Exception("SelectiveParser: exception which isn't ParseException has occured", e));
 				}
 			}
 		}

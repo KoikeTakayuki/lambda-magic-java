@@ -2,6 +2,8 @@ package lambdamagic.data.functional;
 
 import java.util.function.Function;
 
+import lambdamagic.NullArgumentException;
+
 public abstract class Either<L, R> {
 
 	protected L left;
@@ -35,15 +37,21 @@ public abstract class Either<L, R> {
 		if (isRight()) {
 			return right(f.apply(right));
 		}
-		
+
 		return (Either<L, T>)this;
 	}
 
     public static <L, R> Either<L, R> right(R right) {
+    	if (right == null)
+    		throw new NullArgumentException("right");
+
         return new Right<L, R>(right);
     }
     
     public static <L, R> Either<L, R> left(L left) {
+    	if (left == null)
+    		throw new NullArgumentException("left");
+   
         return new Left<L, R>(left);
     }
     
