@@ -1,6 +1,6 @@
 package lambdamagic.parsing.combinator;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,12 +21,12 @@ public class SequentialParser<T> implements Parser<List<T>> {
 	}
 
 	@Override
-	public Either<ParseResult<List<T>>, Exception> parse(InputStream inputStream, TextPosition position) {
+	public Either<ParseResult<List<T>>, Exception> parse(Reader reader, TextPosition position) {
 		List<T> results = new ArrayList<T>();
 		TextPosition newPosition = position;
 
 		for (Parser<T> p : parsers) {
-			Either<ParseResult<T>, Exception> result = p.parse(inputStream, newPosition);
+			Either<ParseResult<T>, Exception> result = p.parse(reader, newPosition);
 
 			if (result.isRight())
 				return Either.right(new ParseException("SequentialParser: Error occured in parsing process of " + p, result.getRight()));

@@ -1,25 +1,28 @@
 package lambdamagic.csv;
 
-import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 
 import lambdamagic.pipeline.DataProcessor;
+import lambdamagic.text.Encodings;
 
 public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 
-	private OutputStream outputStream;
+	private Writer writer;
 
-	public CSVWriter(String filePath) throws IOException {
-		outputStream = new BufferedOutputStream(new FileOutputStream(new File(filePath)));
+	public CSVWriter(String filePath, String encoding) throws IOException {
+		writer = new BufferedWriter(
+						new OutputStreamWriter(
+								new FileOutputStream(new File(filePath)), encoding));
 	}
 
-	public CSVWriter(String filePath, List<String> header) throws IOException {
-		this(filePath);
-		writeRow(header);
+	public CSVWriter(String filePath) throws IOException {
+		this(filePath, Encodings.UTF_8);
 	}
 
 	@Override
@@ -30,8 +33,8 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 
 	private void writeRow(List<String> data) {
 		try {
-			outputStream.write(toCSVString(data).getBytes());
-			outputStream.flush();
+			writer.write(toCSVString(data));
+			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,10 +42,10 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 
 	@Override
 	public void close() throws IOException {
-		outputStream.close();
+		writer.close();
 	}
 	
-	public String toCSVString(List<String> data) {
+	private String toCSVString(List<String> data) {
 		StringBuffer sb = new StringBuffer();
 		int length = data.size();
 		int i = 0;

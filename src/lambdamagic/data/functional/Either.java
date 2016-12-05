@@ -16,10 +16,16 @@ public abstract class Either<L, R> {
 	}
 
 	public L getLeft() {
+		if (isRight())
+			throw new UnsupportedOperationException();
+			
 		return left;
 	}
 
 	public R getRight() {
+		if (isLeft())
+			throw new UnsupportedOperationException();
+
 		return right;
 	}
 

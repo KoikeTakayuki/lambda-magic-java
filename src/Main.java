@@ -10,10 +10,9 @@ import lambdamagic.pipeline.Pipeline;
 public class Main {
 	
 	public static void main(String[] args) throws IOException {
-		DataSource<List<String>> dataSource = new CSVDataSource("/Users/koiketakayuki/Desktop/ken.CSV");
+		DataSource<List<String>> dataSource = new CSVDataSource("/Users/koiketakayuki/Desktop/KEN_ALL_ROME.CSV", "Shift_JIS");
 		Pipeline.from(dataSource)
 				.print()
-				.to(new CSVWriter("/Users/koiketakayuki/Desktop/test.csv"))
 				.execute();
 
 		dataSource.close();

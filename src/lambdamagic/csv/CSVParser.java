@@ -1,11 +1,13 @@
 package lambdamagic.csv;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 import lambdamagic.data.functional.Either;
+import lambdamagic.io.EndOfStreamException;
 import lambdamagic.parsing.ParseResult;
 import lambdamagic.parsing.Parser;
 import lambdamagic.text.Characters;
@@ -14,125 +16,85 @@ import lambdamagic.text.TextPositionBuffer;
 
 public class CSVParser implements Parser<List<String>> {
 	
-	private int character;
-
 	@Override
-	public Either<ParseResult<List<String>>, Exception> parse(InputStream inputStream, TextPosition position) {
-		TextPositionBuffer textPositionBuffer = new TextPositionBuffer(position);
+	public Either<ParseResult<List<String>>, Exception> parse(Reader reader, TextPosition position) {
+
+		BufferedReader bufferedReader;
+
+		if (reader instanceof BufferedReader)
+			bufferedReader = (BufferedReader)reader;
+		else
+			bufferedReader = new BufferedReader(reader);
 
 		try {
-			nextCharacter(inputStream, textPositionBuffer);
-
-			if (Characters.isEndOfStream(character))
-				return Either.right(new Exception("CSVParser: EOF"));
-			
+			TextPositionBuffer textPositionBuffer = new TextPositionBuffer(position);
 			List<String> result = new ArrayList<String>();
+			String row = bufferedReader.readLine();
+			StringBuffer sb = new StringBuffer();
+			boolean readCSVString = false;
+			boolean readEscapedQuotation = false;
+			int currentCharacter;
+			
+			if (row == null)
+				return Either.right(new EndOfStreamException());
 
-			if (isEndOfRow())
-				return Either.left(new ParseResult<List<String>>(result, textPositionBuffer.toTextPosition()));
-
-			while (!isEndOfRow() && !isEndOfStream()) {
-				Either<ParseResult<String>, Exception> parseResultOrException;
-
-				if (character == CSVSpecialCharacter.VALUE_DELIMITER_CHAR)
-					parseResultOrException = parseCSVString(inputStream, textPositionBuffer);
-				else
-					parseResultOrException = parseCSVValue(inputStream, textPositionBuffer);
-
-
-				if (parseResultOrException.isLeft()) {
-					result.add(parseResultOrException.getLeft().getResult());
-				} else {
-					Exception e = parseResultOrException.getRight();
-					return Either.right(new Exception("CSVParser: Exception has occured while parsing row", e));
+			for (int i = 0; i < row.length(); ++i) {
+				currentCharacter = row.charAt(i);
+				textPositionBuffer.update((char)currentCharacter);
+				
+				// start reading CSV string
+				if (!readCSVString && currentCharacter == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
+					readCSVString = true;
+					continue;
 				}
+
+				//reading CSV string
+				if (readCSVString) {
+
+					if (currentCharacter == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
+
+						//ignore if after reading escaped quotation
+						if (readEscapedQuotation) {
+							readEscapedQuotation = false;
+							continue;
+						}
+
+						//escaped double quotation
+						if (i + 1 < row.length() && row.charAt(i + 1) == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
+							sb.append(CSVSpecialCharacter.VALUE_DELIMITER_CHAR);
+							readEscapedQuotation = true;
+
+						//finish reading CSV string
+						} else {
+							readCSVString = false;
+						}	
+						
+					} else {
+						sb.append((char)currentCharacter);
+					}
+
+
+				} else if (currentCharacter == CSVSpecialCharacter.VALUE_SEPARATOR_CHAR) {
+
+					result.add(sb.toString());
+					sb.setLength(0);
+
+				} else {
+					sb.append((char)currentCharacter);
+				}
+
 			}
+			
+			if (readCSVString)
+				return Either.right(new CSVFormatException("End of row before closing double quotation at position " + textPositionBuffer.toTextPosition()));
+			
+			textPositionBuffer.update(CSVSpecialCharacter.ROW_SEPARATOR_CHAR);
 
 			return Either.left(new ParseResult<List<String>>(result, textPositionBuffer.toTextPosition()));
 
 		} catch (IOException e) {
 			return Either.right(e);
 		}
-	}
-
-	private Either<ParseResult<String>, Exception> parseCSVValue(InputStream inputStream,
-			TextPositionBuffer textPositionBuffer) {
-
-		StringBuffer sb = new StringBuffer();
-
-		try {
-			while (!isEndOfRow() && !isEndOfStream() && !isValueSeparator()) {
-				sb.append((char)character);
-				character = inputStream.read();
-				textPositionBuffer.update((char)character);
-			}
-
-			if (isValueSeparator())
-				nextCharacter(inputStream, textPositionBuffer);
-
-			return Either.left(new ParseResult<String>(sb.toString(), textPositionBuffer.toTextPosition()));
-		} catch (IOException e) {
-			return Either.right(e);
-		}
-	}
-
-	private Either<ParseResult<String>, Exception> parseCSVString(InputStream inputStream,
-			TextPositionBuffer textPositionBuffer) {
-		
-		StringBuffer sb = new StringBuffer();
-
-		try {
-			while (!isEndOfStream()) {
-	
-				character = inputStream.read();
-				textPositionBuffer.update((char)character);
-				if (isValueDelemeter()) {
-
-					//lookahead
-					nextCharacter(inputStream, textPositionBuffer);
-
-					if (!isValueDelemeter()) {
-						if (!isEndOfRow() && !isEndOfStream() && !isValueSeparator())
-							return Either.right(new CSVFormatException(textPositionBuffer.toTextPosition()));
-
-						nextCharacter(inputStream, textPositionBuffer);
-						return Either.left(new ParseResult<String>(sb.toString(), textPositionBuffer.toTextPosition()));
-					}
-				}
-
-				sb.append((char)character);
-			}
-
-			return Either.right(new CSVFormatException(textPositionBuffer.toTextPosition()));
-		} catch (IOException e) {
-			return Either.right(e);
-		}
-	}
-	
-	private void nextCharacter(InputStream inputStream, TextPositionBuffer textPositionBuffer) throws IOException {
-		int c;
-		do {
-			c = inputStream.read();
-			textPositionBuffer.update((char)c);
-		} while (c == Characters.SPACE || c == Characters.TAB);
-
-		character = c;
-	}
-
-	private boolean isEndOfRow() {
-		return (char)character == CSVSpecialCharacter.ROW_SEPARATOR_CHAR;
-	}
-	
-	private boolean isEndOfStream() {
-		return Characters.isEndOfStream(character);
-	}
-	
-	private boolean isValueDelemeter() {
-		return (char)character == CSVSpecialCharacter.VALUE_DELIMITER_CHAR;
-	}
-	
-	private boolean isValueSeparator() {
-		return (char)character == CSVSpecialCharacter.VALUE_SEPARATOR_CHAR;
 	}
 
 }

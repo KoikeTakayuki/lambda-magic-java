@@ -1,6 +1,6 @@
 package lambdamagic.parsing.combinator;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Arrays;
 
 import lambdamagic.data.functional.Either;
@@ -19,9 +19,9 @@ public class SelectiveParser<T> implements Parser<T> {
 	}
 
 	@Override
-	public Either<ParseResult<T>, Exception> parse(InputStream inputStream, TextPosition position) {
+	public Either<ParseResult<T>, Exception> parse(Reader reader, TextPosition position) {
 		for (Parser<T> p : parsers) {
-			Either<ParseResult<T>, Exception> result = p.parse(inputStream, position);
+			Either<ParseResult<T>, Exception> result = p.parse(reader, position);
 
 			if (result.isLeft())
 				return result;
