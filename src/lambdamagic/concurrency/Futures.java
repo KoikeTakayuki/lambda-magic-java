@@ -22,8 +22,8 @@ public class Futures {
 	 * Produce new {@link CompletableFuture} which iterate over all the tasks
 	 * in the specified collection.
 	 * 
-	 * New future task will be fulfilled when all the tasks in the collections are fulfilled,
-	 * and be passed all the result.
+	 * New future task will be fulfilled when all the tasks in the collections are finished,
+	 * and will be passed all the result.
 	 * 
 	 * @param tasks
 	 * @return new future task which will be fulfilled when all tasks are fulfilled
@@ -60,8 +60,8 @@ public class Futures {
 	 * Produce new {@link CompletableFuture} which iterate over all the tasks
 	 * in the specified collection.
 	 * 
-	 * New future task will be fulfilled when any of the tasks in the collections are fulfilled,
-	 * and be passed the result of the one task.
+	 * New future task will be fulfilled when any of the tasks in the collections are finished,
+	 * and will be passed the result of the one task.
 	 * 
 	 * When fulfilled, all the tasks in the collection is cancelled.
 	 * 

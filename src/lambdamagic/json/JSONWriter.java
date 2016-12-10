@@ -17,15 +17,23 @@ import lambdamagic.text.Encodings;
 public class JSONWriter implements DataProcessor<Object, Object> {
 
 	private Writer writer;
+	private boolean writeAsArray;
 
 	public JSONWriter(String filePath, String encoding) throws IOException {
 		writer = new BufferedWriter(
 						new OutputStreamWriter(
 								new FileOutputStream(new File(filePath)), encoding));
+
+		writeAsArray();
 	}
 
 	public JSONWriter(String filePath) throws IOException {
 		this(filePath, Encodings.UTF_8);
+	}
+
+	private void writeAsArray() throws IOException {
+		writeAsArray = true;
+		writer.write(JSONParser.JSON_ARRAY_START_CHAR);
 	}
 
 	@Override
@@ -35,6 +43,7 @@ public class JSONWriter implements DataProcessor<Object, Object> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return data;
 	}
 	
@@ -98,7 +107,7 @@ public class JSONWriter implements DataProcessor<Object, Object> {
 		
 		for (Entry<String, Object> e : data.entrySet()) {
 			write(e.getKey());
-			write(JSONParser.JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR);
+			write(JSONParser.JSON_OBJECT_KEY_VALUE_DELIMETER_CHAR);
 			write(e.getValue());
 		}
 
@@ -107,6 +116,9 @@ public class JSONWriter implements DataProcessor<Object, Object> {
 	
 	@Override
 	public void close() throws IOException {
+		if (writeAsArray)
+			writer.write(JSONParser.JSON_ARRAY_START_CHAR);
+			
 		writer.close();
 	}
 }

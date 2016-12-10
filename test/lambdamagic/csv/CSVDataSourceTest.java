@@ -1,9 +1,10 @@
 package lambdamagic.csv;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +18,9 @@ public class CSVDataSourceTest {
 
 	@SuppressWarnings("resource")
 	@Test
-	public void createWithNullArgument() {
+	public void createInstanceWithNullArgument() {
 		try {
-			new CSVDataSource(null);
+			new CSVDataSource((String)null);
 			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException e) {
 
@@ -30,7 +31,7 @@ public class CSVDataSourceTest {
 
 	@SuppressWarnings("resource")
 	@Test
-	public void createWithNotExistingFile() {
+	public void createInstanceWithNotExistingFile() {
 		try {
 			new CSVDataSource("");
 			fail(AssertionMessage.expectException(FileNotFoundException.class));
@@ -43,7 +44,7 @@ public class CSVDataSourceTest {
 	
 	@SuppressWarnings("resource")
 	@Test
-	public void create() {
+	public void createInstance() {
 		try {
 			new CSVDataSource("test/lambdamagic/csv/testdata.csv");
 		} catch(Exception e) {
@@ -51,7 +52,6 @@ public class CSVDataSourceTest {
 		}
 	}
 	
-	@SuppressWarnings("resource")
 	@Test
 	public void read() {
 		try {
@@ -91,7 +91,7 @@ public class CSVDataSourceTest {
 				List<String> data = maybeData.get();
 				assertEquals("test1", data.get(0));
 				assertEquals("\"test2\"", data.get(1));
-				assertEquals("test3\\n", data.get(2));
+				assertEquals("test3\n", data.get(2));
 				assertEquals("ok", data.get(3));
 			} else {
 				fail("not read correctly");

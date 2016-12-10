@@ -1,6 +1,5 @@
 package lambdamagic.csv;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -8,95 +7,157 @@ import java.util.List;
 
 import lambdamagic.data.functional.Either;
 import lambdamagic.io.EndOfStreamException;
-import lambdamagic.parsing.ParseResult;
-import lambdamagic.parsing.Parser;
-import lambdamagic.text.Characters;
-import lambdamagic.text.TextPosition;
-import lambdamagic.text.TextPositionBuffer;
+import lambdamagic.parsing.ParserBase;
 
-public class CSVParser implements Parser<List<String>> {
-	
+public class CSVParser extends ParserBase<List<String>> {
+
+	public CSVParser(Reader reader) throws IOException {
+		super(reader);
+		ignoreBOM();
+	}
+
 	@Override
-	public Either<ParseResult<List<String>>, Exception> parse(Reader reader, TextPosition position) {
+	public Either<List<String>, Exception> parse() {
+		return parseRow();
+	}
 
-		BufferedReader bufferedReader;
-
-		if (reader instanceof BufferedReader)
-			bufferedReader = (BufferedReader)reader;
-		else
-			bufferedReader = new BufferedReader(reader);
-
+	private Either<List<String>, Exception> parseRow() {
 		try {
-			TextPositionBuffer textPositionBuffer = new TextPositionBuffer(position);
-			List<String> result = new ArrayList<String>();
-			String row = bufferedReader.readLine();
-			StringBuffer sb = new StringBuffer();
-			boolean readCSVString = false;
-			boolean readEscapedQuotation = false;
-			int currentCharacter;
 
-			if (row == null)
+			if (isEndOfStream())
 				return Either.right(new EndOfStreamException());
 
-			for (int i = 0; i < row.length(); ++i) {
-				currentCharacter = row.charAt(i);
-				textPositionBuffer.update((char)currentCharacter);
-				
-				// start reading CSV string
-				if (!readCSVString && currentCharacter == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
-					readCSVString = true;
-					continue;
-				}
+			List<String> result = new ArrayList<String>();
 
-				//reading CSV string
-				if (readCSVString) {
+			skipWhitespacesUntilNewline();
 
-					if (currentCharacter == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
-
-						//ignore if after reading escaped quotation
-						if (readEscapedQuotation) {
-							readEscapedQuotation = false;
-							continue;
-						}
-
-						//escaped double quotation
-						if (i + 1 < row.length() && row.charAt(i + 1) == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
-							sb.append(CSVSpecialCharacter.VALUE_DELIMITER_CHAR);
-							readEscapedQuotation = true;
-
-						//finish reading CSV string
-						} else {
-							readCSVString = false;
-						}	
-						
-					} else {
-						sb.append((char)currentCharacter);
-					}
-
-
-				} else if (currentCharacter == CSVSpecialCharacter.VALUE_SEPARATOR_CHAR) {
-
-					result.add(sb.toString());
-					sb.setLength(0);
-
-				} else {
-					sb.append((char)currentCharacter);
-				}
-
+			//empty row
+			if (isEndOfLine()) {
+				nextCharacter();
+				return Either.left(result);
 			}
-			
-			if (readCSVString)
-				return Either.right(new CSVFormatException("End of row before closing double quotation at position " + textPositionBuffer.toTextPosition()));
-			
-			if (sb.length() > 0)
-				result.add(sb.toString());
-	
-			textPositionBuffer.update(CSVSpecialCharacter.ROW_SEPARATOR_CHAR);
-			return Either.left(new ParseResult<List<String>>(result, textPositionBuffer.toTextPosition()));
+
+			// parsing first element
+			Either<String, Exception> valueOrException = parseCSVValue();
+
+			// parsing first element failed
+			if (valueOrException.isRight())
+				return Either.right(valueOrException.getRight());
+
+			result.add(valueOrException.getLeft());
+
+			// parsing remaining element
+			while (true) {
+
+				skipWhitespacesUntilNewline();
+
+				if (isEndOfStream())
+					break;
+
+				if (isEndOfLine()) {
+					nextCharacter();
+					break;
+				}
+
+				if (getCharacter() != CSVSpecialCharacter.VALUE_SEPARATOR_CHAR)
+					return Either.right(new CSVFormatException(getPosition()));
+
+				nextCharacter();
+				skipWhitespacesUntilNewline();
+
+				if (isEndOfLine()) {
+					nextCharacter();
+					break;
+				}
+
+				valueOrException = parseCSVValue();
+
+				if (valueOrException.isRight())
+					return Either.right(valueOrException.getRight()); 
+				
+				result.add(valueOrException.getLeft());
+			}
+
+			return Either.left(result);
 
 		} catch (IOException e) {
 			return Either.right(e);
 		}
+	}
+
+	public Either<String, Exception> parseCSVValue() {
+		if (getCharacter() == CSVSpecialCharacter.VALUE_DELIMITER_CHAR)
+			return parseCSVString();
+
+		return parseUntil(CSVSpecialCharacter.DEFAULT_VALUE_SEPARATORS);
+	}
+
+	private Either<String, Exception> parseCSVString() {
+		try {
+
+			nextCharacter();
+			StringBuffer sb = new StringBuffer();
+	
+			while (true) {
+
+				if (isEndOfStream()) {
+					return Either.right(new EndOfStreamException());
+				}
+				
+				if (getCharacter() == CSVSpecialCharacter.VALUE_ESCAPE_CHAR) {
+					nextCharacter();
+	
+					int lookahead = getCharacter();
+
+					if (lookahead == CSVSpecialCharacter.VALUE_ESCAPE_CHAR) {
+						sb.append(CSVSpecialCharacter.VALUE_ESCAPE_CHAR);
+						nextCharacter();
+					}
+					else if (lookahead == 't') {
+						sb.append('\t');
+						nextCharacter();
+					}
+					else if (lookahead == 'r') {
+						sb.append('\r');
+						nextCharacter();
+					}
+					else if (lookahead == 'n') {
+						sb.append('\n');
+						nextCharacter();
+					}
+					else {
+						sb.append(CSVSpecialCharacter.VALUE_ESCAPE_CHAR);
+						sb.append((char)lookahead);
+					}
+					
+				// double quote escaping or end of string
+				} else if (getCharacter() == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
+					nextCharacter();
+
+					//double quote escaping
+					if (getCharacter() == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
+						sb.append(CSVSpecialCharacter.VALUE_DELIMITER_CHAR);
+						nextCharacter();
+					//end of string
+					} else {
+						return Either.left(sb.toString());
+					}
+
+				} else {
+					sb.append((char)getCharacter());
+					nextCharacter();
+				}
+			}
+
+		} catch (IOException e) {
+			return Either.right(e);
+		}
+	}
+
+	private void ignoreBOM() throws IOException {
+		reader.mark(4);
+		if (reader.read() != '\ufeff')
+			reader.reset(); 
 	}
 
 }
