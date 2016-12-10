@@ -34,23 +34,19 @@ public class CSVDataSource implements DataSource<List<String>>{
 		parser = new CSVParser();
 		position = TextPosition.initialize();
 	}
-	
+
 	public CSVDataSource(String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		this(filePath, Encodings.UTF_8);
 	}
 
 	@Override
 	public Optional<List<String>> readData() {
-		Either<ParseResult<List<String>>, Exception> rowOrException = parser.parse(reader, position);
+		Either<ParseResult<List<String>>, Exception> resultOrException = parser.parse(reader, position);
 
-
-		if (rowOrException.isRight()) {
-			//rowOrException.getRight().printStackTrace(System.err);
+		if (resultOrException.isRight())
 			return Optional.empty();
-		}
 
-		ParseResult<List<String>> result = rowOrException.getLeft();
-		position = result.getPosition();
+		ParseResult<List<String>> result = resultOrException.getLeft();
 
 		return Optional.of(result.getResult());
 	}

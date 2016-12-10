@@ -72,7 +72,7 @@ public class CSVDataSourceTest {
 				List<String> data = maybeData.get();
 				assertEquals("1", data.get(0));
 				assertEquals("2", data.get(1));
-				assertEquals("3", data.get(2));
+				assertEquals("日本語のテスト", data.get(2));
 
 			} else {
 				fail("not read correctly");

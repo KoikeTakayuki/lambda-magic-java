@@ -123,11 +123,10 @@ public class Pipeline<I, O> implements DataSource<O> {
 	}
 
 	public Pipeline<O, O> filter(Predicate<O> predicate) {
-		return from(new FilteredDataSource<>(this, predicate));
+		return from(new FilteredDataSource<O>(this, predicate));
 	}
 
 	@SuppressWarnings("unchecked")
-	@SafeVarargs
 	public final Pipeline<O, O> interleave(DataSource<O>... sources) {
 		DataSource<O>[] args = new DataSource[sources.length + 1];
 		args[0] = this;
@@ -139,7 +138,6 @@ public class Pipeline<I, O> implements DataSource<O> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@SafeVarargs
 	public final Pipeline<O, O> merge(final DataSource<O>... sources) {
 		DataSource<O>[] args = new DataSource[sources.length + 1];
 		args[0] = this;
@@ -171,7 +169,12 @@ public class Pipeline<I, O> implements DataSource<O> {
 	}
 
 	public Pipeline<I, O> print() {
-		return to(data -> System.out.println(data));
+		return to(toProcessor(data -> System.out.println(data)));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> Pipeline<I, T> cast() {
+		return to(data -> (T)data);
 	}
 	
 	@Override

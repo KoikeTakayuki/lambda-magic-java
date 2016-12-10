@@ -1,7 +1,6 @@
 package lambdamagic.parsing.combinator;
 
 import java.io.Reader;
-import java.util.Arrays;
 
 import lambdamagic.data.functional.Either;
 import lambdamagic.parsing.ParseException;
@@ -11,11 +10,11 @@ import lambdamagic.text.TextPosition;
 
 public class SelectiveParser<T> implements Parser<T> {
 
-	private Iterable<Parser<T>> parsers;
+	private Parser<T>[] parsers;
 
 	@SuppressWarnings("unchecked")
 	public SelectiveParser(Parser<T>... parsers) {
-		this.parsers = Arrays.asList(parsers);
+		this.parsers = parsers;
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class CSVParser implements Parser<List<String>> {
 			boolean readCSVString = false;
 			boolean readEscapedQuotation = false;
 			int currentCharacter;
-			
+
 			if (row == null)
 				return Either.right(new EndOfStreamException());
 
@@ -88,8 +88,10 @@ public class CSVParser implements Parser<List<String>> {
 			if (readCSVString)
 				return Either.right(new CSVFormatException("End of row before closing double quotation at position " + textPositionBuffer.toTextPosition()));
 			
+			if (sb.length() > 0)
+				result.add(sb.toString());
+	
 			textPositionBuffer.update(CSVSpecialCharacter.ROW_SEPARATOR_CHAR);
-
 			return Either.left(new ParseResult<List<String>>(result, textPositionBuffer.toTextPosition()));
 
 		} catch (IOException e) {

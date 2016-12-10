@@ -31,7 +31,7 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 		return data;
 	}
 
-	private void writeRow(List<String> data) {
+	public void writeRow(List<String> data) {
 		try {
 			writer.write(toCSVString(data));
 			writer.flush();
