@@ -9,7 +9,7 @@ import lambdamagic.NullArgumentException;
  * 
  * @author KoikeTakayuki
  *
- * @param <T> Type of Array element
+ * @param <T> Type of array element
  */
 public class ArrayIterator<T> implements Iterator<T> {
 	

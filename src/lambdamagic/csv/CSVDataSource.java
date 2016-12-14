@@ -22,6 +22,9 @@ public class CSVDataSource implements DataSource<List<String>> {
 	public CSVDataSource(String filePath, String encoding) throws IOException {
 		if (filePath == null)
 			throw new NullArgumentException("filePath");
+		
+		if (encoding == null)
+			throw new NullArgumentException("encoding");
 
 		Reader reader = new BufferedReader(
 							new InputStreamReader(

@@ -67,9 +67,12 @@ public class JSONParser extends ParserBase<Object> {
 						resultOrException = parseNumber();
 					else
 						resultOrException = parseBooleanOrNull();
-			}		
+			}
 			
-			return resultOrException.applyToLeft(o -> (Object)o);
+			return resultOrException.applyToLeft(o -> {
+				
+				return (o == null) ? new JSONNull() : (Object)o;
+			});
 			
 		} catch (IOException e) {
 			return Either.right(e);
@@ -91,7 +94,7 @@ public class JSONParser extends ParserBase<Object> {
 		if (value.equals(JSON_FALSE_STRING))
 			return Either.left(false);
 
-		if (value == JSON_NULL_STRING)
+		if (value.equals(JSON_NULL_STRING))
 			return Either.left(null);
 		
 		return Either.right(new JSONFormatException(getPosition()));

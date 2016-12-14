@@ -1,6 +1,8 @@
 package lambdamagic.pipeline;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -47,9 +49,7 @@ public class Pipeline<I, O> implements DataSource<O> {
 		return from(DataSource.asDataSource(newSource));
 	}
 
-	public static <T1, T2, T3> DataProcessor<T1, T3> compose
-		(DataProcessor<T1, T2> p1, DataProcessor<T2, T3> p2) {
-
+	public static <T1, T2, T3> DataProcessor<T1, T3> compose(DataProcessor<T1, T2> p1, DataProcessor<T2, T3> p2) {
 		return data -> p2.process(p1.process(data));
 	}
 
@@ -145,15 +145,11 @@ public class Pipeline<I, O> implements DataSource<O> {
 			args[i + 1] = sources[i];
 		}
 
-		return from(new MergedDataSource<O>(args));
+		return from(new MergedDataSource<O>(sources));
 	}
 
 	public <O2> Pipeline<Tuple2<O, O2>, Tuple2<O, O2>> zip(DataSource<O2> other) {
 		return from(new ZippedDataSource<O, O2>(this, other));
-	}
-	
-	public <O2> Pipeline<Tuple2<O, O2>, Tuple2<O, O2>> zip(BaseStream<O2, ?> other) {
-		return zip(DataSource.asDataSource(other));
 	}
 
 	public <T> T fold(T seed, BiFunction<T, O, T> function) {
@@ -167,11 +163,23 @@ public class Pipeline<I, O> implements DataSource<O> {
 
 		return result;
 	}
+	
+	public List<O> toList() {
+		List<O> result = new ArrayList<O>();
+		Optional<O> maybeData = readData();
+
+		while (maybeData.isPresent()) {
+			result.add(maybeData.get());
+			maybeData = readData();
+		}
+		
+		return result;
+	}
 
 	public Pipeline<I, O> print() {
 		return to(toProcessor(data -> System.out.println(data)));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T> Pipeline<I, T> cast() {
 		return to(data -> (T)data);

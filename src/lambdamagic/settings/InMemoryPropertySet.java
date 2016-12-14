@@ -2,6 +2,7 @@ package lambdamagic.settings;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import lambdamagic.NullArgumentException;
@@ -31,8 +32,13 @@ public class InMemoryPropertySet<T> implements PropertySet<T> {
 	}
 	
 	@Override
-	public T get(String propertyName) {
-		return getPropertyMap().get(propertyName);
+	public Optional<T> get(String propertyName) {
+		T result = getPropertyMap().get(propertyName);
+		
+		if (result == null)
+			return Optional.empty();
+		
+		return Optional.of(result);
 	}
 
 	@Override

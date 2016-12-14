@@ -182,22 +182,55 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 			if (integerOrException.isRight())
 				return Either.right(integerOrException.getRight());
 
-			// has no decimal part, finish parsing number
-			if (getCharacter() != '.')
+			// has neither decimal part nor normalized notation, finish parsing number
+			if (getCharacter() != '.' && getCharacter() != 'e' && getCharacter() != 'E')
 				return integerOrException.applyToLeft(i -> (Number)i);
-
-			nextCharacter();
 			
 			double integerPart = integerOrException.getLeft();
-			
-			Either<Integer, Exception> decimalOrException = parseUnsignedInteger();
-	
-			// parsing decimal part failed
-			if (decimalOrException.isRight())
-				return Either.right(decimalOrException.getRight());
+			double decimalPart = 0;
+			double result = integerPart;
 
-			double decimalPart = decimalOrException.getLeft();
-			double result = integerPart + (decimalPart * Math.pow(10, -digitCount));
+			// parsing decimal part
+			if (getCharacter() == '.') {
+			
+				nextCharacter();
+				
+				Either<Integer, Exception> decimalOrException = parseUnsignedInteger();
+		
+				// parsing decimal part failed
+				if (decimalOrException.isRight())
+					return Either.right(decimalOrException.getRight());
+	
+				decimalPart = decimalOrException.getLeft();
+				result = integerPart + (decimalPart * Math.pow(10, -digitCount));
+			}
+
+			// parsing normalized notation
+			if (getCharacter() == 'e' || getCharacter() == 'E') {
+				
+				nextCharacter();
+
+				boolean isNegative = false;
+				
+				if (getCharacter() == '-') {
+					nextCharacter();
+					isNegative = true;
+				} else if (getCharacter() == '+') {
+					nextCharacter();
+				}
+
+				Either<Integer, Exception> exponentOrException = parseUnsignedInteger();
+				
+				if (exponentOrException.isRight())
+					return Either.right(exponentOrException.getRight());
+				
+				int exponent = exponentOrException.getLeft();
+				
+				if (isNegative)
+					exponent *= -1;
+
+				result = result * Math.pow(10, exponent);
+			}
 	
 			return Either.left(result);
 			

@@ -10,8 +10,6 @@ import java.io.StringReader;
 import java.util.Optional;
 
 import lambdamagic.NullArgumentException;
-import lambdamagic.csv.CSVDataSource;
-import lambdamagic.csv.CSVParser;
 import lambdamagic.data.functional.Either;
 import lambdamagic.pipeline.DataSource;
 import lambdamagic.text.Encodings;
@@ -23,6 +21,9 @@ public class JSONDataSource implements DataSource<Object> {
 	public JSONDataSource(String filePath, String encoding) throws IOException {
 		if (filePath == null)
 			throw new NullArgumentException("filePath");
+		
+		if (encoding == null)
+			throw new NullArgumentException("encoding");
 
 		Reader reader = new BufferedReader(
 							new InputStreamReader(
@@ -51,7 +52,6 @@ public class JSONDataSource implements DataSource<Object> {
 		Either<Object, Exception> resultOrException = parser.parse();
 		
 		if (resultOrException.isRight()) {
-			resultOrException.applyToRight(e -> {e.printStackTrace(System.err);return null;});
 			return Optional.empty();
 		}
 		

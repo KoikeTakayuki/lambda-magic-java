@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -43,8 +44,13 @@ public abstract class Settings implements PropertySet<String> {
 			}
 			
 			@Override
-			public String get(String propertyName) {
-				return properties.getProperty(propertyName);
+			public Optional<String> get(String propertyName) {
+				String value = properties.getProperty(propertyName);
+				
+				if (value == null)
+					return Optional.empty();
+
+				return Optional.of(value);
 			}
 			
 			@Override
@@ -64,13 +70,8 @@ public abstract class Settings implements PropertySet<String> {
 		};
 	}
 	
-	public String getRequired(String propertyName) throws MissingPropertyException {
-		String value = get(propertyName);
-		
-		if (value == null)
-			throw new MissingPropertyException(propertyName);
-		
-		return value;
+	public Optional<String> getRequired(String propertyName) {
+		return get(propertyName);
 	}
 	
 	public abstract void save(OutputStream outputStream) throws IOException;
