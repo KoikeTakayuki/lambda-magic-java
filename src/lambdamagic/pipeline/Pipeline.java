@@ -31,7 +31,7 @@ public class Pipeline<I, O> implements DataSource<O> {
 
 	private Pipeline(DataSource<I> source, DataProcessor<I, O> processor) {
 		if (source == null)
-			throw new NoDataSourceException();
+			throw new NullArgumentException("source");
 
 		this.source = source;
 		this.processor = processor;

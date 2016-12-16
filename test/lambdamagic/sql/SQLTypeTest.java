@@ -1,13 +1,11 @@
 package lambdamagic.sql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
 import lambdamagic.NullArgumentException;
-import lambdamagic.sql.SQLType;
-import lambdamagic.test.AssertionMessage;
 
 public class SQLTypeTest {
 
@@ -19,20 +17,16 @@ public class SQLTypeTest {
 	public void constructor_failure_withNullName() {
 		try {
 			new SQLType(null);
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 		
 		try {
 			new SQLType(null, 1);
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 	}
 	
@@ -46,7 +40,6 @@ public class SQLTypeTest {
 			assertEquals("test2", type2.getName());
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 	
@@ -60,7 +53,6 @@ public class SQLTypeTest {
 			assertEquals(2, type2.getSize());
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 

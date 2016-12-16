@@ -6,7 +6,7 @@ import java.util.Optional;
 import lambdamagic.InvalidArgumentException;
 import lambdamagic.pipeline.DataSource;
 
-public class TrimmedDataSource<T> implements DataSource<T> {
+public final class TrimmedDataSource<T> implements DataSource<T> {
 
 	private DataSource<T> wrapped;
 	private int trimCount;

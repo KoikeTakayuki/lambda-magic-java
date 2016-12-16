@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import lambdamagic.pipeline.DataSource;
 
-public class MergedDataSource<T> implements DataSource<T> {
+public final class MergedDataSource<T> implements DataSource<T> {
 	
 	DataSource<T>[] sources;
 	private Optional<DataSource<T>> currentDataSource;

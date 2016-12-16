@@ -1,25 +1,15 @@
 package lambdamagic.sql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-import lambdamagic.NullArgumentException;
-import lambdamagic.sql.SQLDatabase;
-import lambdamagic.test.AssertionMessage;
 
 public class SQLDatabaseTest {
 
 	@Test
 	public void constructor_failure_withNullName() {
-		try {
-			new SQLDatabase(null);
-			fail(AssertionMessage.expectNullArgumentException());
-		} catch (NullArgumentException ok) {
-			
-		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
-		}
+
 	}
 	
 	@Test
@@ -27,7 +17,6 @@ public class SQLDatabaseTest {
 		try {
 			new SQLDatabase("name", null);
 		} catch (Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 
@@ -41,7 +30,6 @@ public class SQLDatabaseTest {
 			assertEquals("test2", type2.getName());
 
 		} catch (Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 	
@@ -55,7 +43,6 @@ public class SQLDatabaseTest {
 			assertEquals("collation", type2.getCollation());
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 }

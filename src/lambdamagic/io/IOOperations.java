@@ -10,31 +10,11 @@ import java.io.Writer;
 
 import lambdamagic.NullArgumentException;
 
-/**
- * This class contains various methods for I/O operation.
- * 
- *  <p>The methods in this class all throw a {@code IOException}.
- * 
- * @author KoikeTakayuki
- */
 public final class IOOperations {
 
 	public static final int BYTE_BUFFER_LENGTH = 8192;
 	public static final int CHAR_BUFFER_LENGTH = 1024;
 
-	/**
-	 * Copy bytes from the input stream to the output stream.
-	 * Maximum byte length to be copied is specified as the third argument.
-	 * 
-	 * Note that bytes count read from the input stream
-	 * can be larger than the specified maximum byte length
-	 * because reading process uses buffer.
-	 * 
-	 * Buffer size is {@value #BYTE_BUFFER_LENGTH}.
-	 * 
-	 * @return totalCount  byte count read from the input stream
-	 * @throws IOException
-	 */
 	public static long copy(InputStream inputStream, OutputStream outputStream, long maximumLength) throws IOException {
 		if (inputStream == null)
 			throw new NullArgumentException("inputStream");

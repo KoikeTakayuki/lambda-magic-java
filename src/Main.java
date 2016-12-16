@@ -9,12 +9,6 @@ import lambdamagic.pipeline.Pipeline;
 public class Main {
 	
 	public static void main(String[] args) throws IOException {
-		DataSource<Object> dataSource = JSONDataSource.fromString("{\"test\":\"test\", \"ok\":true, \"a\":{}}");
-		Pipeline.from(dataSource)
-				.print()
-				.trim(30)
-				.execute();
-
-		dataSource.close();
+		
 	}
 }

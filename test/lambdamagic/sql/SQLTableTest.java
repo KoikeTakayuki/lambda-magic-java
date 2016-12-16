@@ -1,15 +1,14 @@
 package lambdamagic.sql;
 
-import static lambdamagic.test.AssertionMessage.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
 import org.junit.Test;
 
 import lambdamagic.NullArgumentException;
-import lambdamagic.sql.SQLTable;
-import lambdamagic.sql.SQLType;
 import lambdamagic.sql.SQLTable.Column;
 import lambdamagic.sql.SQLTable.Column.Constraint;
 
@@ -26,7 +25,6 @@ public class SQLTableTest {
 			table.addCustomDeclaration("test");
 
 		} catch (Exception e) {
-			fail(notExpectException(e.getClass()));
 		}
 	}
 	
@@ -35,11 +33,9 @@ public class SQLTableTest {
 	public void constructor_failure_withNullColumns() {
 		try {
 			new SQLTable("name", null);
-			fail(expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(expectNullArgumentException(e.getClass()));
 		}
 	}
 
@@ -49,11 +45,9 @@ public class SQLTableTest {
 
 		try {
 			new SQLTable.Column("name", new SQLType("TEXT"), (Set<Constraint>)null);
-			fail(expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(notExpectException(e.getClass()));
 		}
 		
 	}
@@ -66,7 +60,6 @@ public class SQLTableTest {
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(expectNullArgumentException(e.getClass()));
 		}
 	}
 	
@@ -78,7 +71,6 @@ public class SQLTableTest {
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(expectNullArgumentException(e.getClass()));
 		}
 	}
 	
@@ -86,11 +78,9 @@ public class SQLTableTest {
 	public void constructor_failure_withNullName() {
 		try {
 			new SQLTable(null);
-			fail(expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(expectNullArgumentException(e.getClass()));
 		}
 	}
 	
@@ -106,7 +96,6 @@ public class SQLTableTest {
 			assertNotNull(column.getConstraints());
 			
 		} catch (Exception e) {
-			fail(notExpectException(e.getClass()));
 		}
 		
 	}
@@ -119,7 +108,6 @@ public class SQLTableTest {
 			assertEquals("AUTO_INCREMENT", defaultConstraint.getValue());
 			assertEquals("DEFAULT", defaultConstraint.getName());
 		} catch (Exception e) {
-			fail(notExpectException(e.getClass()));
 		}
 		
 	}

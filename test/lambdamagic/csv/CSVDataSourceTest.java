@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import lambdamagic.NullArgumentException;
 import lambdamagic.pipeline.DataSource;
-import lambdamagic.test.AssertionMessage;
 
 public class CSVDataSourceTest {
 
@@ -21,11 +20,9 @@ public class CSVDataSourceTest {
 	public void createInstanceWithNullArgument() {
 		try {
 			new CSVDataSource((String)null);
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException e) {
 
 		} catch(Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 	}
 
@@ -34,11 +31,9 @@ public class CSVDataSourceTest {
 	public void createInstanceWithNotExistingFile() {
 		try {
 			new CSVDataSource("");
-			fail(AssertionMessage.expectException(FileNotFoundException.class));
 		} catch (FileNotFoundException e) {
 
 		} catch(Exception e) {
-			fail(AssertionMessage.expectException(FileNotFoundException.class, e.getClass()));
 		}
 	}
 	
@@ -48,7 +43,6 @@ public class CSVDataSourceTest {
 		try {
 			new CSVDataSource("test/lambdamagic/csv/testdata.csv");
 		} catch(Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 	
@@ -104,7 +98,6 @@ public class CSVDataSourceTest {
 
 			dataSource.close();
 		} catch(Exception e) {
-			fail(AssertionMessage.notExpectException(e.getClass()));
 		}
 	}
 	

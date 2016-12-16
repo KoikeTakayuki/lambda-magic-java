@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author KoikeTakayuki
  *
  * @param <T1> query type
- * @param <T2> output type of query
+ * @param <T2> result type of the query
  */
 public interface Queryable<T1, T2> {
 

@@ -6,7 +6,7 @@ import java.util.Optional;
 import lambdamagic.data.Tuple2;
 import lambdamagic.pipeline.DataSource;
 
-public class ZippedDataSource<T1, T2> implements DataSource<Tuple2<T1, T2>> {
+public final class ZippedDataSource<T1, T2> implements DataSource<Tuple2<T1, T2>> {
 	
 	private DataSource<T1> source1;
 	private DataSource<T2> source2;

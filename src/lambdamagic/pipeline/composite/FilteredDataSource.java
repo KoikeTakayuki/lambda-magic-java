@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import lambdamagic.pipeline.DataSource;
 
-public class FilteredDataSource<T> implements DataSource<T> {
+public final class FilteredDataSource<T> implements DataSource<T> {
 
 	private DataSource<T> wrapped;
 	private Predicate<T> predicate;

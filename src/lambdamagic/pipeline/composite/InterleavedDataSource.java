@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import lambdamagic.pipeline.DataSource;
 
-public class InterleavedDataSource<T> implements DataSource<T> {
+public final class InterleavedDataSource<T> implements DataSource<T> {
 
 	List<DataSource<T>> sources;
 	private int currentIndex;

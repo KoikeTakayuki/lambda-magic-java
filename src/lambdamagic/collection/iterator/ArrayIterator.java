@@ -4,14 +4,7 @@ import java.util.Iterator;
 
 import lambdamagic.NullArgumentException;
 
-/**
- * Iterator that will iterate over the values in the specified array.
- * 
- * @author KoikeTakayuki
- *
- * @param <T> Type of array element
- */
-public class ArrayIterator<T> implements Iterator<T> {
+public final class ArrayIterator<T> implements Iterator<T> {
 	
 	private T[] array;
 	private int index;

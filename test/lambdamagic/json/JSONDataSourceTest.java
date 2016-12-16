@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import lambdamagic.NullArgumentException;
 import lambdamagic.pipeline.DataSource;
-import lambdamagic.test.AssertionMessage;
 
 public class JSONDataSourceTest {
 	
@@ -25,44 +24,36 @@ public class JSONDataSourceTest {
 		
 		try {
 			new JSONDataSource((String)null);
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 	}
 	
 	@Test
 	public void constructor_failure_withNullEncoding() {
 		try (DataSource<Object> source = new JSONDataSource((Reader)null)) {
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 	}
 
 	@Test
 	public void constructor_failure_withNullReader() {
 		try (DataSource<Object> source = new JSONDataSource((Reader)null)) {
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 	}
 	
 	@Test
 	public void fromString_failure_withNullString() {
 		try (DataSource<Object> source = JSONDataSource.fromString(null)) {
-			fail(AssertionMessage.expectNullArgumentException());
 		} catch (NullArgumentException ok) {
 			
 		} catch (Exception e) {
-			fail(AssertionMessage.expectNullArgumentException(e.getClass()));
 		}
 	}
 
