@@ -51,7 +51,7 @@ public class CSVDataSource implements DataSource<List<String>> {
 	@Override
 	public Optional<List<String>> readData() {
 
-		Either<List<String>, Exception> resultOrException = parser.parse();
+		Either<List<String>, ? extends Exception> resultOrException = parser.parse();
 
 		if (resultOrException.isRight())
 			return Optional.empty();

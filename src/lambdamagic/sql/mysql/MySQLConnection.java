@@ -22,7 +22,6 @@ public final class MySQLConnection extends SQLConnection<MySQLCommandBuilder> {
 		return dataSource;
 	}
 
-	
 	public MySQLConnection(DataSource dataSource) throws SQLException {
 		super(dataSource, COMMAND_BUILDER);
 	}

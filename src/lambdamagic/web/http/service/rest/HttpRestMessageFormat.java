@@ -4,7 +4,7 @@ import lambdamagic.NullArgumentException;
 import lambdamagic.web.MimeTypes;
 
 public enum HttpRestMessageFormat {
-
+	
 	JSON(MimeTypes.APPLICATION_JAVASCRIPT);
 	
 	private String mimeType;

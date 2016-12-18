@@ -17,13 +17,6 @@ import lambdamagic.pipeline.composite.MergedDataSource;
 import lambdamagic.pipeline.composite.TrimmedDataSource;
 import lambdamagic.pipeline.composite.ZippedDataSource;
 
-/**
- * 
- * @author KoikeTakayuki
- *
- * @param <I> the type of the pipeline input
- * @param <O> the type of the pipeline output
- */
 public class Pipeline<I, O> implements DataSource<O> {
 
 	private DataSource<I> source;

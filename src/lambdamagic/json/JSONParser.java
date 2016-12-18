@@ -9,8 +9,9 @@ import java.util.Map;
 
 import lambdamagic.data.functional.Either;
 import lambdamagic.parsing.ParserBase;
+import lambdamagic.web.serialization.ObjectReader;
 
-public class JSONParser extends ParserBase<Object> {
+public class JSONParser extends ParserBase<Object> implements ObjectReader {
 
 	public static final String JSON_NULL_STRING = "null";
 	
@@ -196,5 +197,10 @@ public class JSONParser extends ParserBase<Object> {
 		} catch (IOException e) {
 			return Either.right(e);
 		}
+	}
+
+	@Override
+	public Either<Object, Exception> readObject() {
+		return parse();
 	}
 }

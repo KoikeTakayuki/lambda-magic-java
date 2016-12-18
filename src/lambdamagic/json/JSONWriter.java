@@ -13,27 +13,39 @@ import java.util.Map.Entry;
 
 import lambdamagic.pipeline.DataProcessor;
 import lambdamagic.text.Encodings;
+import lambdamagic.web.serialization.ObjectWriter;
 
-public class JSONWriter implements DataProcessor<Object, Object> {
+public class JSONWriter implements DataProcessor<Object, Object>, ObjectWriter {
 
 	private Writer writer;
 	private boolean writeAsArray;
+	
+	public JSONWriter(Writer writer) {
+		this.writer = writer;
+		this.writeAsArray = false;
+	}
 
-	public JSONWriter(String filePath, String encoding) throws IOException {
+	public JSONWriter(String filePath, String encoding, boolean writeAsArray) throws IOException {
 		writer = new BufferedWriter(
 						new OutputStreamWriter(
 								new FileOutputStream(new File(filePath)), encoding));
-
-		writeAsArray();
+		
+		setWriteAsArray(writeAsArray);
 	}
 
 	public JSONWriter(String filePath) throws IOException {
-		this(filePath, Encodings.UTF_8);
+		this(filePath, Encodings.UTF_8, false);
+	}
+	
+	public JSONWriter(String filePath, boolean writeAsArray) throws IOException {
+		this(filePath, Encodings.UTF_8, writeAsArray);
 	}
 
-	private void writeAsArray() throws IOException {
-		writeAsArray = true;
-		writer.write(JSONParser.JSON_ARRAY_START_CHAR);
+	private void setWriteAsArray(boolean writeAsArray) throws IOException {
+		this.writeAsArray = writeAsArray;
+		
+		if (writeAsArray)
+			writer.write(JSONParser.JSON_ARRAY_START_CHAR);
 	}
 
 	@Override
@@ -117,8 +129,18 @@ public class JSONWriter implements DataProcessor<Object, Object> {
 	@Override
 	public void close() throws IOException {
 		if (writeAsArray)
-			writer.write(JSONParser.JSON_ARRAY_START_CHAR);
+			writer.write(JSONParser.JSON_ARRAY_END_CHAR);
 			
 		writer.close();
+	}
+
+	@Override
+	public void writeObject(Object obj) throws IOException {
+		write(obj);
+	}
+
+	@Override
+	public void flush() throws IOException {
+		writer.flush();
 	}
 }

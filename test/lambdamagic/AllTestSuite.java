@@ -6,12 +6,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import lambdamagic.sql.SQLPackageTestSuite;
+import lambdamagic.web.http.service.rest.WebHttpRestServicePackageTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses(
 	{
 		SQLPackageTestSuite.class,
-		
+		WebHttpRestServicePackageTestSuite.class
 	})
 public class AllTestSuite {
 	

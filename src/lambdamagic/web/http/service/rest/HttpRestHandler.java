@@ -4,6 +4,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lambdamagic.data.functional.Either;
+
+@FunctionalInterface
 public interface HttpRestHandler {
-	void process(HttpServletRequest req, HttpServletResponse resp) throws ServletException;
+
+	void process(HttpServletRequest request, HttpServletResponse response) throws ServletException;
 }

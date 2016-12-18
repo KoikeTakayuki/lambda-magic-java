@@ -40,7 +40,7 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		this.debugOutput = debugOutput;
 	}
 
-	public SQLConnection(DataSource dataSource, T commandBuilder) throws SQLException {
+	protected SQLConnection(DataSource dataSource, T commandBuilder) throws SQLException {
 		if (dataSource == null)
 			throw new NullArgumentException("dataSource");
 		
@@ -50,7 +50,7 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		this.connection = dataSource.getConnection();
 	}
 
-	public SQLConnection(String url, String userName, String password, T commandBuilder) throws SQLException {
+	protected SQLConnection(String url, String userName, String password, T commandBuilder) throws SQLException {
 		if (url == null)
 			throw new NullArgumentException("url");
 		

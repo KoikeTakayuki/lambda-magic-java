@@ -3,6 +3,7 @@ package lambdamagic.sql;
 import java.util.Map;
 
 public interface SQLCommandBuilder {
+
 	String buildCreateDatabaseCommand(SQLDatabase database);
 	String buildDropDatabaseCommand(String databaseName);
 	String buildUseDatabaseCommand(String databaseName);
