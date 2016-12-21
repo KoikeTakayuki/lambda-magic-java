@@ -1,4 +1,4 @@
-package lambdamagic.pipeline.composite;
+package lambdamagic.pipeline.wrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public final class InterleavedDataSource<T> implements DataSource<T> {
 	List<DataSource<T>> sources;
 	private int currentIndex;
 
-	@SafeVarargs
+	@SuppressWarnings("unchecked")
 	public InterleavedDataSource(DataSource<T>... sources) {
 		this.sources = new ArrayList<DataSource<T>>(Arrays.asList(sources));
 		currentIndex = 0;

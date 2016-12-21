@@ -1,4 +1,4 @@
-package lambdamagic.pipeline.composite;
+package lambdamagic.pipeline.wrapper;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -11,7 +11,7 @@ public final class MergedDataSource<T> implements DataSource<T> {
 	private Optional<DataSource<T>> currentDataSource;
 	private int currentIndex;
 
-	@SafeVarargs
+	@SuppressWarnings("unchecked")
 	public MergedDataSource(DataSource<T>... sources) {
 		this.sources = sources;
 		currentIndex = 0;

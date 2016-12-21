@@ -5,5 +5,5 @@ import lambdamagic.data.functional.Either;
 @FunctionalInterface
 public interface Parser<T> {
 
-	Either<T, ? extends Exception> parse();
+	Either<T, Exception> parse();
 }

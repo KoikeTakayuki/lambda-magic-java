@@ -17,7 +17,7 @@ public class CSVParser extends ParserBase<List<String>> {
 	}
 
 	@Override
-	public Either<List<String>, ? extends Exception> parse() {
+	public Either<List<String>, Exception> parse() {
 		return parseRow();
 	}
 

@@ -1,14 +1,37 @@
 package lambdamagic.collection.iterator;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
 
+import lambdamagic.NullArgumentException;
+
 public class ArrayIteratorTest {
 
+	@Test(expected=NullArgumentException.class)
+	public void ArrayIterator_mustThrowNullArgumentExceptionWhenNullArrayIsGiven() {
+		new ArrayIterator<Object>(null);
+	}
+	
+	@Test(expected=ArrayIndexOutOfBoundsException.class)
+	public void next_mustThrowArrayIndexOutOfBoundsExceptionWhenThereIsNoElement() {
+		ArrayIterator<Integer> it = new ArrayIterator<Integer>(new Integer[] { 1 });
+		it.next();
+		it.next();
+	}
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void ArrayIterator_properlyIterateGivenArray() {
+		ArrayIterator<Integer> it = new ArrayIterator<Integer>(new Integer[] { 1, 2, 3 });
+		
+		assertThat(it.hasNext(), is(true));
+		assertThat(it.next(), is(1));
+		assertThat(it.hasNext(), is(true));
+		assertThat(it.next(), is(2));
+		assertThat(it.hasNext(), is(true));
+		assertThat(it.next(), is(3));
+		assertThat(it.hasNext(), is(false));
 	}
 
 }

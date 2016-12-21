@@ -2,6 +2,8 @@ package lambdamagic.data;
 
 import java.io.Serializable;
 
+import lambdamagic.NullArgumentException;
+
 public final class Tuple2<T, S> implements Serializable {
 
 	private static final long serialVersionUID = 692990897984802517L;
@@ -18,6 +20,12 @@ public final class Tuple2<T, S> implements Serializable {
 	}
 
 	public Tuple2(T firstValue, S secondValue) {
+		if (firstValue == null)
+			throw new NullArgumentException("firstValue");
+		
+		if (secondValue == null)
+			throw new NullArgumentException("secondValue");
+		
 		this.firstValue = firstValue;
 		this.secondValue = secondValue;
 	}

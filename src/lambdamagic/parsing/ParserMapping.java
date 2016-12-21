@@ -15,7 +15,7 @@ public class ParserMapping<T, U> implements Parser<U> {
 	}
 
 	@Override
-	public Either<U, ? extends Exception> parse() {
+	public Either<U, Exception> parse() {
 		return wrapped.parse().applyToLeft(mapping);
 	}
 }

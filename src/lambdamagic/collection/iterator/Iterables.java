@@ -11,12 +11,15 @@ import lambdamagic.pipeline.DataProcessor;
 public final class Iterables {
 
 	@SuppressWarnings("unchecked")
-	public static <T> Iterable<T> asIterable(final T... ts) {
+	public static <T> Iterable<T> asIterable(final T... elements) {
+		if (elements == null)
+			throw new NullArgumentException("elements");
+		
 		return new Iterable<T>() {
 
 			@Override
 			public Iterator<T> iterator() {
-				return new ArrayIterator<T>(ts);
+				return new ArrayIterator<T>(elements);
 			}
 		};
 	}
@@ -49,5 +52,4 @@ public final class Iterables {
 	}
 	
 	private Iterables() {}
-
 }

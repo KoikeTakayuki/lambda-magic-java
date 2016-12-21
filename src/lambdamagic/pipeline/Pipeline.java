@@ -11,11 +11,11 @@ import java.util.stream.BaseStream;
 
 import lambdamagic.NullArgumentException;
 import lambdamagic.data.Tuple2;
-import lambdamagic.pipeline.composite.FilteredDataSource;
-import lambdamagic.pipeline.composite.InterleavedDataSource;
-import lambdamagic.pipeline.composite.MergedDataSource;
-import lambdamagic.pipeline.composite.TrimmedDataSource;
-import lambdamagic.pipeline.composite.ZippedDataSource;
+import lambdamagic.pipeline.wrapper.FilteredDataSource;
+import lambdamagic.pipeline.wrapper.InterleavedDataSource;
+import lambdamagic.pipeline.wrapper.MergedDataSource;
+import lambdamagic.pipeline.wrapper.TrimmedDataSource;
+import lambdamagic.pipeline.wrapper.ZippedDataSource;
 
 public class Pipeline<I, O> implements DataSource<O> {
 

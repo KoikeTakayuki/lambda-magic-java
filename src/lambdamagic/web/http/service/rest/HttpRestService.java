@@ -166,15 +166,15 @@ public abstract class HttpRestService extends HttpServlet {
 	}
 	
 	
-	private Object[] translateArguments(HttpServletRequest req, HttpMethod method, HttpRestParameter[] parameters) throws UnsupportedEncodingException {
+	private Object[] translateArguments(HttpServletRequest request, HttpMethod method, HttpRestParameter[] parameters) throws UnsupportedEncodingException {
 		Object[] arguments = new Object[parameters.length];
 	
-		req.setCharacterEncoding(getDataSerializer().getEncoding());
+		request.setCharacterEncoding(getDataSerializer().getEncoding());
 		
 		for (int i = 0; i < parameters.length; ++i) {
 			HttpRestParameter parameter = parameters[i];
 			
-			String parameterStringValue = req.getParameter(parameter.getName());
+			String parameterStringValue = request.getParameter(parameter.getName());
 			Object parameterValue = null;
 			
 			if (parameterStringValue == null) {

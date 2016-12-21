@@ -1,4 +1,4 @@
-package lambdamagic.pipeline.composite;
+package lambdamagic.pipeline.wrapper;
 
 import java.io.IOException;
 import java.util.Optional;
