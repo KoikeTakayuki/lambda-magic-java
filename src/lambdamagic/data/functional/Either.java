@@ -2,6 +2,8 @@ package lambdamagic.data.functional;
 
 import java.util.function.Function;
 
+import lambdamagic.NullArgumentException;
+
 public abstract class Either<L, R> {
 
 	protected L left;
@@ -28,36 +30,43 @@ public abstract class Either<L, R> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Either<T, R> applyToLeft(Function<L, T> f) {
-		if (isLeft()) {
-			return left(f.apply(left));
-		}
+	public <T> Either<T, R> applyToLeft(Function<L, T> function) {
+		if (function == null)
+			throw new NullArgumentException("function");
+		
+		if (isLeft())
+			return left(function.apply(left));
 		
 		return (Either<T, R>)this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> Either<L, T> applyToRight(Function<R, T> f) {
-		if (isRight()) {
-			return right(f.apply(right));
-		}
+	public <T> Either<L, T> applyToRight(Function<R, T> function) {
+		if (function == null)
+			throw new NullArgumentException("function");
+		
+		if (isRight())
+			return right(function.apply(right));
 
 		return (Either<L, T>)this;
 	}
 
-    public static <L, R> Either<L, R> right(R right) {
-        return new Right<L, R>(right);
+    public static <L, R> Either<L, R> right(R rightValue) {
+        return new Right<L, R>(rightValue);
     }
     
-    public static <L, R> Either<L, R> left(L left) {
-        return new Left<L, R>(left);
+    public static <L, R> Either<L, R> left(L leftValue) {
+        return new Left<L, R>(leftValue);
     }
     
 
     private final static class Left<L, R> extends Either<L, R> {
 
-    	private Left(L value) {
-    		this.left = value;
+    	private Left(L leftValue) {
+    		if (leftValue == null)
+    			throw new NullArgumentException("leftValue");
+
+    		this.left = leftValue;
     	}
 
 		@Override
@@ -73,8 +82,11 @@ public abstract class Either<L, R> {
     
     private final static class Right<L, R> extends Either<L, R> {
     		
-    	private Right(R value) {
-    		this.right = value;
+    	private Right(R rightValue) {
+    		if (rightValue == null)
+    			throw new NullArgumentException("rightValue");
+    
+    		this.right = rightValue;
     	}
 
 		@Override
