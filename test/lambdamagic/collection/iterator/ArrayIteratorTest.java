@@ -13,14 +13,17 @@ public class ArrayIteratorTest {
 	public void ArrayIterator_mustThrowNullArgumentExceptionWhenNullArrayIsGiven() {
 		new ArrayIterator<Object>(null);
 	}
-	
+
 	@Test(expected=ArrayIndexOutOfBoundsException.class)
-	public void next_mustThrowArrayIndexOutOfBoundsExceptionWhenThereIsNoElement() {
+	public void next_mustThrowArrayIndexOutOfBoundsExceptionWhenItDoesNotHaveNextElement() {
 		ArrayIterator<Integer> it = new ArrayIterator<Integer>(new Integer[] { 1 });
+
+		assertThat(it.hasNext(), is(true));
 		it.next();
+		assertThat(it.hasNext(), is(false));
 		it.next();
 	}
-	
+
 	@Test
 	public void ArrayIterator_properlyIterateGivenArray() {
 		ArrayIterator<Integer> it = new ArrayIterator<Integer>(new Integer[] { 1, 2, 3 });

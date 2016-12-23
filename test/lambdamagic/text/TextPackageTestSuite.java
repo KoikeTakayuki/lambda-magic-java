@@ -9,6 +9,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	{
 		CharactersTest.class,
 		TextLocationTest.class,
-		TextPosition.class
+		TextPositionTest.class
 	})
 public class TextPackageTestSuite {}
