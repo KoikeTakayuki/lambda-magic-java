@@ -16,6 +16,8 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import lambdamagic.NullArgumentException;
+import lambdamagic.sql.query.SQLInsertQuery;
+import lambdamagic.sql.query.SQLQuery;
 
 
 public abstract class SQLConnection<T extends SQLCommandBuilder> implements AutoCloseable {
@@ -147,7 +149,7 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 	}
 	
 	public int insertInto(String tableName, Map<String, ?> values) throws SQLException {
-		String command = commandBuilder.buildInsertIntoCommand(tableName, values);
+		String command = commandBuilder.buildInsertIntoCommand(new SQLInsertQuery(tableName, values));
 		
 		if (debugOutput != null)
 			debugOutput.println(replaceJokerValues(command, values.values()));
@@ -162,20 +164,8 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		return executeGetLastInsertId();
 	}
 	
-	public int  update(String tableName, String columnName, Object value, Map<String, ?> values) throws SQLException {
-		String command = commandBuilder.buildUpdateCommand(tableName, columnName, value, values);
-		
-		if (debugOutput != null)
-			debugOutput.println(replaceJokerValues(command, values.values()));
-		
-		try (PreparedStatement preparedStatement = connection.prepareStatement(command)) {
-			int count = 0;
-			for (Map.Entry<String, ?> e : values.entrySet())
-				preparedStatement.setObject(++count, e.getValue());	
-			
-			preparedStatement.executeUpdate();
-		}
-		return executeGetLastInsertId();
+	public int update(String tableName, String columnName, Object value, Map<String, ?> values) throws SQLException {
+		return 1;
 	}
 	
 	private String replaceJokerValues(String command, Collection<?> values) {
@@ -196,23 +186,11 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		return sb.toString();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <T> T executeSingle(SQLQuery query) throws SQLException {
-		ResultSet resultSet = null;
-		
-		try {
-			resultSet = executeQuery(commandBuilder.buildSelectCommand(query));
-			resultSet.next();
-			return (T)resultSet.getObject(1);
-		}
-		finally {
-			if (resultSet != null)
-				resultSet.getStatement().close();
-		}
+		return null;
 	}
 	
 	public SQLResultSet execute(SQLQuery query) {
-		final String command = commandBuilder.buildSelectCommand(query);
 		return new SQLResultSet();
 	}
 

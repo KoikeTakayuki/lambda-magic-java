@@ -1,6 +1,9 @@
 package lambdamagic.sql;
 
-import java.util.Map;
+import lambdamagic.sql.query.SQLDeleteQuery;
+import lambdamagic.sql.query.SQLInsertQuery;
+import lambdamagic.sql.query.SQLSelectQuery;
+import lambdamagic.sql.query.SQLUpdateQuery;
 
 public interface SQLCommandBuilder {
 
@@ -14,8 +17,9 @@ public interface SQLCommandBuilder {
 	String buildAddTableColumnCommand(String tableName, String columnName, SQLType columnType);
 	String buildDropTableColumnCommand(String tableName, String columnName);
 	String buildDropTableCommand(String tableName);
-	String buildInsertIntoCommand(String tableName, Map<String, ?> values);
+	String buildInsertIntoCommand(SQLInsertQuery query);
 	String buildLastInsertIdCommand();
-	String buildUpdateCommand(String tableName, String columnName, Object value, Map<String, ?> values);
-	String buildSelectCommand(SQLQuery query);
+	String buildUpdateCommand(SQLUpdateQuery query);
+	String getDeleteFromCommand(SQLDeleteQuery query);
+	String buildSelectCommand(SQLSelectQuery query);
 }

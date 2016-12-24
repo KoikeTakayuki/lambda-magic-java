@@ -11,7 +11,6 @@ import lambdamagic.event.log.FileEventLogTest;
 @SuiteClasses(
 	{
 		EventListenerManagerTest.class,
-		EventTest.class,
 		FallibleEventTest.class,
 		NotificationEventTest.class,
 		ProgressEventTest.class,

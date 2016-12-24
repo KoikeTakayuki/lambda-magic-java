@@ -11,7 +11,6 @@ import lambdamagic.data.DataPackageTestSuite;
 import lambdamagic.event.EventPackageTestSuite;
 import lambdamagic.io.IOPackageTestSuite;
 import lambdamagic.json.JSONPackageTestSuite;
-import lambdamagic.parsing.ParsingPackageTestSuite;
 import lambdamagic.pipeline.PipelinePackageTestSuite;
 import lambdamagic.resource.ResourcePackageTestSuite;
 import lambdamagic.settings.SettingsPackageTestSuite;
@@ -29,7 +28,6 @@ import lambdamagic.web.WebPackageTestSuite;
 		EventPackageTestSuite.class,
 		IOPackageTestSuite.class,
 		JSONPackageTestSuite.class,
-		ParsingPackageTestSuite.class,
 		PipelinePackageTestSuite.class,
 		ResourcePackageTestSuite.class,
 		SettingsPackageTestSuite.class,

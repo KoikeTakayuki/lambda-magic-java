@@ -31,12 +31,16 @@ public final class SQLTable {
 				return value;
 			}
 			
-			private Constraint(String name, Object value) {
+			public Constraint(String name, Object value) {
 				if (name == null)
 					throw new NullArgumentException("name");
 
 				this.name = name;
 				this.value = value;
+			}
+			
+			public Constraint(String name) {
+				this(name, null);
 			}
 		}
 		
