@@ -1,19 +1,18 @@
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.ServletException;
-
-import lambdamagic.csv.CSVDataSource;
-import lambdamagic.json.JSONDataSource;
-import lambdamagic.pipeline.DataSource;
-import lambdamagic.pipeline.Pipeline;
-import lambdamagic.web.http.service.rest.HttpRestService;
+import java.util.concurrent.CompletableFuture;
 
 public class Main {
 	
-	public static void main(String[] args) throws IOException, ServletException {
-		HttpRestService service = new RestAPISample();
+	public static void main(String[] args) throws InterruptedException {
 		
-		service.init();
+		CompletableFuture.runAsync(() -> {
+			try {
+				Thread.sleep(5000);
+				System.out.println("test");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}).join();
+		
 	}
 }

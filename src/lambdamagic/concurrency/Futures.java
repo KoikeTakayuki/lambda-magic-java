@@ -1,100 +1,76 @@
 package lambdamagic.concurrency;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-/**
- * This class contains utility methods for concurrent process.
- * 
- * @author KoikeTakayuki
- */
+import lambdamagic.NullArgumentException;
+import lambdamagic.collection.iterator.Iterables;
+import lambdamagic.data.Tuple2;
+
 public class Futures {
+	
+	public static <T> CompletableFuture<T> runAsync(Supplier<T> task) {
+		if (task == null)
+			throw new NullArgumentException("task");
 
-	/**
-	 * Interval time taken after polling all processes.
-	 * Time unit is milliseconds.
-	 */
-	private static int INTERVAL = 100;
+		return CompletableFuture.supplyAsync(task);
+	}
+	
+	public static CompletableFuture<Void> runAsync(Runnable task) {
+		if (task == null)
+			throw new NullArgumentException("task");
 
-	/**
-	 * Produce new {@link CompletableFuture} which iterate over all the tasks
-	 * in the specified collection.
-	 * 
-	 * New future task will be fulfilled when all the tasks in the collections are finished,
-	 * and will be passed all the result.
-	 * 
-	 * @param tasks
-	 * @return new future task which will be fulfilled when all tasks are fulfilled
-	 */
-	public static <T> CompletableFuture<Collection<T>> all(Collection<CompletableFuture<T>> tasks) {
-
-		CompletableFuture<Collection<T>> future = new CompletableFuture<Collection<T>>();
-		Predicate<CompletableFuture<T>> isDone = t -> t.isDone();
-
-		CompletableFuture.runAsync(() -> {
-
-			// ask all processes is done
-			while (!tasks.stream().allMatch(isDone)) {
-				try {
-					Thread.sleep(INTERVAL);
-				} catch (InterruptedException ex) {
-					future.completeExceptionally(ex);
-				}
-			}
-
-			Collection<T> result = new ArrayList<T>();
-
-			for (CompletableFuture<T> t : tasks) {
-				result.add(t.getNow(null));
-			}
-
-			future.complete(result);
-		});
+		return runAsync(() -> task.run());
+	}
+	
+	public static <I, O> Function<CompletableFuture<I>, CompletableFuture<O>> lift(Function<I, O> function) {
+		if (function == null)
+			throw new NullArgumentException("function");
 		
-		return future;
+		return inputFuture -> inputFuture.thenApply(function);
+	}
+	
+	public static <T> CompletableFuture<T> wrap(T value) {
+		if (value == null)
+			throw new NullArgumentException("value");
+		
+		return CompletableFuture.supplyAsync(() -> value);
 	}
 
-	/**
-	 * Produce new {@link CompletableFuture} which iterate over all the tasks
-	 * in the specified collection.
-	 * 
-	 * New future task will be fulfilled when any of the tasks in the collections are finished,
-	 * and will be passed the result of the one task.
-	 * 
-	 * When fulfilled, all the tasks in the collection is cancelled.
-	 * 
-	 * @param tasks
-	 * @return new future task which will be fulfilled when any one of the tasks are fulfilled
-	 */
-	public static <T> CompletableFuture<T> any(Collection<CompletableFuture<T>> tasks) {
-		CompletableFuture<T> future = new CompletableFuture<T>();
-
-		CompletableFuture.runAsync(() -> {
-			
-			boolean isDone = false;
-
-			// ask any process is done
-			while (!isDone) {
-				for (CompletableFuture<T> t : tasks) {
-					if (t.isDone()) {
-						future.complete(t.getNow(null));
-						tasks.forEach(task -> {
-							task.cancel(true);
-						});
-						isDone = true;
-					}
-				}
-
-				try {
-					Thread.sleep(INTERVAL);
-				} catch (InterruptedException ex) {
-					future.completeExceptionally(ex);
-				}
-			}
+	public static <T> CompletableFuture<List<T>> all(Iterable<CompletableFuture<T>> tasks) {
+		if (tasks == null)
+			throw new NullArgumentException("tasks");
+		
+		return Iterables.foldLeft(tasks, wrap(Arrays.asList()), (acc, e) -> {
+			return acc.thenCombineAsync(e, (values, value) -> {
+				List<T> newValues = new ArrayList<T>();
+				newValues.addAll(values);
+				newValues.add(value);
+				return newValues;
+			});
 		});
+	}
 
-		return future;
+	public static <T> CompletableFuture<T> any(Iterable<CompletableFuture<T>> tasks) {
+		if (tasks == null)
+			throw new NullArgumentException("tasks");
+		
+		return Iterables.reduce(tasks, (future1, future2) -> {
+			return future1.applyToEitherAsync(future2, Function.identity());
+		});
+	}
+	
+	public static <T, S> CompletableFuture<Tuple2<T, S>> join(CompletableFuture<T> task1, CompletableFuture<S> task2) {
+		if (task1 == null)
+			throw new NullArgumentException("task1");
+		
+		if (task2 == null)
+			throw new NullArgumentException("task2");
+		
+		return task1.thenCombineAsync(task2, (t1, t2) -> new Tuple2<T, S>(t1, t2));
 	}
 }

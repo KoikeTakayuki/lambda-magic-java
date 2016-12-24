@@ -77,6 +77,26 @@ public final class Iterables {
 		
 		return result;
 	}
+	
+	public static <T> T reduce(Iterable<T> elements, BiFunction<T, T, T> reducingFunction) {
+		if (elements == null)
+			throw new NullArgumentException("elements");
+		
+		if (reducingFunction == null)
+			throw new NullArgumentException("reducingFunction");
+
+
+		T result = null;
+		
+		for (T e : elements) {
+			if (result == null)
+				result = e;
+			else
+				result = reducingFunction.apply(result, e);
+		}
+
+		return result;
+	}
 
 	public static <I, O> Function<Iterable<I>, Iterable<O>> lift(Function<I, O> function) {
 		
