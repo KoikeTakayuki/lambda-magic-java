@@ -20,6 +20,6 @@ public interface SQLCommandBuilder {
 	String buildInsertIntoCommand(SQLInsertQuery query);
 	String buildLastInsertIdCommand();
 	String buildUpdateCommand(SQLUpdateQuery query);
-	String getDeleteFromCommand(SQLDeleteQuery query);
+	String buildDeleteFromCommand(SQLDeleteQuery query);
 	String buildSelectCommand(SQLSelectQuery query);
 }

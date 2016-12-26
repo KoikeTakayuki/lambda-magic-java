@@ -1,14 +1,12 @@
 package lambdamagic.pipeline;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 
 @FunctionalInterface
-public interface DataSource<T> extends Closeable, Supplier<T> {
+public interface DataSource<T> extends AutoCloseable, Supplier<T> {
 
 	Optional<T> readData();
 
@@ -41,5 +39,5 @@ public interface DataSource<T> extends Closeable, Supplier<T> {
 	}
 	
 	@Override
-	default void close() throws IOException {}
+	default void close() throws Exception {}
 }

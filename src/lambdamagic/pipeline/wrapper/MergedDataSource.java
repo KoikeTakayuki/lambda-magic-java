@@ -1,6 +1,5 @@
 package lambdamagic.pipeline.wrapper;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import lambdamagic.pipeline.DataSource;
@@ -50,7 +49,7 @@ public final class MergedDataSource<T> implements DataSource<T> {
 	}
 	
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		for (DataSource<T> s : sources) {
 			s.close();
 		}

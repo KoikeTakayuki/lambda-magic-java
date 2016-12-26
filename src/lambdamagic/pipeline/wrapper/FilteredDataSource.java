@@ -1,6 +1,5 @@
 package lambdamagic.pipeline.wrapper;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -33,7 +32,7 @@ public final class FilteredDataSource<T> implements DataSource<T> {
 	}
 	
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		wrapped.close();
 	}
 }

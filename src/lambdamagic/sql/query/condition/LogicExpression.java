@@ -1,24 +1,70 @@
 package lambdamagic.sql.query.condition;
 
-public class LogicExpression implements SQLCondition {
+import lambdamagic.NullArgumentException;
 
-	static enum LogicOperator {
-		NOT,
-		AND,
-		OR
- 	}
+public abstract class LogicExpression implements SQLCondition {
+	
+	public static class AndExpression extends LogicExpression {
+		
+		private SQLCondition[] operands;
+		
+		public SQLCondition[] getOperands() {
+			return operands;
+		}
+		
+		AndExpression(SQLCondition... operands) {
+			if (operands == null)
+				throw new NullArgumentException("operands");
+				
+			this.operands = operands;
+		}
 
-	private LogicOperator operator;
-
-	public LogicOperator getOperator() {
-		return operator;
-	}
-
-	LogicExpression(LogicOperator operator, SQLCondition condition1, SQLCondition condition2) {
-		this.operator = operator;
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
 	}
 	
-	LogicExpression(LogicOperator operator, SQLCondition condition) {
-		this.operator = operator;
+	public static class OrExpression extends LogicExpression {
+		
+		private SQLCondition[] operands;
+		
+		public SQLCondition[] getOperands() {
+			return operands;
+		}
+		
+		OrExpression(SQLCondition... operands) {
+			if (operands == null)
+				throw new NullArgumentException("operands");
+				
+			this.operands = operands;
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
 	}
+	
+	public static class NotExpression extends LogicExpression {
+		
+		private SQLCondition operand;
+		
+		public SQLCondition getOperand() {
+			return operand;
+		}
+		
+		NotExpression(SQLCondition operand) {
+			if (operand == null)
+				throw new NullArgumentException("operand");
+				
+			this.operand = operand;
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
 }

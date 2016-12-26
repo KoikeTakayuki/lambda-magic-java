@@ -1,6 +1,5 @@
 package lambdamagic.pipeline.wrapper;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import lambdamagic.InvalidArgumentException;
@@ -38,7 +37,7 @@ public final class TrimmedDataSource<T> implements DataSource<T> {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		wrapped.close();
 	}
 

@@ -1,6 +1,5 @@
 package lambdamagic.pipeline.wrapper;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import lambdamagic.data.Tuple2;
@@ -32,7 +31,7 @@ public final class ZippedDataSource<T1, T2> implements DataSource<Tuple2<T1, T2>
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		source1.close();
 		source2.close();
 	}

@@ -1,6 +1,5 @@
 package lambdamagic.pipeline.wrapper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +39,7 @@ public final class InterleavedDataSource<T> implements DataSource<T> {
 
 			try {
 				dataSource.close();
-			} catch(IOException e) {
+			} catch(Exception e) {
 				e.printStackTrace();
 			}
 

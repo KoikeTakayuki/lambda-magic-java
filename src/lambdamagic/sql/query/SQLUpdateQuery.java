@@ -1,6 +1,5 @@
 package lambdamagic.sql.query;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import lambdamagic.sql.query.condition.SQLCondition;
@@ -15,12 +14,16 @@ public class SQLUpdateQuery extends SQLConditionalQuery {
 
 	private SQLUpdateQuery(String tableName) {
 		super(tableName);
-		
-		this.updateValues = new HashMap<>();
 	}
 
-	public static SQLUpdateQuery from(String tableName) {
+	public static SQLUpdateQuery update(String tableName) {
 		return new SQLUpdateQuery(tableName);
+	}
+	
+	public SQLUpdateQuery set(Map<String, Object> updateValues) {
+		this.updateValues = updateValues;
+
+		return this;
 	}
 	
 	@Override

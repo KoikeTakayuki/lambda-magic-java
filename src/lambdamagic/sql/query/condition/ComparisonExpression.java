@@ -2,51 +2,150 @@ package lambdamagic.sql.query.condition;
 
 import lambdamagic.NullArgumentException;
 
-public class ComparisonExpression implements SQLCondition {
+public abstract class ComparisonExpression<T> implements SQLCondition {
 
-	static enum Operator {
-		IS_NULL,
-		IS_NOT_NULL,
-		EQUAL_TO,
-		NOT_EQUAL_TO,
-		LESS_THAN,
-		GREATER_THAN,
-		LESS_OR_EQUAL_TO,
-		GREATER_OR_EQUAL_TO,
-		CONTAIN_STRING,
-		START_WITH_STRING,
-		END_WITH_STRING,
-		IN_LIST,
-	}
-
-	private Operator operator;
 	private String firstOperand;
-	private Object secondOperand;
-	
-	public Operator getOperator() {
-		return operator;
-	}
+	private T secondOperand;
 	
 	public String getFirstOperand() {
 		return firstOperand;
 	}
 	
-	public Object getSecondOperand() {
+	public T getSecondOperand() {
 		return secondOperand;
 	}
 	
-	ComparisonExpression(Operator operator, String firstOperand, Object secondOperand) {
-		if (operator == null)
-			throw new NullArgumentException("operator");
-		
+	ComparisonExpression(String firstOperand, T secondOperand) {
 		if (firstOperand == null)
 			throw new NullArgumentException("firstOperand");
 		
 		if (secondOperand == null)
 			throw new NullArgumentException("secondOperand");
 		
-		this.operator = operator;
 		this.firstOperand = firstOperand;
 		this.secondOperand = secondOperand;
 	}
+
+	public static class EqualToExpression extends ComparisonExpression<Object> {
+
+		EqualToExpression(String firstOperand, Object secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+
+
+	public static class NotEqualToExpression extends ComparisonExpression<Object> {
+
+		NotEqualToExpression(String firstOperand, Object secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class GreaterThanExpression extends ComparisonExpression<Number> {
+		
+		GreaterThanExpression(String firstOperand, Number secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class LessThanExpression extends ComparisonExpression<Number> {
+		
+		LessThanExpression(String firstOperand, Number secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class GreaterOrEqualToExpression extends ComparisonExpression<Number> {
+		
+		GreaterOrEqualToExpression(String firstOperand, Number secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class LessOrEqualToExpression extends ComparisonExpression<Number> {
+		
+		LessOrEqualToExpression(String firstOperand, Number secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class ContainStringExpression extends ComparisonExpression<String> {
+		
+		ContainStringExpression(String firstOperand, String secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	
+	public static class StartWithExpression extends ComparisonExpression<String> {
+		
+		StartWithExpression(String firstOperand, String secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class EndWithExpression extends ComparisonExpression<String> {
+		
+		EndWithExpression(String firstOperand, String secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+	
+	public static class InListExpression extends ComparisonExpression<Iterable<?>> {
+		
+		InListExpression(String firstOperand, Iterable<?> secondOperand) {
+			super(firstOperand, secondOperand);
+		}
+
+		@Override
+		public StringBuffer accept(SQLConditionVisitor visitor) {
+			return visitor.visit(this);
+		}
+	}
+
 }

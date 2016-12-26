@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import lambdamagic.NullArgumentException;
+import lambdamagic.OutOfRangeArgumentException;
 import lambdamagic.sql.SQLCommandBuilder;
 import lambdamagic.sql.SQLDatabase;
 import lambdamagic.sql.SQLTable;
@@ -17,6 +18,8 @@ import lambdamagic.sql.query.SQLDeleteQuery;
 import lambdamagic.sql.query.SQLInsertQuery;
 import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.SQLUpdateQuery;
+import lambdamagic.sql.query.condition.SQLCondition;
+import lambdamagic.sql.query.condition.SQLJoinClause;
 import lambdamagic.text.Strings;
 
 
@@ -27,6 +30,12 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 	public static final Constraint INDEX = new Constraint("INDEX");
 	public static final Constraint UNIQUE = new Constraint("UNIQUE");
 	public static final Constraint NOT_NULL = new Constraint("NOT NULL");
+	
+	private MySQLConditionVisitor visitor;
+	
+	public MySQLCommandBuilder() {
+		this.visitor = new MySQLConditionVisitor();
+	}
 
 	@Override
 	public String buildCreateDatabaseCommand(SQLDatabase database) {
@@ -266,19 +275,60 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 
 	@Override
 	public String buildUpdateCommand(SQLUpdateQuery query) {
-		// TODO Auto-generated method stub
-		return null;
+		if (query == null)
+			throw new NullArgumentException("query");
+	
+		Iterator<Map.Entry<String, Object>> it = query.getUpdateValues().entrySet().iterator();
+
+		if (!it.hasNext())
+			throw new OutOfRangeArgumentException("updateValues", "!it.hasNext()");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("UPDATE ");
+		sb.append(query.getTableName());
+		sb.append(" SET ");
+		
+		Map.Entry<String, ?> entry = it.next();
+		sb.append(entry.getKey());
+		sb.append(" = ?");
+		
+		while (it.hasNext()) {
+			entry = it.next();
+			sb.append(", ");
+			sb.append(entry.getKey());
+			sb.append(" = ?");
+		}
+
+		return sb.toString();
 	}
 
 	@Override
-	public String getDeleteFromCommand(SQLDeleteQuery query) {
-		// TODO Auto-generated method stub
-		return null;
+	public String buildDeleteFromCommand(SQLDeleteQuery query) {
+		if (query == null)
+			throw new NullArgumentException("query");
+		
+		String tableName = query.getTableName();
+		List<SQLJoinClause> joinClauses = query.getJoinClauses();
+		SQLCondition condition = query.getCondition();
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("DELETE FROM ");
+		sb.append(tableName);
+		
+		if (joinClauses.size() > 0) {
+			
+		}
+		
+		if (condition != null) {
+			sb.append(" WHERE ");
+			sb.append(condition.accept(visitor));
+		}
+
+		return sb.toString();
 	}
 
 	@Override
 	public String buildSelectCommand(SQLSelectQuery query) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

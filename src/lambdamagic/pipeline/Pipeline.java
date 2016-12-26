@@ -1,6 +1,5 @@
 package lambdamagic.pipeline;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -179,7 +178,7 @@ public class Pipeline<I, O> implements DataSource<O> {
 	}
 	
 	@Override
-	public void close() throws IOException {
+	public void close() throws Exception {
 		source.close();
 		processor.close();
 	}

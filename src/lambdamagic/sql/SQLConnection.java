@@ -3,7 +3,6 @@ package lambdamagic.sql;
 
 import java.io.PrintStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,20 +10,22 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import lambdamagic.NullArgumentException;
+import lambdamagic.sql.query.SQLDeleteQuery;
 import lambdamagic.sql.query.SQLInsertQuery;
-import lambdamagic.sql.query.SQLQuery;
+import lambdamagic.sql.query.SQLSelectQuery;
+import lambdamagic.sql.query.SQLUpdateQuery;
+import lambdamagic.sql.query.condition.SQLCondition;
 
 
-public abstract class SQLConnection<T extends SQLCommandBuilder> implements AutoCloseable {
+public abstract class SQLConnection implements AutoCloseable {
 
 	private Connection connection;
 	private PrintStream debugOutput;
-	private T commandBuilder;
+	private SQLCommandBuilder commandBuilder;
 
 	public boolean getAutoCommit() throws SQLException {
 		return connection.getAutoCommit();
@@ -42,7 +43,7 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		this.debugOutput = debugOutput;
 	}
 
-	protected SQLConnection(DataSource dataSource, T commandBuilder) throws SQLException {
+	protected SQLConnection(DataSource dataSource, SQLCommandBuilder commandBuilder) throws SQLException {
 		if (dataSource == null)
 			throw new NullArgumentException("dataSource");
 		
@@ -50,28 +51,6 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 			throw new NullArgumentException("commandBuilder");
 		
 		this.connection = dataSource.getConnection();
-	}
-
-	protected SQLConnection(String url, String userName, String password, T commandBuilder) throws SQLException {
-		if (url == null)
-			throw new NullArgumentException("url");
-		
-		if (commandBuilder == null)
-			throw new NullArgumentException("commandBuilder");
-
-		this.connection = openConnection(url, userName, password);
-	}
-	
-	private Connection openConnection(String databaseUrl, String userName, String password) throws SQLException {
-		Properties properties = new Properties();
-		
-		if (userName != null)
-			properties.put("user", userName);
-		
-		if (password != null)
-			properties.put("password", password);
-		
-		return DriverManager.getConnection(databaseUrl, properties);
 	}
 	
 	@Override
@@ -164,8 +143,25 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		return executeGetLastInsertId();
 	}
 	
-	public int update(String tableName, String columnName, Object value, Map<String, ?> values) throws SQLException {
-		return 1;
+	public int update(String tableName, SQLCondition condition, Map<String, Object> values) throws SQLException {
+		SQLUpdateQuery query = SQLUpdateQuery.update(tableName).set(values).where(condition);
+		String command = commandBuilder.buildUpdateCommand(query);
+		
+		if (debugOutput != null)
+			debugOutput.println(replaceJokerValues(command, values.values()));
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(command)) {
+			int count = 0;
+			for (Map.Entry<String, ?> e : values.entrySet())
+				preparedStatement.setObject(++count, e.getValue());	
+			
+			preparedStatement.executeUpdate();
+		}
+		return executeGetLastInsertId();
+	}
+	
+	public int update(String tableName, String columnName, Object value, Map<String, Object> values) throws SQLException {
+		return update(tableName, SQLCondition.EQUAL_TO(columnName, value), values);
 	}
 	
 	private String replaceJokerValues(String command, Collection<?> values) {
@@ -185,13 +181,19 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		sb.append(command.substring(startIndex, command.length()));
 		return sb.toString();
 	}
-	
-	public <T> T executeSingle(SQLQuery query) throws SQLException {
-		return null;
+
+	public int deleteFrom(String tableName, SQLCondition condition) throws SQLException {
+		SQLDeleteQuery query = SQLDeleteQuery.from(tableName).where(condition);
+		return executeUpdate(commandBuilder.buildDeleteFromCommand(query));
 	}
 	
-	public SQLResultSet execute(SQLQuery query) {
-		return new SQLResultSet();
+	public int deleteFrom(String tableName, String columnName, Object value) throws SQLException {
+		return deleteFrom(tableName, SQLCondition.EQUAL_TO(columnName, value));
+	}
+	
+	public SQLResultSet execute(SQLSelectQuery query) {
+		final String command = commandBuilder.buildSelectCommand(query);
+		return new SQLResultSet(() -> executeQuery(command));
 	}
 
 	private int executeGetLastInsertId() throws SQLException {
@@ -208,7 +210,6 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 	}
 
 	private boolean execute(String command) throws SQLException {
-		
 		if (debugOutput != null)
 			debugOutput.println(command);
 		
@@ -218,7 +219,7 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 	}
 	
 	
-	public int executeUpdate(String command) throws SQLException {
+	private int executeUpdate(String command) throws SQLException {
 		if (debugOutput != null)
 			debugOutput.println(command);
 		
@@ -231,6 +232,8 @@ public abstract class SQLConnection<T extends SQLCommandBuilder> implements Auto
 		if (debugOutput != null)
 			debugOutput.println(command);
 		
-		return connection.createStatement().executeQuery(command);
+		try (Statement statement = connection.createStatement()) {
+			return connection.createStatement().executeQuery(command);
+		}
 	}
 }
