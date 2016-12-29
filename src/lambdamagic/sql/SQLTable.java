@@ -2,10 +2,7 @@ package lambdamagic.sql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import lambdamagic.NullArgumentException;
 
@@ -46,7 +43,21 @@ public final class SQLTable {
 		
 		private String name;
 		private SQLType type;
-		private Set<Constraint> constraints;
+		private List<Constraint> constraints;
+		
+		public Column(String name, SQLType type, Constraint... constraints) {
+			this(name, type, Arrays.asList(constraints));
+		}
+		
+		public Column(String name, SQLType type, List<Constraint> constraints) {
+			this.name = name;
+			this.type = type;
+			
+			if (constraints == null)
+				throw new NullArgumentException("constraints");
+			
+			this.constraints = constraints;
+		}
 		
 		public String getName() {
 			return name;
@@ -57,28 +68,30 @@ public final class SQLTable {
 			return type;
 		}
 		
-		public Set<Constraint> getConstraints() {
+		public List<Constraint> getConstraints() {
 			return constraints;
 		}
-		
-		public Column(String name, SQLType type, Constraint... constraints) {
-			this(name, type, new HashSet<Constraint>(Arrays.asList(constraints)));
-		}
-		
-		public Column(String name, SQLType type, Set<Constraint> constraints) {
-			this.name = name;
-			this.type = type;
-			
-			if (constraints == null)
-				throw new NullArgumentException("constraints");
-			
-			this.constraints = constraints;
-		}
+
 	}
 	
 	private String name;
-	private Set<Column> columns;
+	private List<Column> columns;
 	private List<String> customDeclarations;
+	
+	public SQLTable(String name, List<Column> columns) {
+		if (name == null)
+			throw new NullArgumentException("name");
+		
+		if (columns == null)
+			throw new NullArgumentException("columns");
+		
+		if (columns.size() < 1)
+			throw new IllegalStateException("SQLTable should have one column definition at least");
+		
+		this.name = name;
+		this.columns = columns;
+		this.customDeclarations = new ArrayList<String>();
+	}
 	
 	public String getName() {
 		return name;
@@ -104,22 +117,6 @@ public final class SQLTable {
 			throw new NullArgumentException("customDeclaration");
 	
 		customDeclarations.add(customDeclaration);
-	}
-	
-	public SQLTable(String name, Set<Column> columns) {
-		if (name == null)
-			throw new NullArgumentException("name");
-		
-		if (columns == null)
-			throw new NullArgumentException("columns");
-		
-		this.name = name;
-		this.columns = columns;
-		this.customDeclarations = new ArrayList<String>();
-	}
-	
-	public SQLTable(String name) {
-		this(name, new LinkedHashSet<Column>());
 	}
 	
 	@Override

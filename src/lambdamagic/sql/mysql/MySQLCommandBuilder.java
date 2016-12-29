@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import lambdamagic.NullArgumentException;
 import lambdamagic.OutOfRangeArgumentException;
+import lambdamagic.collection.iterator.Iterables;
 import lambdamagic.sql.SQLCommandBuilder;
 import lambdamagic.sql.SQLDatabase;
 import lambdamagic.sql.SQLTable;
@@ -30,6 +31,19 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 	public static final Constraint INDEX = new Constraint("INDEX");
 	public static final Constraint UNIQUE = new Constraint("UNIQUE");
 	public static final Constraint NOT_NULL = new Constraint("NOT NULL");
+	
+	public static final SQLType SYMBOL = new SQLType("CHAR", 64);
+	public static final SQLType BOOLEAN = new SQLType("BIT");
+	public static final SQLType INTEGER = new SQLType("INT");
+	public static final SQLType REAL = new SQLType("DOUBLE");
+	public static final SQLType SHORT_TEXT = new SQLType("VARCHAR", 64);
+	public static final SQLType TEXT = new SQLType("VARCHAR", 255);
+	public static final SQLType LONG_TEXT = new SQLType("TEXT");
+	public static final SQLType PASSWORD = new SQLType("CHAR", 32);
+	public static final SQLType DATE = new SQLType("DATE");
+	public static final SQLType TIME = new SQLType("TIME");
+	public static final SQLType DATE_TIME = new SQLType("DATETIME");
+	public static final SQLType BINARY_OBJECT = new SQLType("LONGBLOB");
 	
 	private MySQLConditionVisitor visitor;
 	
@@ -88,23 +102,7 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 		sb.append(table.getName());
 		sb.append(" (");
 		
-		List<Column> indexedColumns = new ArrayList<Column>();
-		Iterator<Column> it = table.getColumns().iterator();
-		if (it.hasNext()) {		
-			appendColumnDefinition(sb, it.next(), indexedColumns);
-			
-			while(it.hasNext()) {
-				sb.append(", ");
-				appendColumnDefinition(sb, it.next(), indexedColumns);
-			}
-		}
-		
-		for (Column c : indexedColumns) {
-			sb.append(", ");
-			sb.append(" INDEX(");
-			sb.append(c.getName());
-			sb.append(")");
-		}
+		appendColumnDefinitions(sb, table.getColumns());
 
 		for (String declaration : table.getCustomDeclarations()) {
 			sb.append(", ");
@@ -113,49 +111,6 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 		sb.append(')');
 		
 		return sb.toString();
-	}
-	
-	private void appendColumnDefinition(StringBuffer sb, Column column, List<Column> indexedColumns) {
-		sb.append(column.getName());
-		
-		SQLType columnType = column.getType();
-		sb.append(' ');
-		sb.append(columnType.getName());
-		
-		if (columnType.getSize() != -1) {
-			sb.append('(');
-			sb.append(columnType.getSize());
-			sb.append(')');
-		}
-		
-		Iterator<Constraint> it = column.getConstraints().iterator();
-		while (it.hasNext()) {
-			Constraint constraint = it.next();
-
-			if (constraint.equals(INDEX)) {
-				indexedColumns.add(column);
-				return;
-			}
-			
-			sb.append(' ');
-			appendConstraintDefinition(sb, constraint);
-		}
-	}
-	
-	private void appendConstraintDefinition(StringBuffer sb, Column.Constraint constraint) {
-		sb.append(constraint.getName());
-		
-		Object value = constraint.getValue();
-		if (value != null) {
-			sb.append(" '");
-			
-			if (value instanceof String)
-				sb.append(escapeString((String)value));
-			else
-				sb.append(value);
-			
-			sb.append('\'');
-		}
 	}
 	
 	@Override
@@ -167,6 +122,14 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			throw new NullArgumentException("newTableName");
 		
 		return Strings.concat("RENAME TABLE ", tableName, " TO ", newTableName);
+	}
+
+	@Override
+	public String buildDropTableCommand(String tableName) {
+		if (tableName == null)
+			throw new NullArgumentException("tableName");
+		
+		return Strings.concat("DROP TABLE ", tableName);
 	}
 	
 	@Override
@@ -182,29 +145,18 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 
 
 	@Override
-	public String buildAddTableColumnCommand(String tableName, String columnName, SQLType columnType) {
+	public String buildAddTableColumnCommand(String tableName, Column column) {
 		if (tableName == null)
 			throw new NullArgumentException("tableName");
 		
-		if (columnName == null)
-			throw new NullArgumentException("columnName");
-		
-		if (columnType == null)
-			throw new NullArgumentException("columnType");
+		if (column == null)
+			throw new NullArgumentException("column");
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("ALTER TABLE ");
 		sb.append(tableName);
 		sb.append(" ADD ");
-		sb.append(columnName);
-		sb.append(' ');
-		sb.append(columnType.getName());
-		
-		if (columnType.getSize() != -1) {
-			sb.append('(');
-			sb.append(columnType.getSize());
-			sb.append(')');
-		}
+		appendColumnDefinitions(sb, Iterables.asIterable(column));
 
 		return sb.toString();
 	}
@@ -218,14 +170,6 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			throw new NullArgumentException("columnName");
 		
 		return Strings.concat("ALTER TABLE ", tableName, " DROP COLUMN ", columnName);
-	}
-
-	@Override
-	public String buildDropTableCommand(String tableName) {
-		if (tableName == null)
-			throw new NullArgumentException("tableName");
-		
-		return Strings.concat("DROP TABLE ", tableName);
 	}
 
 	@Override
@@ -330,6 +274,70 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 	@Override
 	public String buildSelectCommand(SQLSelectQuery query) {
 		return null;
+	}
+	
+	private void appendColumnDefinitions(StringBuffer sb, Iterable<Column> columns) {
+		Iterator<Column> it = columns.iterator();
+		List<Column> indexedColumns  = new ArrayList<>();
+
+		if (it.hasNext()) {		
+			appendColumnDefinition(sb, it.next(), indexedColumns);
+			
+			while(it.hasNext()) {
+				sb.append(", ");
+				appendColumnDefinition(sb, it.next(), indexedColumns);
+			}
+		}
+		
+		for (Column c : indexedColumns) {
+			sb.append(", ");
+			sb.append(" INDEX(");
+			sb.append(c.getName());
+			sb.append(")");
+		}
+	}
+	
+	private void appendColumnDefinition(StringBuffer sb, Column column, List<Column> indexedColumns) {
+		sb.append(column.getName());
+		
+		SQLType columnType = column.getType();
+		sb.append(' ');
+		sb.append(columnType.getName());
+		
+		if (columnType.getSize() != -1) {
+			sb.append('(');
+			sb.append(columnType.getSize());
+			sb.append(')');
+		}
+		
+		Iterator<Constraint> it = column.getConstraints().iterator();
+		while (it.hasNext()) {
+			Constraint constraint = it.next();
+
+			if (constraint.equals(INDEX)) {
+				indexedColumns.add(column);
+				return;
+			}
+			
+			sb.append(' ');
+			appendConstraintDefinition(sb, constraint);
+		}
+	}
+	
+	private void appendConstraintDefinition(StringBuffer sb, Column.Constraint constraint) {
+		sb.append(constraint.getName());
+		
+		Object value = constraint.getValue();
+		if (value != null) {
+			sb.append(" '");
+			
+			if (value instanceof String)
+				sb.append(escapeString((String)value));
+			else
+				sb.append(value);
+			
+			sb.append('\'');
+		}
 	}
 	
 	private String escapeString(String s) {

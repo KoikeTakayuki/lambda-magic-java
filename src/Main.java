@@ -1,5 +1,3 @@
-import java.util.concurrent.CompletableFuture;
-
 import lambdamagic.sql.mysql.MySQLCommandBuilder;
 import lambdamagic.sql.query.SQLDeleteQuery;
 import lambdamagic.sql.query.condition.SQLCondition;

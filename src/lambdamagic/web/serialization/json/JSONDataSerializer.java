@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-import lambdamagic.data.functional.Either;
 import lambdamagic.json.JSONParser;
 import lambdamagic.json.JSONWriter;
 import lambdamagic.text.Encodings;

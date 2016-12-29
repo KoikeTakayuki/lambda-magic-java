@@ -116,7 +116,7 @@ public abstract class SQLConnection implements AutoCloseable {
 		if (column == null)
 			throw new NullArgumentException("column");
 		
-		execute(commandBuilder.buildAddTableColumnCommand(tableName, column.getName(), column.getType()));
+		execute(commandBuilder.buildAddTableColumnCommand(tableName, column));
 	}
 	
 	public void dropTableColumn(String tableName, String columnName) throws SQLException {
