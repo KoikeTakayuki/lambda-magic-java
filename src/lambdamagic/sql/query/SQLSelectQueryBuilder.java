@@ -1,4 +1,4 @@
-package lambdamagic.sql.query.builder;
+package lambdamagic.sql.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,6 @@ import java.util.Map;
 import lambdamagic.NullArgumentException;
 import lambdamagic.OutOfRangeArgumentException;
 import lambdamagic.collection.iterator.Iterables;
-import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.condition.SQLCondition;
 import lambdamagic.sql.query.condition.SQLJoinClause;
 
@@ -27,11 +26,11 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 	private boolean count;
 	
 	private SQLSelectQueryBuilder(String tableName) {
+		if (tableName == null) {
+			throw new NullArgumentException("tableName");
+		}
+		
 		this.tableName = tableName;
-		this.joinClauses = new ArrayList<>();
-		this.selectColumnNames = new ArrayList<>();
-		this.groupByColumnNames = new ArrayList<>();
-		this.orderByColumnMap = new HashMap<>();
 		this.orderAscending = true;
 		this.skipCount = -1;
 		this.takeCount = -1;
@@ -41,7 +40,9 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 	
 	@Override
 	public SQLSelectQuery build() {
-		return new SQLSelectQuery(tableName, joinClauses, condition, selectColumnNames, groupByColumnNames, orderByColumnMap, orderAscending, skipCount, takeCount, distinct, count);
+		return new SQLSelectQuery(tableName, joinClauses, condition,
+				selectColumnNames, groupByColumnNames, orderByColumnMap,
+				orderAscending, skipCount, takeCount, distinct, count);
 	}
 	
 	public static SQLSelectQueryBuilder from(String tableName) {
@@ -49,8 +50,17 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 	}
 	
 	public SQLSelectQueryBuilder select(Iterable<String> columnNames) {
-		for (String columnName : columnNames)
+		if (columnNames == null) {
+			throw new NullArgumentException("columnNames");
+		}
+		
+		if (selectColumnNames == null) {
+			selectColumnNames = new ArrayList<>();
+		}
+		
+		for (String columnName : columnNames) {
 			selectColumnNames.add(columnName);
+		}
 
 		return this;
 	}
@@ -60,8 +70,17 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 	}
 	
 	public SQLSelectQueryBuilder groupBy(Iterable<String> columnNames) {
-		for (String columnName : columnNames)
+		if (columnNames == null) {
+			throw new NullArgumentException("columnNames");
+		}
+		
+		if (groupByColumnNames == null) {
+			groupByColumnNames = new ArrayList<>();
+		}
+
+		for (String columnName : columnNames) {
 			groupByColumnNames.add(columnName);
+		}
 
 		return this;
 	}
@@ -71,25 +90,31 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 	}
 
 	public SQLSelectQueryBuilder orderBy(String columnName, boolean ascending) {
-		if (columnName == null)
+		if (columnName == null) {
 			throw new NullArgumentException("columnName");
+		}
+		
+		if (orderByColumnMap == null) {
+			orderByColumnMap = new HashMap<>();
+		}
 
 		orderByColumnMap.put(columnName, ascending);
-
 		return this;
 	}
 	
 	public SQLSelectQueryBuilder skip(int count) {
-		if (count < 0)
-			throw new OutOfRangeArgumentException("count", "count < 0");
+		if (count < 1) {
+			throw new OutOfRangeArgumentException("count", "count < 1");
+		}
 		
 		this.skipCount = count;
 		return this;
 	}
 	
 	public SQLSelectQueryBuilder take(int count) {
-		if (count < 0)
-			throw new OutOfRangeArgumentException("count", "count < 0");
+		if (count < 1) {
+			throw new OutOfRangeArgumentException("count", "count < 1");
+		}
 		
 		this.takeCount = count;
 		return this;
@@ -102,6 +127,24 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 
 	public SQLSelectQueryBuilder count() {
 		count = true;
+		return this;
+	}
+	
+	public SQLSelectQueryBuilder where(SQLCondition condition) {
+		if (condition == null) {
+			throw new NullArgumentException("condition");
+		}
+
+		this.condition = condition;
+		return this;
+	}
+	
+	public SQLSelectQueryBuilder joinOn(SQLJoinClause joinClause) {
+		if (joinClauses == null) {
+			this.joinClauses = new ArrayList<>();
+		}
+
+		this.joinClauses.add(joinClause);
 		return this;
 	}
 }

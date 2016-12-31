@@ -2,6 +2,7 @@ package lambdamagic.sql.query;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import lambdamagic.NullArgumentException;
 import lambdamagic.sql.query.condition.SQLCondition;
@@ -14,18 +15,11 @@ public class SQLUpdateQuery implements SQLConditionalQuery {
 	private SQLCondition condition;
 	private Map<String, Object> updateValues;
 	
-	public SQLUpdateQuery(String tableName, List<SQLJoinClause> joinClauses, SQLCondition condition, Map<String, Object> updateValues) {
+	SQLUpdateQuery(String tableName, List<SQLJoinClause> joinClauses,
+			SQLCondition condition, Map<String, Object> updateValues) {
+
 		if (tableName == null)
 			throw new NullArgumentException("tableName");
-		
-		if (joinClauses == null)
-			throw new NullArgumentException("joinClauses");
-		
-		if (condition == null)
-			throw new NullArgumentException("condition");
-		
-		if (updateValues == null)
-			throw new NullArgumentException("updateValues");
 		
 		this.tableName = tableName;
 		this.joinClauses = joinClauses;
@@ -39,13 +33,21 @@ public class SQLUpdateQuery implements SQLConditionalQuery {
 	}
 
 	@Override
-	public List<SQLJoinClause> getJoinClauses() {
-		return joinClauses;
+	public Optional<List<SQLJoinClause>> getJoinClauses() {
+		if (joinClauses == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(joinClauses);
 	}
 
 	@Override
-	public SQLCondition getCondition() {
-		return condition;
+	public Optional<SQLCondition> getCondition() {
+		if (condition == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(condition);
 	}
 	
 	public Map<String, Object> getUpdateValues() {

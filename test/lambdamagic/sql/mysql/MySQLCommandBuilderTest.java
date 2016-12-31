@@ -12,7 +12,6 @@ import lambdamagic.NullArgumentException;
 import lambdamagic.sql.SQLDatabase;
 import lambdamagic.sql.SQLTable;
 import lambdamagic.sql.SQLTable.Column;
-import lambdamagic.sql.query.SQLInsertQuery;
 
 public class MySQLCommandBuilderTest {
 

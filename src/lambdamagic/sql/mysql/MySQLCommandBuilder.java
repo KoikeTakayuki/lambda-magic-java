@@ -19,8 +19,6 @@ import lambdamagic.sql.query.SQLDeleteQuery;
 import lambdamagic.sql.query.SQLInsertQuery;
 import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.SQLUpdateQuery;
-import lambdamagic.sql.query.condition.SQLCondition;
-import lambdamagic.sql.query.condition.SQLJoinClause;
 import lambdamagic.text.Strings;
 
 
@@ -233,23 +231,8 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			throw new NullArgumentException("query");
 		
 		String tableName = query.getTableName();
-		List<SQLJoinClause> joinClauses = query.getJoinClauses();
-		SQLCondition condition = query.getCondition();
-		
-		StringBuffer sb = new StringBuffer();
-		sb.append("DELETE FROM ");
-		sb.append(tableName);
-		
-		if (joinClauses.size() > 0) {
-			
-		}
-		
-		if (condition != null) {
-			sb.append(" WHERE ");
-			sb.append(condition.accept(visitor));
-		}
 
-		return sb.toString();
+		return null;
 	}
 
 	@Override

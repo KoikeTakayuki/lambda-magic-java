@@ -2,7 +2,9 @@ package lambdamagic.sql.query;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.sql.query.condition.SQLCondition;
 import lambdamagic.sql.query.condition.SQLJoinClause;
 
@@ -20,10 +22,14 @@ public class SQLSelectQuery implements SQLConditionalQuery {
 	private boolean distinct;
 	private boolean count;
 	
-	public SQLSelectQuery(String tableName, List<SQLJoinClause> joinClauses, SQLCondition condition,
+	SQLSelectQuery(String tableName, List<SQLJoinClause> joinClauses, SQLCondition condition,
 			List<String> selectColumnNames, List<String> groupByColumnNames, Map<String, Boolean> orderByColumnMap,
 			boolean orderAscending, int skipCount, int takeCount, boolean distinct, boolean count) {
 
+		if (tableName == null) {
+			throw new NullArgumentException("tableName");
+		}
+		
 		this.tableName = tableName;
 		this.joinClauses = joinClauses;
 		this.condition = condition;
@@ -43,21 +49,37 @@ public class SQLSelectQuery implements SQLConditionalQuery {
 	}
 
 	@Override
-	public List<SQLJoinClause> getJoinClauses() {
-		return joinClauses;
+	public Optional<List<SQLJoinClause>> getJoinClauses() {
+		if (joinClauses == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(joinClauses);
 	}
 
 	@Override
-	public SQLCondition getCondition() {
-		return condition;
+	public Optional<SQLCondition> getCondition() {
+		if (condition == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(condition);
 	}
 	
-	public List<String> getSelectColumnNames() {
-		return selectColumnNames;
+	public Optional<List<String>> getSelectColumnNames() {
+		if (selectColumnNames == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(selectColumnNames);
 	}
 	
-	public List<String> getGroupByColumnNames() {
-		return groupByColumnNames;
+	public Optional<List<String>> getGroupByColumnNames() {
+		if (groupByColumnNames == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(groupByColumnNames);
 	}
 	
 	public Map<String, Boolean> getOrderColumnMap() {

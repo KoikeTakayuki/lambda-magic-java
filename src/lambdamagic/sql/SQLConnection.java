@@ -15,11 +15,12 @@ import javax.sql.DataSource;
 
 import lambdamagic.NullArgumentException;
 import lambdamagic.sql.query.SQLDeleteQuery;
+import lambdamagic.sql.query.SQLDeleteQueryBuilder;
 import lambdamagic.sql.query.SQLInsertQuery;
+import lambdamagic.sql.query.SQLInsertQueryBuilder;
 import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.SQLUpdateQuery;
-import lambdamagic.sql.query.builder.SQLDeleteQueryBuilder;
-import lambdamagic.sql.query.builder.SQLUpdateQueryBuilder;
+import lambdamagic.sql.query.SQLUpdateQueryBuilder;
 import lambdamagic.sql.query.condition.SQLCondition;
 
 
@@ -130,7 +131,8 @@ public abstract class SQLConnection implements AutoCloseable {
 	}
 	
 	public int insertInto(String tableName, Map<String, ?> values) throws SQLException {
-		String command = commandBuilder.buildInsertIntoCommand(new SQLInsertQuery(tableName, values));
+		SQLInsertQuery query = SQLInsertQueryBuilder.insertInto(tableName).values(values).build();
+		String command = commandBuilder.buildInsertIntoCommand(query);
 		
 		if (debugOutput != null)
 			debugOutput.println(replaceJokerValues(command, values.values()));
