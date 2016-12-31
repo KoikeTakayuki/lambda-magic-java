@@ -9,8 +9,6 @@ public class Main {
 		
 		MySQLCommandBuilder builder = new MySQLCommandBuilder();
 		
-		String query = builder.buildDeleteFromCommand(SQLDeleteQuery.from("test").where(SQLCondition.AND(SQLCondition.CONTAIN("Name", "Koike"), SQLCondition.GREATER_OR_EQUAL_TO("Id", 1))));
-		System.out.println(query);
 	}
 	
 }

@@ -12,6 +12,7 @@ import lambdamagic.NullArgumentException;
 import lambdamagic.sql.SQLDatabase;
 import lambdamagic.sql.SQLTable;
 import lambdamagic.sql.SQLTable.Column;
+import lambdamagic.sql.query.SQLInsertQuery;
 
 public class MySQLCommandBuilderTest {
 
@@ -89,9 +90,9 @@ public class MySQLCommandBuilderTest {
 	public void buildCreateTableCommand_buildMySQLCreateTableCommand() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		List<Column> columns = new ArrayList<>();
-		columns.add(new SQLTable.Column("id", MySQLCommandBuilder.INTEGER, MySQLCommandBuilder.PRIMARY_KEY, MySQLCommandBuilder.AUTO_INCREMENT, MySQLCommandBuilder.NOT_NULL));
-		columns.add(new SQLTable.Column("name", MySQLCommandBuilder.TEXT));
-		columns.add(new SQLTable.Column("password", MySQLCommandBuilder.PASSWORD));
+		columns.add(new SQLTable.Column("id", MySQLType.INTEGER, MySQLConstraint.PRIMARY_KEY, MySQLConstraint.AUTO_INCREMENT, MySQLConstraint.NOT_NULL));
+		columns.add(new SQLTable.Column("name", MySQLType.TEXT));
+		columns.add(new SQLTable.Column("password", MySQLType.PASSWORD));
 		String result = commandBuilder.buildCreateTableCommand(new SQLTable("test", columns));
 
 		assertThat(result, is("CREATE TABLE test (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, name VARCHAR(255), password CHAR(32))"));
@@ -154,7 +155,7 @@ public class MySQLCommandBuilderTest {
 	@Test(expected=NullArgumentException.class)
 	public void buildAddTableColumnCommand_mustThrowNullArgumentExceptionWhenNullTableNameIsGiven() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
-		commandBuilder.buildAddTableColumnCommand(null, new Column("name", MySQLCommandBuilder.TEXT));
+		commandBuilder.buildAddTableColumnCommand(null, new Column("name", MySQLType.TEXT));
 	}
 	
 	@Test(expected=NullArgumentException.class)
@@ -166,7 +167,7 @@ public class MySQLCommandBuilderTest {
 	@Test
 	public void buildAddTableColumnCommand_() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
-		String result = commandBuilder.buildAddTableColumnCommand("test", new Column("name", MySQLCommandBuilder.TEXT));
+		String result = commandBuilder.buildAddTableColumnCommand("test", new Column("name", MySQLType.TEXT));
 		
 		assertThat(result, is("ALTER TABLE test ADD name VARCHAR(255)"));
 	}
@@ -190,4 +191,24 @@ public class MySQLCommandBuilderTest {
 		
 		assertThat(result, is("ALTER TABLE test DROP COLUMN name"));
 	}
+	
+	@Test(expected=NullArgumentException.class)
+	public void buildInsertIntoCommand_mustThrowNullArgumentExceptionWhenNullQueryIsGiven() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		commandBuilder.buildInsertIntoCommand(null);
+	}
+	
+	@Test
+	public void buildInsertIntoCommand_buildMySQLInsertIntoQuery() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+	}
+
+	@Test
+	public void buildLastInsertIdCommand_buildMySQLLastInsertCommand() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		String result = commandBuilder.buildLastInsertIdCommand();
+		
+		assertThat(result, is("SELECT LAST_INSERT_ID()"));
+	}
+	
 }

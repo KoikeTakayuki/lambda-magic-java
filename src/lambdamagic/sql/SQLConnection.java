@@ -18,6 +18,8 @@ import lambdamagic.sql.query.SQLDeleteQuery;
 import lambdamagic.sql.query.SQLInsertQuery;
 import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.SQLUpdateQuery;
+import lambdamagic.sql.query.builder.SQLDeleteQueryBuilder;
+import lambdamagic.sql.query.builder.SQLUpdateQueryBuilder;
 import lambdamagic.sql.query.condition.SQLCondition;
 
 
@@ -144,7 +146,7 @@ public abstract class SQLConnection implements AutoCloseable {
 	}
 	
 	public int update(String tableName, SQLCondition condition, Map<String, Object> values) throws SQLException {
-		SQLUpdateQuery query = SQLUpdateQuery.update(tableName).set(values).where(condition);
+		SQLUpdateQuery query = SQLUpdateQueryBuilder.update(tableName).set(values).where(condition).build();
 		String command = commandBuilder.buildUpdateCommand(query);
 		
 		if (debugOutput != null)
@@ -183,7 +185,7 @@ public abstract class SQLConnection implements AutoCloseable {
 	}
 
 	public int deleteFrom(String tableName, SQLCondition condition) throws SQLException {
-		SQLDeleteQuery query = SQLDeleteQuery.from(tableName).where(condition);
+		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom(tableName).where(condition).build();
 		return executeUpdate(commandBuilder.buildDeleteFromCommand(query));
 	}
 	

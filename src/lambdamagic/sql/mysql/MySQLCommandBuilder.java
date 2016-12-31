@@ -26,25 +26,6 @@ import lambdamagic.text.Strings;
 
 public class MySQLCommandBuilder implements SQLCommandBuilder {
 	
-	public static final Constraint PRIMARY_KEY = new Constraint("PRIMARY KEY");
-	public static final Constraint AUTO_INCREMENT = new Constraint("AUTO_INCREMENT");
-	public static final Constraint INDEX = new Constraint("INDEX");
-	public static final Constraint UNIQUE = new Constraint("UNIQUE");
-	public static final Constraint NOT_NULL = new Constraint("NOT NULL");
-	
-	public static final SQLType SYMBOL = new SQLType("CHAR", 64);
-	public static final SQLType BOOLEAN = new SQLType("BIT");
-	public static final SQLType INTEGER = new SQLType("INT");
-	public static final SQLType REAL = new SQLType("DOUBLE");
-	public static final SQLType SHORT_TEXT = new SQLType("VARCHAR", 64);
-	public static final SQLType TEXT = new SQLType("VARCHAR", 255);
-	public static final SQLType LONG_TEXT = new SQLType("TEXT");
-	public static final SQLType PASSWORD = new SQLType("CHAR", 32);
-	public static final SQLType DATE = new SQLType("DATE");
-	public static final SQLType TIME = new SQLType("TIME");
-	public static final SQLType DATE_TIME = new SQLType("DATETIME");
-	public static final SQLType BINARY_OBJECT = new SQLType("LONGBLOB");
-	
 	private MySQLConditionVisitor visitor;
 	
 	public MySQLCommandBuilder() {
@@ -172,11 +153,6 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 		return Strings.concat("ALTER TABLE ", tableName, " DROP COLUMN ", columnName);
 	}
 
-	@Override
-	public String buildLastInsertIdCommand() {
-		return "SELECT LAST_INSERT_ID()";
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public String buildInsertIntoCommand(SQLInsertQuery query) {
@@ -215,6 +191,11 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 		}
 		sb.append(')');
 		return sb.toString();
+	}
+
+	@Override
+	public String buildSelectCommand(SQLSelectQuery query) {
+		return null;
 	}
 
 	@Override
@@ -272,8 +253,8 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 	}
 
 	@Override
-	public String buildSelectCommand(SQLSelectQuery query) {
-		return null;
+	public String buildLastInsertIdCommand() {
+		return "SELECT LAST_INSERT_ID()";
 	}
 	
 	private void appendColumnDefinitions(StringBuffer sb, Iterable<Column> columns) {
@@ -314,7 +295,7 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 		while (it.hasNext()) {
 			Constraint constraint = it.next();
 
-			if (constraint.equals(INDEX)) {
+			if (constraint.equals(MySQLConstraint.INDEX)) {
 				indexedColumns.add(column);
 				return;
 			}

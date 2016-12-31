@@ -1,17 +1,16 @@
 package lambdamagic.sql.query;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lambdamagic.NullArgumentException;
-import lambdamagic.OutOfRangeArgumentException;
-import lambdamagic.collection.iterator.Iterables;
 import lambdamagic.sql.query.condition.SQLCondition;
+import lambdamagic.sql.query.condition.SQLJoinClause;
 
-public class SQLSelectQuery extends SQLConditionalQuery {
-	
+public class SQLSelectQuery implements SQLConditionalQuery {
+
+	private String tableName;
+	private List<SQLJoinClause> joinClauses;
+	private SQLCondition condition;
 	private List<String> selectColumnNames;
 	private List<String> groupByColumnNames;
 	private Map<String, Boolean> orderByColumnMap;
@@ -20,6 +19,38 @@ public class SQLSelectQuery extends SQLConditionalQuery {
 	private int takeCount;
 	private boolean distinct;
 	private boolean count;
+	
+	public SQLSelectQuery(String tableName, List<SQLJoinClause> joinClauses, SQLCondition condition,
+			List<String> selectColumnNames, List<String> groupByColumnNames, Map<String, Boolean> orderByColumnMap,
+			boolean orderAscending, int skipCount, int takeCount, boolean distinct, boolean count) {
+
+		this.tableName = tableName;
+		this.joinClauses = joinClauses;
+		this.condition = condition;
+		this.selectColumnNames = selectColumnNames;
+		this.groupByColumnNames = groupByColumnNames;
+		this.orderByColumnMap = orderByColumnMap;
+		this.orderAscending = orderAscending;
+		this.skipCount = skipCount;
+		this.takeCount = takeCount;
+		this.distinct = distinct;
+		this.count = count;
+	}
+	
+	@Override
+	public String getTableName() {
+		return tableName;
+	}
+
+	@Override
+	public List<SQLJoinClause> getJoinClauses() {
+		return joinClauses;
+	}
+
+	@Override
+	public SQLCondition getCondition() {
+		return condition;
+	}
 	
 	public List<String> getSelectColumnNames() {
 		return selectColumnNames;
@@ -52,84 +83,4 @@ public class SQLSelectQuery extends SQLConditionalQuery {
 	public boolean isCount() {
 		return count;
 	}
-
-	private SQLSelectQuery(String tableName) {
-		super(tableName);
-
-		this.selectColumnNames = new ArrayList<>();
-		this.groupByColumnNames = new ArrayList<>();
-		this.orderByColumnMap = new HashMap<>();
-	}
-	
-	public static SQLSelectQuery from(String tableName) {
-		return new SQLSelectQuery(tableName);
-	}
-	
-	public SQLSelectQuery select(Iterable<String> columnNames) {
-		for (String columnName : columnNames)
-			selectColumnNames.add(columnName);
-
-		return this;
-	}
-	
-	public SQLSelectQuery select(String... columnNames) {
-		return select(Iterables.asIterable(columnNames));
-	}
-	
-	public SQLSelectQuery groupBy(Iterable<String> columnNames) {
-		for (String columnName : columnNames)
-			groupByColumnNames.add(columnName);
-
-		return this;
-	}
-
-	public SQLSelectQuery groupBy(String... columnNames) {
-		return groupBy(Iterables.asIterable(columnNames));
-	}
-
-	public SQLSelectQuery orderBy(String columnName, boolean ascending) {
-		if (columnName == null)
-			throw new NullArgumentException("columnName");
-
-		orderByColumnMap.put(columnName, ascending);
-
-		return this;
-	}
-	
-	public SQLSelectQuery skip(int count) {
-		if (count < 0)
-			throw new OutOfRangeArgumentException("count", "count < 0");
-		
-		this.skipCount = count;
-		return this;
-	}
-	
-	public SQLSelectQuery take(int count) {
-		if (count < 0)
-			throw new OutOfRangeArgumentException("count", "count < 0");
-		
-		this.takeCount = count;
-		return this;
-	}
-	
-	public SQLSelectQuery distinct() {
-		distinct = true;
-		return this;
-	}
-
-	public SQLSelectQuery count() {
-		count = true;
-		return this;
-	}
-	
-	@Override
-	public SQLSelectQuery joinOn(String tableName, String columnName1, String columnName2) {
-		return (SQLSelectQuery)super.joinOn(tableName, columnName1, columnName2);
-	}
-	
-	@Override
-	public SQLSelectQuery where(SQLCondition condition) {
-		return (SQLSelectQuery)super.where(condition);
-	}
-
 }
