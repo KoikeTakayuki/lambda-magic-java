@@ -15,18 +15,6 @@ public final class SQLTable {
 			
 			private String name;
 			private Object value;
-
-			public static Constraint DEFAULT(Object value) {
-				return new Constraint("DEFAULT", value);
-			}
-			
-			public String getName() {
-				return name;
-			}
-		
-			public Object getValue() {
-				return value;
-			}
 			
 			public Constraint(String name, Object value) {
 				if (name == null)
@@ -39,6 +27,19 @@ public final class SQLTable {
 			public Constraint(String name) {
 				this(name, null);
 			}
+
+			public static Constraint DEFAULT(Object value) {
+				return new Constraint("DEFAULT", value);
+			}
+			
+			public String getName() {
+				return name;
+			}
+		
+			public Object getValue() {
+				return value;
+			}
+
 		}
 		
 		private String name;
@@ -50,19 +51,26 @@ public final class SQLTable {
 		}
 		
 		public Column(String name, SQLType type, List<Constraint> constraints) {
+			if (name == null) {
+				throw new NullArgumentException("name");
+			}
+			
+			if (type == null) {
+				throw new NullArgumentException("type");
+			}
+			
+			if (constraints == null) {
+				throw new NullArgumentException("constraints");
+			}
+			
 			this.name = name;
 			this.type = type;
-			
-			if (constraints == null)
-				throw new NullArgumentException("constraints");
-			
 			this.constraints = constraints;
 		}
 		
 		public String getName() {
 			return name;
 		}
-
 		
 		public SQLType getType() {
 			return type;
@@ -79,14 +87,17 @@ public final class SQLTable {
 	private List<String> customDeclarations;
 	
 	public SQLTable(String name, List<Column> columns) {
-		if (name == null)
+		if (name == null) {
 			throw new NullArgumentException("name");
+		}
 		
-		if (columns == null)
+		if (columns == null) {
 			throw new NullArgumentException("columns");
+		}
 		
-		if (columns.size() < 1)
+		if (columns.size() < 1) {
 			throw new IllegalStateException("SQLTable should have one column definition at least");
+		}
 		
 		this.name = name;
 		this.columns = columns;

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import lambdamagic.NullArgumentException;
-import lambdamagic.OutOfRangeArgumentException;
 import lambdamagic.collection.iterator.Iterables;
 import lambdamagic.sql.SQLCommandBuilder;
 import lambdamagic.sql.SQLDatabase;
@@ -15,66 +15,74 @@ import lambdamagic.sql.SQLTable;
 import lambdamagic.sql.SQLTable.Column;
 import lambdamagic.sql.SQLTable.Column.Constraint;
 import lambdamagic.sql.SQLType;
+import lambdamagic.sql.query.SQLConditionalQuery;
 import lambdamagic.sql.query.SQLDeleteQuery;
 import lambdamagic.sql.query.SQLInsertQuery;
 import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.SQLUpdateQuery;
+import lambdamagic.sql.query.condition.SQLConditionVisitor;
+import lambdamagic.sql.query.condition.SQLJoinClause;
+import lambdamagic.sql.query.condition.SQLJoinClause.JoinType;
 import lambdamagic.text.Strings;
 
 
 public class MySQLCommandBuilder implements SQLCommandBuilder {
 	
-	private MySQLConditionVisitor visitor;
-	
-	public MySQLCommandBuilder() {
-		this.visitor = new MySQLConditionVisitor();
+	public SQLConditionVisitor getConditionVisitor() {
+		return new MySQLConditionVisitor();
 	}
-
+	
 	@Override
 	public String buildCreateDatabaseCommand(SQLDatabase database) {
-		if (database == null)
+		if (database == null) {
 			throw new NullArgumentException("database");
+		}
 		
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("CREATE DATABASE ");
 		sb.append(database.getName());
 		
-		if (database.getCollation() != null) {
+		database.getCollation().ifPresent(collation -> {
 			sb.append(" COLLATE ");
-			sb.append(database.getCollation());
-		}
+			sb.append(collation);
+		});
+		
 		return sb.toString();
 	}
 
 	@Override
 	public String buildDropDatabaseCommand(String databaseName) {
-		if (databaseName == null)
+		if (databaseName == null) {
 			throw new NullArgumentException("databaseName");
+		}
 		
 		return Strings.concat("DROP DATABASE ", databaseName);
 	}
 
 	@Override
 	public String buildUseDatabaseCommand(String databaseName) {
-		if (databaseName == null)
+		if (databaseName == null) {
 			throw new NullArgumentException("databaseName");
+		}
 		
 		return Strings.concat("USE ", databaseName);
 	}
 
 	@Override
 	public String buildTableExistsCommand(String tableName) {
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
 		return Strings.concat("SELECT COUNT(*) FROM ", tableName, " LIMIT 1");
 	}
 
 	@Override
 	public String buildCreateTableCommand(SQLTable table) {
-		if (table == null)
+		if (table == null) {
 			throw new NullArgumentException("table");
+		}
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("CREATE TABLE ");
@@ -87,6 +95,7 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			sb.append(", ");
 			sb.append(declaration);
 		}
+		
 		sb.append(')');
 		
 		return sb.toString();
@@ -94,30 +103,35 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 	
 	@Override
 	public String buildRenameTableCommand(String tableName, String newTableName) {
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
-		if (newTableName == null)
+		if (newTableName == null) {
 			throw new NullArgumentException("newTableName");
+		}
 		
 		return Strings.concat("RENAME TABLE ", tableName, " TO ", newTableName);
 	}
 
 	@Override
 	public String buildDropTableCommand(String tableName) {
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
 		return Strings.concat("DROP TABLE ", tableName);
 	}
 	
 	@Override
 	public String buildTableColumnExistsCommand(String tableName, String columnName) {
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
-		if (columnName == null)
+		if (columnName == null) {
 			throw new NullArgumentException("columnName");
+		}
 		
 		return Strings.concat("SELECT ", columnName, " FROM ", tableName, " LIMIT 1");
 	}
@@ -125,11 +139,13 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 
 	@Override
 	public String buildAddTableColumnCommand(String tableName, Column column) {
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
-		if (column == null)
+		if (column == null) {
 			throw new NullArgumentException("column");
+		}
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("ALTER TABLE ");
@@ -142,69 +158,150 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 
 	@Override
 	public String buildDropTableColumnCommand(String tableName, String columnName) {
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
-		if (columnName == null)
+		if (columnName == null) {
 			throw new NullArgumentException("columnName");
+		}
 		
 		return Strings.concat("ALTER TABLE ", tableName, " DROP COLUMN ", columnName);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public String buildInsertIntoCommand(SQLInsertQuery query) {
-		if (query == null)
+	public String buildInsertCommand(SQLInsertQuery query) {
+		if (query == null) {
 			throw new NullArgumentException("query");
+		}
 		
-		Map<String, ?> values = query.getValues();
-	
-		Iterator<Map.Entry<String, ?>> it = (Iterator<Map.Entry<String, ?>>)(Iterator<?>)values.entrySet().iterator();
+		Map<String, Object> values = query.getValues();
+		int valueCount = 0;
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("INSERT INTO ");
 		sb.append(query.getTableName());
 		sb.append(" (");
 		
-		if (it.hasNext()) {
-			sb.append(it.next().getKey());
-			
-			while (it.hasNext()) {
+		for (Entry<String, Object> entry : values.entrySet()) {
+			if (valueCount > 0) {
 				sb.append(", ");
-				sb.append(it.next().getKey());
 			}
+			sb.append(entry.getKey());
+			++valueCount;
 		}
-		sb.append(") VALUES (");
-
-		it = (Iterator<Map.Entry<String, ?>>)(Iterator<?>)values.entrySet().iterator();
 		
-		if (it.hasNext()) {
-			it.next();
-			sb.append('?');
-
-			while (it.hasNext()) {
-				it.next();
-				sb.append(", ?");
+		sb.append(") VALUES (");
+		
+		for (int i = 0; i < valueCount; ++i) {
+			if (i > 0) {
+				sb.append(", ");
 			}
+
+			sb.append('?');
 		}
+
 		sb.append(')');
 		return sb.toString();
 	}
 
 	@Override
 	public String buildSelectCommand(SQLSelectQuery query) {
-		return null;
+		if (query == null) {
+			throw new NullArgumentException("query");
+		}
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT ");
+		
+		if (query.isCount()) {
+			sb.append("COUNT(");
+		}
+		
+		if (query.isDistinct()) {
+			sb.append("DISTINCT ");
+		}
+		
+		if (!query.getSelectColumnNames().isPresent()) {
+			sb.append("*");
+		}
+		
+		query.getSelectColumnNames().ifPresent(columnNames -> {
+			Iterator<String> selectIterator = columnNames.iterator();
+
+			if (!selectIterator.hasNext()) {
+				throw new IllegalStateException("columnNames should have at least one value");
+			}
+	
+			sb.append(selectIterator.next());
+			
+			while (selectIterator.hasNext()) {
+				sb.append(", ");
+				sb.append(selectIterator.next());
+			}
+		});
+		
+		if (query.isCount()) {
+			sb.append(")");
+		}
+		
+		sb.append(" FROM ");
+		sb.append(query.getTableName());
+		
+		appendJoinClause(sb, query);
+		appendCondition(sb, query);
+		
+		query.getGroupByColumnNames().ifPresent(groupByColumnNames -> {
+			
+			Iterator<String> groupByIterator = groupByColumnNames.iterator();
+			if (groupByIterator.hasNext()) {
+				sb.append(" GROUP BY ");
+				
+				sb.append(groupByIterator.next());
+				
+				while (groupByIterator.hasNext()) {
+					sb.append(", ");
+					sb.append(groupByIterator.next());
+				}
+			}
+		});
+		
+		query.getOrderColumnMap().ifPresent(orderColumnMap -> {
+			for (Entry<String, Boolean> entry : orderColumnMap.entrySet()) {
+				sb.append(" ORDER BY ");
+				sb.append(entry.getKey());
+				sb.append(' ');
+				sb.append(entry.getValue() ? "ASC" : "DESC");
+			}
+		});
+		
+		if (query.getTakeCount() != -1) {
+			sb.append(" LIMIT ");
+			sb.append(query.getTakeCount());
+		}
+		
+		if (query.getSkipCount() != -1) {
+			if (query.getTakeCount() == -1) {
+				sb.append(" LIMIT 18446744073709551615");
+			}
+			
+			sb.append(" OFFSET ");
+			sb.append(query.getSkipCount());
+		}
+		return sb.toString();
 	}
 
 	@Override
 	public String buildUpdateCommand(SQLUpdateQuery query) {
-		if (query == null)
+		if (query == null) {
 			throw new NullArgumentException("query");
+		}
 	
 		Iterator<Map.Entry<String, Object>> it = query.getUpdateValues().entrySet().iterator();
 
-		if (!it.hasNext())
-			throw new OutOfRangeArgumentException("updateValues", "!it.hasNext()");
+		if (!it.hasNext()) {
+			throw new IllegalStateException("updateValues should have at least one value");
+		}
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("UPDATE ");
@@ -221,18 +318,27 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			sb.append(entry.getKey());
 			sb.append(" = ?");
 		}
+		
+		appendJoinClause(sb, query);
+		appendCondition(sb, query);
 
 		return sb.toString();
 	}
 
 	@Override
-	public String buildDeleteFromCommand(SQLDeleteQuery query) {
-		if (query == null)
+	public String buildDeleteCommand(SQLDeleteQuery query) {
+		if (query == null) {
 			throw new NullArgumentException("query");
+		}
 		
-		String tableName = query.getTableName();
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("DELETE FROM ");
+		sb.append(query.getTableName());
+		appendJoinClause(sb, query);
+		appendCondition(sb, query);
 
-		return null;
+		return sb.toString();
 	}
 
 	@Override
@@ -302,6 +408,43 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			
 			sb.append('\'');
 		}
+	}
+	
+	private String getJoinTypeString(JoinType joinType) {
+		switch(joinType) {
+			case INNER:
+				return "INNER";
+				
+			case LEFT:
+				return "LEFT";
+				
+			case RIGHT:
+				return "RIGHT";
+		}
+		
+		throw new UnsupportedOperationException("Unknown join type");
+	}
+	
+	private void appendJoinClause(StringBuffer sb, SQLConditionalQuery query) {
+		query.getJoinClauses().ifPresent(joinClauses -> {
+			
+			for (SQLJoinClause clause : joinClauses) {
+				sb.append(' ');
+				sb.append(getJoinTypeString(clause.getJoinType()));
+				sb.append(" JOIN ");
+				sb.append(clause.getTableName());
+				sb.append(" ON ");
+				sb.append(clause.getCondition().accept(getConditionVisitor()));
+			}
+		});
+
+	}
+	
+	private void appendCondition(StringBuffer sb, SQLConditionalQuery query) {
+		query.getCondition().ifPresent(condition -> {
+			sb.append(" WHERE ");
+			sb.append(condition.accept(getConditionVisitor()));
+		});
 	}
 	
 	private String escapeString(String s) {

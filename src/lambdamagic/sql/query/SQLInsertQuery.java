@@ -7,9 +7,9 @@ import lambdamagic.NullArgumentException;
 public class SQLInsertQuery implements SQLQuery {
 	
 	private String tableName;
-	private Map<String, ?> values;
+	private Map<String, Object> values;
 	
-	SQLInsertQuery(String tableName, Map<String, ?> values) {
+	SQLInsertQuery(String tableName, Map<String, Object> values) {
 		if (tableName == null) {
 			throw new NullArgumentException("tableName");
 		}
@@ -27,7 +27,8 @@ public class SQLInsertQuery implements SQLQuery {
 		return tableName;
 	}
 	
-	public Map<String, ?> getValues() {
+	public Map<String, Object> getValues() {
 		return values;
 	}
+	
 }

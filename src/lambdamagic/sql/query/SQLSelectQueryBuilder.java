@@ -8,14 +8,9 @@ import java.util.Map;
 import lambdamagic.NullArgumentException;
 import lambdamagic.OutOfRangeArgumentException;
 import lambdamagic.collection.iterator.Iterables;
-import lambdamagic.sql.query.condition.SQLCondition;
-import lambdamagic.sql.query.condition.SQLJoinClause;
 
-public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
+public class SQLSelectQueryBuilder extends SQLConditionalQueryBuilder<SQLSelectQuery, SQLSelectQueryBuilder> {
 	
-	private String tableName;
-	private List<SQLJoinClause> joinClauses;
-	private SQLCondition condition;
 	private List<String> selectColumnNames;
 	private List<String> groupByColumnNames;
 	private Map<String, Boolean> orderByColumnMap;
@@ -26,11 +21,8 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 	private boolean count;
 	
 	private SQLSelectQueryBuilder(String tableName) {
-		if (tableName == null) {
-			throw new NullArgumentException("tableName");
-		}
+		super(tableName);
 		
-		this.tableName = tableName;
 		this.orderAscending = true;
 		this.skipCount = -1;
 		this.takeCount = -1;
@@ -130,21 +122,4 @@ public class SQLSelectQueryBuilder implements SQLQueryBuilder<SQLSelectQuery> {
 		return this;
 	}
 	
-	public SQLSelectQueryBuilder where(SQLCondition condition) {
-		if (condition == null) {
-			throw new NullArgumentException("condition");
-		}
-
-		this.condition = condition;
-		return this;
-	}
-	
-	public SQLSelectQueryBuilder joinOn(SQLJoinClause joinClause) {
-		if (joinClauses == null) {
-			this.joinClauses = new ArrayList<>();
-		}
-
-		this.joinClauses.add(joinClause);
-		return this;
-	}
 }

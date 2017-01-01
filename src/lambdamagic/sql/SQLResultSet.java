@@ -19,15 +19,17 @@ public final class SQLResultSet implements DataSource<SQLResult> {
 	private ResultSet resultSet;
 
 	SQLResultSet(SQLResultSetConstructor constructor) {
-		if (constructor == null)
+		if (constructor == null) {
 			throw new NullArgumentException("constructor");
+		}
 
 		this.constructor = constructor;
 	}
 	
 	private ResultSet getResultSet() throws SQLException {
-		if (resultSet == null)
+		if (resultSet == null) {
 			resultSet = constructor.create();
+		}
 
 		return resultSet;
 	}
@@ -36,7 +38,7 @@ public final class SQLResultSet implements DataSource<SQLResult> {
 	public Optional<SQLResult> readData() {
 		try {
 
-			if (!resultSet.isLast() && ((resultSet.getRow() != 0) || resultSet.isBeforeFirst())) {
+			if (!getResultSet().isLast() && ((getResultSet().getRow() != 0) || getResultSet().isBeforeFirst())) {
 				getResultSet().next();
 				return Optional.of(new SQLResult(getResultSet()));
 			}

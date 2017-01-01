@@ -10,15 +10,7 @@ public final class Tuple2<T, S> implements Serializable {
 
 	private T firstValue;
 	private S secondValue;
-
-	public T getFirstValue() {
-		return firstValue;
-	}
-
-	public S getSecondValue() {
-		return secondValue;
-	}
-
+	
 	public Tuple2(T firstValue, S secondValue) {
 		if (firstValue == null)
 			throw new NullArgumentException("firstValue");
@@ -28,6 +20,14 @@ public final class Tuple2<T, S> implements Serializable {
 		
 		this.firstValue = firstValue;
 		this.secondValue = secondValue;
+	}
+
+	public T getFirstValue() {
+		return firstValue;
+	}
+
+	public S getSecondValue() {
+		return secondValue;
 	}
 
 	@Override

@@ -1,16 +1,6 @@
 package lambdamagic.sql.query.condition;
 
 public abstract class UnaryOperatorExpression implements SQLCondition {
-	
-	private String operand;
-	
-	public String getOperand() {
-		return operand;
-	}
-	
-	public UnaryOperatorExpression(String operand) {
-		this.operand = operand;
-	}
 
 	public static class IsNullExpression extends UnaryOperatorExpression {
 
@@ -34,5 +24,15 @@ public abstract class UnaryOperatorExpression implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+	}
+	
+	private String operand;
+	
+	public UnaryOperatorExpression(String operand) {
+		this.operand = operand;
+	}
+
+	public String getOperand() {
+		return operand;
 	}
 }

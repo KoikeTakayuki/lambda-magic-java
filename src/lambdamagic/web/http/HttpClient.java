@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import lambdamagic.NullArgumentException;
+import lambdamagic.data.functional.Either;
 
 
 public final class HttpClient {
@@ -65,30 +66,42 @@ public final class HttpClient {
 		
 		HttpURLConnection connection = (HttpURLConnection)new URL(request.getUrlString()).openConnection();
 		
-		for (Entry<String, String> f : request.getHeaderFields().entrySet())
+		for (Entry<String, String> f : request.getHeaderFields().entrySet()) {
 			connection.setRequestProperty(f.getKey(), f.getValue());
+		}
 		
-		if (forwardCookies && (lastCookie != null))
+		if (forwardCookies && (lastCookie != null)) {
 			connection.setRequestProperty(HttpHeaderField.COOKIE, lastCookie.toString());
+		}
 		
 		if (request.getMethod() != HttpMethod.GET) {
 			connection.setDoOutput(true);
+			
 			try (OutputStream outputStream = connection.getOutputStream()) {
 				request.writeData(outputStream);
 			}
 		}
 
 		String cookieString = connection.getHeaderField(HttpHeaderField.SET_COOKIE);
-		if (cookieString != null)
-			lastCookie = new HttpCookie(cookieString);
+		
+		if (cookieString != null) {
+			HttpCookieParser parser = new HttpCookieParser(cookieString);
+			Either<HttpCookie, HttpCookieFormatException> parseResult = parser.parse();
+			
+			if (parseResult.isLeft()) {
+				lastCookie = parseResult.getLeft();
+			}
+		}
 
 		InputStream errorStream = connection.getErrorStream();
 		Map<String, String> responseHeaderFields = new LinkedHashMap<String, String>();
 		
 		for (int i = 0; i < connection.getHeaderFields().size(); ++i) {
 			String key = connection.getHeaderFieldKey(i);
-			if (key == null)
+			
+			if (key == null) {
 				continue;
+			}
 			
 			String value = connection.getHeaderField(i);
 			responseHeaderFields.put(key, value);

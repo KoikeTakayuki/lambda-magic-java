@@ -82,8 +82,12 @@ public class SQLSelectQuery implements SQLConditionalQuery {
 		return Optional.of(groupByColumnNames);
 	}
 	
-	public Map<String, Boolean> getOrderColumnMap() {
-		return orderByColumnMap;
+	public Optional<Map<String, Boolean>> getOrderColumnMap() {
+		if (orderByColumnMap == null) {
+			return Optional.empty();
+		}
+
+		return Optional.of(orderByColumnMap);
 	}
 	
 	public boolean isOrderAscending() {

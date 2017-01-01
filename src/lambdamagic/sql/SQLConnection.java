@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -23,12 +24,24 @@ import lambdamagic.sql.query.SQLUpdateQuery;
 import lambdamagic.sql.query.SQLUpdateQueryBuilder;
 import lambdamagic.sql.query.condition.SQLCondition;
 
-
 public abstract class SQLConnection implements AutoCloseable {
 
 	private Connection connection;
 	private PrintStream debugOutput;
 	private SQLCommandBuilder commandBuilder;
+	
+	protected SQLConnection(DataSource dataSource, SQLCommandBuilder commandBuilder) throws SQLException {
+		if (dataSource == null) {
+			throw new NullArgumentException("dataSource");
+		}
+		
+		if (commandBuilder == null) {
+			throw new NullArgumentException("commandBuilder");
+		}
+		
+		this.connection = dataSource.getConnection();
+		this.commandBuilder = commandBuilder;
+	}
 
 	public boolean getAutoCommit() throws SQLException {
 		return connection.getAutoCommit();
@@ -38,22 +51,16 @@ public abstract class SQLConnection implements AutoCloseable {
 		connection.setAutoCommit(autoCommit);
 	}
 
-	public PrintStream getDebugOutput() {
-		return debugOutput;
+	public Optional<PrintStream> getDebugOutput() {
+		if (debugOutput == null) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(debugOutput);
 	}
 
 	public void setDebugOutput(PrintStream debugOutput) {
 		this.debugOutput = debugOutput;
-	}
-
-	protected SQLConnection(DataSource dataSource, SQLCommandBuilder commandBuilder) throws SQLException {
-		if (dataSource == null)
-			throw new NullArgumentException("dataSource");
-		
-		if (commandBuilder == null)
-			throw new NullArgumentException("commandBuilder");
-		
-		this.connection = dataSource.getConnection();
 	}
 	
 	@Override
@@ -93,11 +100,13 @@ public abstract class SQLConnection implements AutoCloseable {
 	}
 	
 	public void createTableIfNotExist(SQLTable table) throws SQLException {
-		if (table == null)
+		if (table == null) {
 			throw new NullArgumentException("table");
+		}
 		
-		if (!tableExists(table.getName()))
+		if (!tableExists(table.getName())) {
 			createTable(table);
+		}
 	}
 	
 	public void renameTable(String tableName, String newTableName) throws SQLException {
@@ -130,21 +139,28 @@ public abstract class SQLConnection implements AutoCloseable {
 		execute(commandBuilder.buildDropTableCommand(tableName));
 	}
 	
-	public int insertInto(String tableName, Map<String, ?> values) throws SQLException {
+	public int insertInto(String tableName, Map<String, Object> values) throws SQLException {
 		SQLInsertQuery query = SQLInsertQueryBuilder.insertInto(tableName).values(values).build();
-		String command = commandBuilder.buildInsertIntoCommand(query);
-		
-		if (debugOutput != null)
-			debugOutput.println(replaceJokerValues(command, values.values()));
+		String command = commandBuilder.buildInsertCommand(query);
+
+		getDebugOutput().ifPresent(output -> output.println(replaceJokerValues(command, values.values())));
 		
 		try (PreparedStatement preparedStatement = connection.prepareStatement(command)) {
 			int count = 0;
-			for (Map.Entry<String, ?> e : values.entrySet())
+			
+			for (Map.Entry<String, ?> e : values.entrySet()) {
 				preparedStatement.setObject(++count, e.getValue());
+			}
 			
 			preparedStatement.executeUpdate();
 		}
+		
 		return executeGetLastInsertId();
+	}
+	
+	public SQLResultSet select(SQLSelectQuery query) {
+		String command = commandBuilder.buildSelectCommand(query);
+		return new SQLResultSet(() -> executeQuery(command));
 	}
 	
 	public int update(String tableName, SQLCondition condition, Map<String, Object> values) throws SQLException {
@@ -188,34 +204,18 @@ public abstract class SQLConnection implements AutoCloseable {
 
 	public int deleteFrom(String tableName, SQLCondition condition) throws SQLException {
 		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom(tableName).where(condition).build();
-		return executeUpdate(commandBuilder.buildDeleteFromCommand(query));
-	}
-	
-	public int deleteFrom(String tableName, String columnName, Object value) throws SQLException {
-		return deleteFrom(tableName, SQLCondition.EQUAL_TO(columnName, value));
-	}
-	
-	public SQLResultSet execute(SQLSelectQuery query) {
-		final String command = commandBuilder.buildSelectCommand(query);
-		return new SQLResultSet(() -> executeQuery(command));
+		return executeUpdate(commandBuilder.buildDeleteCommand(query));
 	}
 
 	private int executeGetLastInsertId() throws SQLException {
-		ResultSet resultSet = null;
-		try {
-			resultSet = executeQuery(commandBuilder.buildLastInsertIdCommand());
+		try (ResultSet resultSet = executeQuery(commandBuilder.buildLastInsertIdCommand())) {
 			resultSet.next();
 			return resultSet.getInt(1);
-		}
-		finally {
-			if (resultSet != null)
-				resultSet.getStatement().close();
 		}
 	}
 
 	private boolean execute(String command) throws SQLException {
-		if (debugOutput != null)
-			debugOutput.println(command);
+		getDebugOutput().ifPresent(output -> output.println(command));
 		
 		try (Statement statement = connection.createStatement()) {
 			return statement.execute(command);
@@ -224,17 +224,15 @@ public abstract class SQLConnection implements AutoCloseable {
 	
 	
 	private int executeUpdate(String command) throws SQLException {
-		if (debugOutput != null)
-			debugOutput.println(command);
-		
+		getDebugOutput().ifPresent(output -> output.println(command));
+	
 		try (Statement statement = connection.createStatement()) {
 			return statement.executeUpdate(command);
 		}
 	}
 	
 	private ResultSet executeQuery(String command) throws SQLException {
-		if (debugOutput != null)
-			debugOutput.println(command);
+		getDebugOutput().ifPresent(output -> output.println(command));
 		
 		try (Statement statement = connection.createStatement()) {
 			return connection.createStatement().executeQuery(command);

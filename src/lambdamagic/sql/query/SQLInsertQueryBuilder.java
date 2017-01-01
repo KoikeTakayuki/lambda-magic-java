@@ -1,5 +1,6 @@
 package lambdamagic.sql.query;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lambdamagic.NullArgumentException;
@@ -7,7 +8,7 @@ import lambdamagic.NullArgumentException;
 public class SQLInsertQueryBuilder implements SQLQueryBuilder<SQLInsertQuery> {
 
 	private String tableName;
-	private Map<String, ?> insertValues;
+	private Map<String, Object> insertValues;
 
 	private SQLInsertQueryBuilder(String tableName) {
 		if (tableName == null) {
@@ -21,7 +22,7 @@ public class SQLInsertQueryBuilder implements SQLQueryBuilder<SQLInsertQuery> {
 		return new SQLInsertQueryBuilder(tableName);
 	}
 	
-	public SQLInsertQueryBuilder values(Map<String, ?> insertValues) {
+	public SQLInsertQueryBuilder values(Map<String, Object> insertValues) {
 		if (insertValues == null) {
 			throw new NullArgumentException("insertValues");
 		}

@@ -1,5 +1,7 @@
 package lambdamagic.sql;
 
+import java.util.Optional;
+
 import lambdamagic.NullArgumentException;
 
 public final class SQLDatabase {
@@ -11,8 +13,12 @@ public final class SQLDatabase {
 		return name;
 	}
 
-	public String getCollation() {
-		return collation;
+	public Optional<String> getCollation() {
+		if (collation == null) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(collation);
 	}
 	
 	public SQLDatabase(String name, String collation) {

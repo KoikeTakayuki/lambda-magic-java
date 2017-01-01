@@ -10,20 +10,12 @@ import lambdamagic.sql.query.condition.SQLJoinClause;
 public class SQLDeleteQuery implements SQLConditionalQuery {
 	
 	private String tableName;
-	private Optional<List<SQLJoinClause>> joinClauses;
-	private Optional<SQLCondition> condition;
+	private List<SQLJoinClause> joinClauses;
+	private SQLCondition condition;
 	
-	SQLDeleteQuery(String tableName, Optional<List<SQLJoinClause>> joinClauses, Optional<SQLCondition> condition) {
+	SQLDeleteQuery(String tableName, List<SQLJoinClause> joinClauses, SQLCondition condition) {
 		if (tableName == null) {
 			throw new NullArgumentException("tableName");
-		}
-		
-		if (joinClauses == null) {
-			throw new NullArgumentException("joinClauses");
-		}
-		
-		if (condition == null) {
-			throw new  NullArgumentException("condition");
 		}
 
 		this.tableName = tableName;
@@ -38,11 +30,19 @@ public class SQLDeleteQuery implements SQLConditionalQuery {
 
 	@Override
 	public Optional<List<SQLJoinClause>> getJoinClauses() {
-		return joinClauses;
+		if (joinClauses == null) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(joinClauses);
 	}
 
 	@Override
 	public Optional<SQLCondition> getCondition() {
-		return condition;
+		if (condition == null) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(condition);
 	}
 }

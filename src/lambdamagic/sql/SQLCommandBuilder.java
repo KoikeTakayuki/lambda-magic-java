@@ -25,9 +25,9 @@ public interface SQLCommandBuilder {
 	String buildDropTableColumnCommand(String tableName, String columnName);
 
 	/* SQL Table Row Operation */
-	String buildInsertIntoCommand(SQLInsertQuery query);
+	String buildInsertCommand(SQLInsertQuery query);
 	String buildSelectCommand(SQLSelectQuery query);
 	String buildUpdateCommand(SQLUpdateQuery query);
-	String buildDeleteFromCommand(SQLDeleteQuery query);
+	String buildDeleteCommand(SQLDeleteQuery query);
 	String buildLastInsertIdCommand();
 }

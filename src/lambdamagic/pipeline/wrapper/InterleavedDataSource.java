@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.pipeline.DataSource;
 
 public final class InterleavedDataSource<T> implements DataSource<T> {
@@ -14,6 +15,10 @@ public final class InterleavedDataSource<T> implements DataSource<T> {
 
 	@SuppressWarnings("unchecked")
 	public InterleavedDataSource(DataSource<T>... sources) {
+		if (sources == null) {
+			throw new NullArgumentException("sources");
+		}
+		
 		this.sources = new ArrayList<DataSource<T>>(Arrays.asList(sources));
 		currentIndex = 0;
 	}
@@ -51,8 +56,9 @@ public final class InterleavedDataSource<T> implements DataSource<T> {
 	}
 	
 	private Optional<DataSource<T>> getDataSource() {
-		if (sources.isEmpty())
+		if (sources.isEmpty()) {
 			return Optional.empty();
+		}
 		
 		return Optional.of(sources.get(currentIndex));
 	}
@@ -60,7 +66,8 @@ public final class InterleavedDataSource<T> implements DataSource<T> {
 	private void step() {
 		++currentIndex;
 
-		if (currentIndex >= sources.size())
+		if (currentIndex >= sources.size()) {
 			currentIndex = 0;
+		}
 	}
 }

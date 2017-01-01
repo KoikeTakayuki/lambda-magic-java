@@ -15,8 +15,9 @@ import lambdamagic.NullArgumentException;
 public abstract class Settings implements PropertySet<String> {
 
 	public static Settings load(String filePath) throws FileNotFoundException, IOException {
-		if (filePath == null)
+		if (filePath == null) {
 			throw new NullArgumentException("filePath");
+		}
 		
 		try (FileInputStream is = new FileInputStream(filePath)) {
 			return load(is);

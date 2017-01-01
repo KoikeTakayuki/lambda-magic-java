@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -12,6 +13,15 @@ import lambdamagic.NullArgumentException;
 import lambdamagic.sql.SQLDatabase;
 import lambdamagic.sql.SQLTable;
 import lambdamagic.sql.SQLTable.Column;
+import lambdamagic.sql.query.SQLDeleteQuery;
+import lambdamagic.sql.query.SQLDeleteQueryBuilder;
+import lambdamagic.sql.query.SQLInsertQuery;
+import lambdamagic.sql.query.SQLInsertQueryBuilder;
+import lambdamagic.sql.query.SQLSelectQuery;
+import lambdamagic.sql.query.SQLSelectQueryBuilder;
+import lambdamagic.sql.query.SQLUpdateQuery;
+import lambdamagic.sql.query.SQLUpdateQueryBuilder;
+import lambdamagic.sql.query.condition.SQLCondition;
 
 public class MySQLCommandBuilderTest {
 
@@ -72,7 +82,7 @@ public class MySQLCommandBuilderTest {
 	}
 	
 	@Test
-	public void buildTableExistsCommand_buildMySQLCountSingleQuery() {
+	public void buildTableExistsCommand_buildMySQLCountSingleCommand() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		String result = commandBuilder.buildTableExistsCommand("test");
 
@@ -164,7 +174,7 @@ public class MySQLCommandBuilderTest {
 	}
 	
 	@Test
-	public void buildAddTableColumnCommand_() {
+	public void buildAddTableColumnCommand_buildMySQLAlterTableCommand() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		String result = commandBuilder.buildAddTableColumnCommand("test", new Column("name", MySQLType.TEXT));
 		
@@ -192,14 +202,158 @@ public class MySQLCommandBuilderTest {
 	}
 	
 	@Test(expected=NullArgumentException.class)
-	public void buildInsertIntoCommand_mustThrowNullArgumentExceptionWhenNullQueryIsGiven() {
+	public void buildInsertCommand_mustThrowNullArgumentExceptionWhenNullQueryIsGiven() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
-		commandBuilder.buildInsertIntoCommand(null);
+		commandBuilder.buildInsertCommand(null);
 	}
 	
 	@Test
-	public void buildInsertIntoCommand_buildMySQLInsertIntoQuery() {
+	public void buildInsertCommand_buildMySQLInsertCommand() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		LinkedHashMap<String, Object> insertValues = new LinkedHashMap<>();
+		insertValues.put("id", 1);
+		insertValues.put("name", "test");
+
+		SQLInsertQuery query = SQLInsertQueryBuilder.insertInto("test").values(insertValues).build();
+		String result = commandBuilder.buildInsertCommand(query);
+		
+		assertThat(result, is("INSERT INTO test (id, name) VALUES (?, ?)"));
+	}
+	
+	@Test(expected=NullArgumentException.class)
+	public void buildSelectCommand_mustThrowExceptionWhenNullQueryIsGiven() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		commandBuilder.buildSelectCommand(null);
+	}
+	
+	@Test
+	public void buildSelectCommand_buildMySQLSelectCommand() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		SQLSelectQuery query = SQLSelectQueryBuilder.from("test")
+													.select("id", "name")
+													.build();
+		String result = commandBuilder.buildSelectCommand(query);
+		
+		assertThat(result, is("SELECT id, name FROM test"));
+	}
+	
+	@Test
+	public void buildSelectCommand_buildMySQLSelectCommandWithJoinClause() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		SQLSelectQuery query = SQLSelectQueryBuilder.from("test")
+													.select("id", "name")
+													.rightJoin("other_table", SQLCondition.EQUAL_TO("test.id", "other_table.test_id"))
+													.where(SQLCondition.CONTAIN("other_table.name", "test"))
+													.orderBy("test.name", true)
+													.build();
+
+		String result = commandBuilder.buildSelectCommand(query);
+		
+		assertThat(result, is("SELECT id, name FROM test RIGHT JOIN other_table ON test.id = other_table.test_id WHERE other_table.name LIKE '%test%' ORDER BY test.name ASC"));
+	}
+	
+	@Test
+	public void buildSelectCommand_buildMySQLSelectCommandWithCondition() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		SQLSelectQuery query = SQLSelectQueryBuilder.from("test")
+													.select("id", "name")
+													.where(SQLCondition.EQUAL_TO("name", "test"))
+													.orderBy("name", true)
+													.build();
+
+		String result = commandBuilder.buildSelectCommand(query);
+		
+		assertThat(result, is("SELECT id, name FROM test WHERE name = test ORDER BY name ASC"));
+	}
+	
+	@Test(expected=NullArgumentException.class)
+	public void buildUpdateCommand_mustThrowExceptionWhenNullQueryIsGiven() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		commandBuilder.buildDeleteCommand(null);
+	}
+	
+	@Test
+	public void buildUpdateCommand_buildMySQLUpdateCommand() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		LinkedHashMap<String, Object> updateValues = new LinkedHashMap<>();
+		updateValues.put("id", 1);
+		updateValues.put("name", "test");
+
+		SQLUpdateQuery query = SQLUpdateQueryBuilder.update("test")
+													.set(updateValues)
+													.build();
+		String result = commandBuilder.buildUpdateCommand(query);
+		
+		assertThat(result, is("UPDATE test SET id = ?, name = ?"));
+	}
+	
+	@Test
+	public void buildUpdateCommand_buildMySQLUpdateCommandWithJoinClause() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		LinkedHashMap<String, Object> updateValues = new LinkedHashMap<>();
+		updateValues.put("id", 1);
+		updateValues.put("name", "test");
+		SQLUpdateQuery query = SQLUpdateQueryBuilder.update("test")
+													.set(updateValues)
+													.leftJoin("other_table", SQLCondition.EQUAL_TO("test.id", "other_table.test_id"))
+													.where(SQLCondition.GREATER_OR_EQUAL_TO("other_table.id", 3))
+													.build();
+		String result = commandBuilder.buildUpdateCommand(query);
+		
+		assertThat(result, is("UPDATE test SET id = ?, name = ? LEFT JOIN other_table ON test.id = other_table.test_id WHERE other_table.id >= 3"));
+	}
+	
+	@Test
+	public void buildUpdateCommand_buildMySQLUpdateCommandWithCondition() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		LinkedHashMap<String, Object> updateValues = new LinkedHashMap<>();
+		updateValues.put("id", 1);
+		updateValues.put("name", "test");
+
+		SQLUpdateQuery query = SQLUpdateQueryBuilder.update("test")
+													.set(updateValues)
+													.where(SQLCondition.GREATER_THAN("id", 3))
+													.build();
+		String result = commandBuilder.buildUpdateCommand(query);
+		
+		assertThat(result, is("UPDATE test SET id = ?, name = ? WHERE id > 3"));
+	}
+	
+	@Test(expected=NullArgumentException.class)
+	public void buildDeleteCommand_mustThrowExceptionWhenNullQueryIsGiven() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		commandBuilder.buildDeleteCommand(null);
+	}
+	
+	@Test
+	public void buildDeleteCommand_buildMySQLDeleteCommand() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom("test").build();
+		String result = commandBuilder.buildDeleteCommand(query);
+		
+		assertThat(result, is("DELETE FROM test"));
+	}
+	
+	@Test
+	public void buildDeleteCommand_buildMySQLDeleteCommandWithJoinClause() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom("test")
+													.innerJoin("other_table", SQLCondition.EQUAL_TO("test.id", "other_table.test_id"))
+													.build();
+		String result = commandBuilder.buildDeleteCommand(query);
+		
+		assertThat(result, is("DELETE FROM test INNER JOIN other_table ON test.id = other_table.test_id"));
+	}
+	
+	@Test
+	public void buildDeleteCommand_buildMySQLDeleteCommandWithCondition() {
+		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
+		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom("test")
+													.where(SQLCondition.END_WITH("name", "a"))
+													.build();
+		String result = commandBuilder.buildDeleteCommand(query);
+		
+		assertThat(result, is("DELETE FROM test WHERE name LIKE '%a'"));
 	}
 
 	@Test

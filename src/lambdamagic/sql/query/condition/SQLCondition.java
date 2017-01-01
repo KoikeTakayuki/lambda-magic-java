@@ -30,7 +30,7 @@ public interface SQLCondition {
 	
 	
 	/* Comparison Expression Factories */	
-	public static SQLCondition EQUAL_TO(String firstOperand, Object secondOperand) {
+	public static EqualToExpression EQUAL_TO(String firstOperand, Object secondOperand) {
 		return new EqualToExpression(firstOperand, secondOperand);
 	}
 	

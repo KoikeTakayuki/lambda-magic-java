@@ -2,6 +2,7 @@ package lambdamagic.pipeline.wrapper;
 
 import java.util.Optional;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.pipeline.DataSource;
 
 public final class MergedDataSource<T> implements DataSource<T> {
@@ -12,6 +13,10 @@ public final class MergedDataSource<T> implements DataSource<T> {
 
 	@SuppressWarnings("unchecked")
 	public MergedDataSource(DataSource<T>... sources) {
+		if (sources == null) {
+			throw new NullArgumentException("sources");
+		}
+		
 		this.sources = sources;
 		currentIndex = 0;
 		setNextDataSource();
@@ -40,10 +45,11 @@ public final class MergedDataSource<T> implements DataSource<T> {
 	}
 
 	private void setNextDataSource() {
-		 if (currentIndex >= sources.length)
+		 if (currentIndex >= sources.length) {
 			 currentDataSource = Optional.empty();
-		 else
+		 } else {
 			 currentDataSource =  Optional.of(sources[currentIndex]);
+		 }
 		 
 		 ++currentIndex;
 	}

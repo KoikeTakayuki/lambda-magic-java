@@ -23,8 +23,9 @@ public final class TrimmedDataSource<T> implements DataSource<T> {
 
 	@Override
 	public Optional<T> readData() {
-		if (trimCount <= readCount)
+		if (trimCount <= readCount) {
 			return Optional.empty();
+		}
 
 		Optional<T> maybeData = wrapped.readData();
 

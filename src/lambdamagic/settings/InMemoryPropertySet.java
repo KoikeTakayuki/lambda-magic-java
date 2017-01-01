@@ -11,19 +11,20 @@ public class InMemoryPropertySet<T> implements PropertySet<T> {
 	
 	private Map<String, T> propertyMap;
 	
+	protected InMemoryPropertySet(Map<String, T> propertyMap) {
+		if (propertyMap == null) {
+			throw new NullArgumentException("propertyMap");
+		}
+		
+		this.propertyMap = propertyMap;
+	}
+	
 	public Map<String, T> getPropertyMap() {
 		return propertyMap;
 	}
 	
 	public InMemoryPropertySet() {
 		this.propertyMap = new LinkedHashMap<String, T>();
-	}
-	
-	protected InMemoryPropertySet(Map<String, T> propertyMap) {
-		if (propertyMap == null)
-			throw new NullArgumentException("propertyMap");
-		
-		this.propertyMap = propertyMap;
 	}
 
 	@Override
@@ -35,8 +36,9 @@ public class InMemoryPropertySet<T> implements PropertySet<T> {
 	public Optional<T> get(String propertyName) {
 		T result = getPropertyMap().get(propertyName);
 		
-		if (result == null)
+		if (result == null) {
 			return Optional.empty();
+		}
 		
 		return Optional.of(result);
 	}

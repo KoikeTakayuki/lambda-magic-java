@@ -16,20 +16,24 @@ public final class MySQLConnection extends SQLConnection {
 	private static final SQLCommandBuilder COMMAND_BUILDER = new MySQLCommandBuilder();
 	
 	private static DataSource createDataSource(String url, String userName, String password) {
-		if (url == null)
+		if (url == null) {
 			throw new NullArgumentException("url");
+		}
 		
-		if (userName == null)
+		if (userName == null) {
 			throw new NullArgumentException("userName");
+		}
 		
-		if (password == null)
+		if (password == null) {
 			throw new NullArgumentException("password");
+		}
 
 		MysqlDataSource dataSource = new MysqlDataSource();
 		
 		dataSource.setUrl(url);
 		dataSource.setUser(userName);
 		dataSource.setPassword(password);
+		
 		return dataSource;
 	}
 
