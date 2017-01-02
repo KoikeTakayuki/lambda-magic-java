@@ -9,6 +9,25 @@ public class HttpRestOperation {
 	private HttpMethod method;
 	private String name;
 	private HttpRestParameter[] parameters;
+	
+	public HttpRestOperation(HttpMethod method, String path, String name, HttpRestParameter... parameters) {
+		if (method == null) {
+			throw new NullArgumentException("method");
+		}
+		
+		if (path == null) {
+			throw new NullArgumentException("path");
+		}
+		
+		if (name == null) {
+			throw new NullArgumentException("name");
+		}
+		
+		this.method = method;
+		this.path = path;
+		this.name = name;
+		this.parameters = parameters;
+	}
 
 	public HttpMethod getMethod() {
 		return method;
@@ -26,19 +45,4 @@ public class HttpRestOperation {
 		return parameters;
 	}
 	
-	public HttpRestOperation(HttpMethod method, String path, String name, HttpRestParameter... parameters) {
-		if (method == null)
-			throw new NullArgumentException("method");
-		
-		if (path == null)
-			throw new NullArgumentException("path");
-		
-		if (name == null)
-			throw new NullArgumentException("name");
-		
-		this.method = method;
-		this.path = path;
-		this.name = name;
-		this.parameters = parameters;
-	}
 }

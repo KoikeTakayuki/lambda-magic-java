@@ -7,14 +7,14 @@ public class NotificationEvent extends Event<NotificationEventListener> {
 	
 	private String message;
 	
-	public String getMessage() {
-		return message;
-	}
-	
 	public NotificationEvent(Object source, String message) {
 		super(source);
 		
 		this.message = message;
+	}
+	
+	public String getMessage() {
+		return message;
 	}
 
 	@Override

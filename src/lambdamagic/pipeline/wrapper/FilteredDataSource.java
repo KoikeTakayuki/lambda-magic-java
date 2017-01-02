@@ -46,4 +46,5 @@ public final class FilteredDataSource<T> implements DataSource<T> {
 	public void close() throws Exception {
 		wrapped.close();
 	}
+	
 }

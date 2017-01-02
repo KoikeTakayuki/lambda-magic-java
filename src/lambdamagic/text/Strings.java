@@ -14,7 +14,6 @@ public final class Strings {
 		return ((s == null) || s.isEmpty());
 	}
 	
-	
 	public static String getNullIfEmpty(String s) {
 		return (s == null) ? null : (s.isEmpty() ? null : s); 
 	}
@@ -24,16 +23,19 @@ public final class Strings {
 	}
 	
 	public static String join(String separator, Iterable<String> strings) {
-		if (separator == null)
+		if (separator == null) {
 			throw new NullArgumentException("separator");
+		}
 		
-		if (strings == null)
+		if (strings == null) {
 			throw new NullArgumentException("strings");
+		}
 		
 		Iterator<String> it = strings.iterator();
 
-		if (!it.hasNext())
+		if (!it.hasNext()) {
 			return "";
+		}
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(it.next());
@@ -66,14 +68,17 @@ public final class Strings {
 	}
 	
 	public static String truncate(String self, int length) {
-		if (self == null)
+		if (self == null) {
 			throw new NullArgumentException("self");
+		}
 		
-		if (length <= 0)
+		if (length <= 0) {
 			throw new OutOfRangeArgumentException("length", "length <= 0");
+		}
 		
-		if (self.length() <= length)
+		if (self.length() <= length) {
 			return self;
+		}
 
 		return (length <= 3) ? self.substring(0, length)
 				: self.substring(0, length - 3) + "...";
@@ -87,46 +92,54 @@ public final class Strings {
 		return self + paddingString(self, c, length);
 	}
 	
-	private static String paddingString(String self, char c, int length) {
-		if (self == null)
-			throw new NullArgumentException("self");
-		
-		if (length <= 0)
-			throw new OutOfRangeArgumentException("length", "length <= 0");
-		
-		int paddingLength = length - self.length();
-		
-		if (paddingLength <= 0)
-			return "";
-		
-		char[] characters = new char[paddingLength];
-		for (int i = 0; i < characters.length; ++i)
-			characters[i] = c;
-		
-		return new String(characters);
-	}
+
 	
 	public static String crop(String targetString, String startString, String endString) {
-		if (targetString == null)
+		if (targetString == null) {
 			throw new NullArgumentException("targetString");
-
-		if (startString == null)
+		}
+		
+		if (startString == null) {
 			throw new NullArgumentException("startString");
-
-		if (endString == null)
+		}
+		
+		if (endString == null) {
 			throw new NullArgumentException("endString");
+		}
 
 		int startIndex = targetString.indexOf(startString) + startString.length();
 		int endIndex = targetString.indexOf(endString, startIndex);
 
-		if (startIndex == -1 || endIndex == -1)
+		if (startIndex == -1 || endIndex == -1) {
 			return Strings.EMPTY_STRING;
+		}
 
 		return targetString.substring(startIndex, endIndex);
 	}
 	
-	
-
-	private Strings() {
+	private static String paddingString(String self, char c, int length) {
+		if (self == null) {
+			throw new NullArgumentException("self");
+		}
+		
+		if (length <= 0) {
+			throw new OutOfRangeArgumentException("length", "length <= 0");
+		}
+		
+		int paddingLength = length - self.length();
+		
+		if (paddingLength <= 0) {
+			return "";
+		}
+		
+		char[] characters = new char[paddingLength];
+		for (int i = 0; i < characters.length; ++i) {
+			characters[i] = c;
+		}
+		
+		return new String(characters);
 	}
+
+	private Strings() {}
+	
 }

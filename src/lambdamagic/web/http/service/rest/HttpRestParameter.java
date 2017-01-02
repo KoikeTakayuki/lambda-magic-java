@@ -8,6 +8,21 @@ public class HttpRestParameter {
 	private Class<?> type;
 	private boolean required;
 	private Object defaultValue;
+	
+	private HttpRestParameter(String name, Class<?> type, boolean required, Object defaultValue) {
+		if (name == null) {
+			throw new NullArgumentException("name");
+		}
+		
+		if (type == null) {
+			throw new NullArgumentException("type");
+		}
+		
+		this.name = name;
+		this.type = type;
+		this.required = required;
+		this.defaultValue = defaultValue;
+	}
 
 	public String getName() {
 		return name;
@@ -32,17 +47,5 @@ public class HttpRestParameter {
 	public HttpRestParameter(String name, Class<?> type) {
 		this(name, type, true, null);
 	}
-	
-	private HttpRestParameter(String name, Class<?> type, boolean required, Object defaultValue) {
-		if (name == null)
-			throw new NullArgumentException("name");
-		
-		if (type == null)
-			throw new NullArgumentException("type");
-		
-		this.name = name;
-		this.type = type;
-		this.required = required;
-		this.defaultValue = defaultValue;
-	}
+
 }

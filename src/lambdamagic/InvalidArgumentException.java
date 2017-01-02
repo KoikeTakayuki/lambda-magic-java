@@ -7,4 +7,5 @@ public class InvalidArgumentException extends IllegalArgumentException {
 	public InvalidArgumentException(String parameterName, String message) {
 		super(parameterName + " - " + message);
 	}
+	
 }

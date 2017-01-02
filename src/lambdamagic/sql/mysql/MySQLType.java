@@ -3,7 +3,7 @@ package lambdamagic.sql.mysql;
 import lambdamagic.sql.SQLType;
 
 public final class MySQLType {
-
+	
 	public static final SQLType SYMBOL = new SQLType("CHAR", 64);
 	public static final SQLType BOOLEAN = new SQLType("BIT");
 	public static final SQLType INTEGER = new SQLType("INT");
@@ -16,4 +16,7 @@ public final class MySQLType {
 	public static final SQLType TIME = new SQLType("TIME");
 	public static final SQLType DATE_TIME = new SQLType("DATETIME");
 	public static final SQLType BINARY_OBJECT = new SQLType("LONGBLOB");
+	
+	private MySQLType() {}
+	
 }

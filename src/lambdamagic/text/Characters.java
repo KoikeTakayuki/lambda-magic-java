@@ -8,7 +8,6 @@ public final class Characters {
 	public static final char CARRIAGE_RETURN = '\r';
 	public static final char NEW_LINE = '\n';
 	
-	
 	public static boolean isNewLine(int c) {
 		return c == NEW_LINE;
 	}
@@ -28,4 +27,5 @@ public final class Characters {
 	public static boolean isEndOfStream(int c) {
 		return c == END_OF_STREAM_CODE;
 	}
+	
 }

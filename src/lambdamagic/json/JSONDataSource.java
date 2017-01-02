@@ -19,12 +19,14 @@ public class JSONDataSource implements DataSource<Object> {
 	private JSONParser parser;
 
 	public JSONDataSource(String filePath, String encoding) throws IOException {
-		if (filePath == null)
+		if (filePath == null) {
 			throw new NullArgumentException("filePath");
+		}
 		
-		if (encoding == null)
+		if (encoding == null) {
 			throw new NullArgumentException("encoding");
-
+		}
+		
 		Reader reader = new BufferedReader(
 							new InputStreamReader(
 								new FileInputStream(new File(filePath)), encoding));
@@ -41,9 +43,10 @@ public class JSONDataSource implements DataSource<Object> {
 	}
 	
 	public static JSONDataSource fromString(String string) throws IOException {
-		if (string == null)
+		if (string == null) {
 			throw new NullArgumentException("string");
-
+		}
+		
 		return new JSONDataSource(new StringReader(string));
 	}
 

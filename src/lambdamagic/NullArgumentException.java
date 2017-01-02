@@ -7,4 +7,5 @@ public final class NullArgumentException extends InvalidArgumentException {
 	public NullArgumentException(String parameterName) {
 		super(parameterName, "parameter cannot be null");
 	}
+	
 }

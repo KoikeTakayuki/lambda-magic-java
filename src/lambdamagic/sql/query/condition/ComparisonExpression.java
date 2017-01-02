@@ -7,23 +7,25 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 	private String firstOperand;
 	private T secondOperand;
 	
+	ComparisonExpression(String firstOperand, T secondOperand) {
+		if (firstOperand == null) {
+			throw new NullArgumentException("firstOperand");
+		}
+		
+		if (secondOperand == null) {
+			throw new NullArgumentException("secondOperand");
+		}
+		
+		this.firstOperand = firstOperand;
+		this.secondOperand = secondOperand;
+	}
+	
 	public String getFirstOperand() {
 		return firstOperand;
 	}
 	
 	public T getSecondOperand() {
 		return secondOperand;
-	}
-	
-	ComparisonExpression(String firstOperand, T secondOperand) {
-		if (firstOperand == null)
-			throw new NullArgumentException("firstOperand");
-		
-		if (secondOperand == null)
-			throw new NullArgumentException("secondOperand");
-		
-		this.firstOperand = firstOperand;
-		this.secondOperand = secondOperand;
 	}
 
 	public static class EqualToExpression extends ComparisonExpression<Object> {
@@ -36,8 +38,8 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
-
 
 	public static class NotEqualToExpression extends ComparisonExpression<Object> {
 
@@ -49,6 +51,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class GreaterThanExpression extends ComparisonExpression<Number> {
@@ -61,6 +64,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class LessThanExpression extends ComparisonExpression<Number> {
@@ -73,6 +77,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class GreaterOrEqualToExpression extends ComparisonExpression<Number> {
@@ -85,6 +90,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class LessOrEqualToExpression extends ComparisonExpression<Number> {
@@ -97,6 +103,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class ContainStringExpression extends ComparisonExpression<String> {
@@ -109,6 +116,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	
@@ -122,6 +130,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class EndWithExpression extends ComparisonExpression<String> {
@@ -134,6 +143,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class InListExpression extends ComparisonExpression<Iterable<?>> {
@@ -146,6 +156,7 @@ public abstract class ComparisonExpression<T> implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 
 }

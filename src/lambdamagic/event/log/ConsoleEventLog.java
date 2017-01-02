@@ -9,8 +9,9 @@ public final class ConsoleEventLog implements EventLog {
 
 	@Override
 	public void log(LoggedEventType type, String format, Object... args) {
-		if (format == null)
+		if (format == null) {
 			throw new NullArgumentException("format");
+		}
 		
 		@SuppressWarnings("resource")
 		PrintStream output = ((type != LoggedEventType.Warning) && (type != LoggedEventType.Error))
@@ -18,4 +19,5 @@ public final class ConsoleEventLog implements EventLog {
 		
 		output.printf("%tc [%s] %s%n", new Date(), type, String.format(format, args));
 	}
+	
 }

@@ -1,6 +1,5 @@
 package lambdamagic.sql.query;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lambdamagic.NullArgumentException;

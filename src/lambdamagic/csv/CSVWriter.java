@@ -9,9 +9,12 @@ import java.io.Writer;
 import java.util.List;
 
 import lambdamagic.pipeline.DataProcessor;
+import lambdamagic.text.Characters;
 import lambdamagic.text.Encodings;
 
 public class CSVWriter implements DataProcessor<List<String>, List<String>> {
+	
+	private static final String VALUE_DELIMITER_ESCAPE_STRING = "\"\"";
 
 	private Writer writer;
 
@@ -55,18 +58,33 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 
 			if (s != null) {
 
-				if (CSVSpecialCharacter.hasSpecialCharacter(s))
-					sb.append(CSVSpecialCharacter.escape(s));
-				else
-					sb.append(s);				
+				if (hasSpecialCharacter(s)) {
+					sb.append(escape(s));
+				} else {
+					sb.append(s);
+				}
 
 			}
 
-			if (length > i)
+			if (length > i) {
 				sb.append(CSVSpecialCharacter.VALUE_SEPARATOR_CHAR);
+			}
 		}
 
 		sb.append(CSVSpecialCharacter.ROW_SEPARATOR_CHAR);
 		return sb.toString();
+	}
+	
+	private static String escape(String string) {
+		return CSVSpecialCharacter.VALUE_DELIMITER_CHAR
+				+ string.replaceAll(String.valueOf(CSVSpecialCharacter.VALUE_DELIMITER_CHAR), VALUE_DELIMITER_ESCAPE_STRING)
+				+ CSVSpecialCharacter.VALUE_DELIMITER_CHAR;
+	}
+	
+	private static boolean hasSpecialCharacter(String s) {
+		return s.indexOf(CSVSpecialCharacter.VALUE_DELIMITER_CHAR) != -1 ||
+				s.indexOf(CSVSpecialCharacter.VALUE_SEPARATOR_CHAR) != -1 ||
+				s.indexOf(CSVSpecialCharacter.ROW_SEPARATOR_CHAR) != -1 ||
+				s.indexOf(Characters.CARRIAGE_RETURN) != -1;
 	}
 }

@@ -24,9 +24,10 @@ public class CSVParser extends ParserBase<List<String>> {
 	private Either<List<String>, Exception> parseRow() {
 		try {
 
-			if (isEndOfStream())
+			if (isEndOfStream()) {
 				return Either.right(new EndOfStreamException());
-
+			}
+			
 			List<String> result = new ArrayList<String>();
 
 			skipWhitespacesUntilNewline();
@@ -41,8 +42,9 @@ public class CSVParser extends ParserBase<List<String>> {
 			Either<String, Exception> valueOrException = parseCSVValue();
 
 			// parsing first element failed
-			if (valueOrException.isRight())
+			if (valueOrException.isRight()) {
 				return Either.right(valueOrException.getRight());
+			}
 
 			result.add(valueOrException.getLeft());
 
@@ -51,16 +53,18 @@ public class CSVParser extends ParserBase<List<String>> {
 
 				skipWhitespacesUntilNewline();
 
-				if (isEndOfStream())
+				if (isEndOfStream()) {
 					break;
+				}
 
 				if (isEndOfLine()) {
 					nextCharacter();
 					break;
 				}
 
-				if (getCharacter() != CSVSpecialCharacter.VALUE_SEPARATOR_CHAR)
+				if (getCharacter() != CSVSpecialCharacter.VALUE_SEPARATOR_CHAR) {
 					return Either.right(new CSVFormatException(getPosition()));
+				}
 
 				nextCharacter();
 				skipWhitespacesUntilNewline();
@@ -72,8 +76,9 @@ public class CSVParser extends ParserBase<List<String>> {
 
 				valueOrException = parseCSVValue();
 
-				if (valueOrException.isRight())
-					return Either.right(valueOrException.getRight()); 
+				if (valueOrException.isRight()) {
+					return Either.right(valueOrException.getRight());
+				}
 				
 				result.add(valueOrException.getLeft());
 			}
@@ -112,20 +117,16 @@ public class CSVParser extends ParserBase<List<String>> {
 					if (lookahead == CSVSpecialCharacter.VALUE_ESCAPE_CHAR) {
 						sb.append(CSVSpecialCharacter.VALUE_ESCAPE_CHAR);
 						nextCharacter();
-					}
-					else if (lookahead == 't') {
+					} else if (lookahead == 't') {
 						sb.append('\t');
 						nextCharacter();
-					}
-					else if (lookahead == 'r') {
+					} else if (lookahead == 'r') {
 						sb.append('\r');
 						nextCharacter();
-					}
-					else if (lookahead == 'n') {
+					} else if (lookahead == 'n') {
 						sb.append('\n');
 						nextCharacter();
-					}
-					else {
+					} else {
 						sb.append(CSVSpecialCharacter.VALUE_ESCAPE_CHAR);
 						sb.append((char)lookahead);
 					}
@@ -138,6 +139,7 @@ public class CSVParser extends ParserBase<List<String>> {
 					if (getCharacter() == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
 						sb.append(CSVSpecialCharacter.VALUE_DELIMITER_CHAR);
 						nextCharacter();
+						
 					//end of string
 					} else {
 						return Either.left(sb.toString());
@@ -156,8 +158,10 @@ public class CSVParser extends ParserBase<List<String>> {
 
 	private void ignoreBOM() throws IOException {
 		reader.mark(4);
-		if (reader.read() != '\ufeff')
+		
+		if (reader.read() != '\ufeff') {
 			reader.reset(); 
+		}
 	}
 
 }

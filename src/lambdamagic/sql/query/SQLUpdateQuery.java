@@ -18,8 +18,9 @@ public class SQLUpdateQuery implements SQLConditionalQuery {
 	SQLUpdateQuery(String tableName, List<SQLJoinClause> joinClauses,
 			SQLCondition condition, Map<String, Object> updateValues) {
 
-		if (tableName == null)
+		if (tableName == null) {
 			throw new NullArgumentException("tableName");
+		}
 		
 		this.tableName = tableName;
 		this.joinClauses = joinClauses;

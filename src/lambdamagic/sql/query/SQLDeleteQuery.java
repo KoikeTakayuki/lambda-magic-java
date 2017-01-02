@@ -45,4 +45,5 @@ public class SQLDeleteQuery implements SQLConditionalQuery {
 		
 		return Optional.of(condition);
 	}
+	
 }

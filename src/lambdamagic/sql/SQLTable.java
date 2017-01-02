@@ -17,9 +17,10 @@ public final class SQLTable {
 			private Object value;
 			
 			public Constraint(String name, Object value) {
-				if (name == null)
+				if (name == null) {
 					throw new NullArgumentException("name");
-
+				}
+				
 				this.name = name;
 				this.value = value;
 			}
@@ -113,8 +114,9 @@ public final class SQLTable {
 	}
 	
 	public boolean addColumn(Column column) {
-		if (column == null)
+		if (column == null) {
 			throw new NullArgumentException("column");
+		}
 		
 		return columns.add(column);
 	}
@@ -124,9 +126,10 @@ public final class SQLTable {
 	}
 	
 	public void addCustomDeclaration(String customDeclaration) {
-		if (customDeclaration == null)
+		if (customDeclaration == null) {
 			throw new NullArgumentException("customDeclaration");
-	
+		}
+		
 		customDeclarations.add(customDeclaration);
 	}
 	
@@ -137,13 +140,16 @@ public final class SQLTable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
+		}
 		
-		if (!(obj instanceof SQLTable))
+		if (!(obj instanceof SQLTable)) {
 			return false;
+		}
 		
 		SQLTable other = (SQLTable) obj;
 		return getName().equals(other.getName());
 	}
+	
 }

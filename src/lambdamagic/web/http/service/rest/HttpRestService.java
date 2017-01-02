@@ -78,8 +78,9 @@ public abstract class HttpRestService extends HttpServlet {
 	}
 	
 	public void registerOperation(HttpRestOperation operation) throws NoSuchMethodException, SecurityException {
-		if (operation == null)
+		if (operation == null) {
 			throw new NullArgumentException("operation");
+		}
 		
 		Map<String, HttpRestHandler> pathHandlerMap = methodHandlerMap.get(operation.getMethod());
 
@@ -92,14 +93,16 @@ public abstract class HttpRestService extends HttpServlet {
 	}
 	
 	private HttpRestHandler createHttpRestHandler(final HttpRestOperation operation) throws NoSuchMethodException, SecurityException {
-		if (operation == null)
+		if (operation == null) {
 			throw new NullArgumentException("operation");
+		}
 		
 		final HttpRestParameter[] parameters = operation.getParameters();
 		final Class<?>[] parameterTypes = new Class<?>[parameters.length];
 		
-		for (int i = 0; i < parameterTypes.length; ++i)
+		for (int i = 0; i < parameterTypes.length; ++i) {
 			parameterTypes[i] = parameters[i].getType();
+		}
 		
 		final Method APIMethod = getClass().getMethod(operation.getName(), parameterTypes);
 		
@@ -107,8 +110,7 @@ public abstract class HttpRestService extends HttpServlet {
 			try {
 				try {
 					writeHandlerInvocationResult(response, APIMethod, translateArguments(request, operation.getMethod(), parameters));
-				}
-				catch (Throwable ex) {
+				} catch (Throwable ex) {
 					String className = ex.getClass().getName();
 					String message = (ex.getMessage() != null) ? ex.getMessage() : "";
 					String exceptionMessage = className + EXCEPTION_CLASS_NAME_MESSAGE_SEPARATOR + message;
@@ -125,8 +127,9 @@ public abstract class HttpRestService extends HttpServlet {
 					outputStream.flush();
 					outputStream.close();
 					
-					if (debugOutput != null)
+					if (debugOutput != null) {
 						ex.printStackTrace(debugOutput);
+					}
 				}
 			}
 			catch (Throwable ex) {
@@ -153,14 +156,15 @@ public abstract class HttpRestService extends HttpServlet {
 	private Optional<HttpRestHandler> getHandler(HttpMethod method, String path) {
 		Map<String, HttpRestHandler> handlers = methodHandlerMap.get(method);
 
-		if (handlers == null)
+		if (handlers == null) {
 			return Optional.empty();
-
+		}
+		
 		HttpRestHandler handler = handlers.get(path);
 		
-		if (handler == null)
+		if (handler == null) {
 			return Optional.empty();
-		
+		}
 		
 		return Optional.of(handler);
 	}
@@ -178,8 +182,10 @@ public abstract class HttpRestService extends HttpServlet {
 			Object parameterValue = null;
 			
 			if (parameterStringValue == null) {
-				if (parameter.isRequired())
+				
+				if (parameter.isRequired()) {
 					throw new NullArgumentException(parameter.getName());
+				}
 				
 				parameterValue = parameter.getDefaultValue();
 			}
@@ -197,15 +203,18 @@ public abstract class HttpRestService extends HttpServlet {
 				catch (IOException ex) {
 					throw new IllegalStateException(ex);
 				}
+				
 			}
 			
-			if ((parameterValue != null) && !isInstance(parameter.getType(), parameterValue))
+			if ((parameterValue != null) && !isInstance(parameter.getType(), parameterValue)) {
 				throw new InvalidArgumentException(parameter.getName(), String.format(
 						"Invalid type \"%s\", while type \"%s\" was expected.",
 						parameterValue.getClass().getName(), parameter.getType().getName()));
+			}
 				
 			arguments[i] = parameterValue;
 		}
+		
 		return arguments;
 	}
 	
@@ -250,11 +259,9 @@ public abstract class HttpRestService extends HttpServlet {
 
 			response.setContentLength(byteArrayOutputStream.size());
 			response.getOutputStream().write(byteArrayOutputStream.toByteArray());
-		}
-		catch (IllegalArgumentException | IllegalAccessException ex) {
+		} catch (IllegalArgumentException | IllegalAccessException ex) {
 			throw ex;
-		}
-		catch (InvocationTargetException ex) {
+		} catch (InvocationTargetException ex) {
 			throw ex.getCause();
 		}
 	}
@@ -267,4 +274,5 @@ public abstract class HttpRestService extends HttpServlet {
 	private void writeErrorNotFoundResponse(HttpServletResponse response) {
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	}
+	
 }

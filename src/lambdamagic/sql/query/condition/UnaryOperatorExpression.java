@@ -12,6 +12,7 @@ public abstract class UnaryOperatorExpression implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class IsNotNullExpression extends UnaryOperatorExpression {
@@ -24,6 +25,7 @@ public abstract class UnaryOperatorExpression implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	private String operand;
@@ -35,4 +37,5 @@ public abstract class UnaryOperatorExpression implements SQLCondition {
 	public String getOperand() {
 		return operand;
 	}
+	
 }

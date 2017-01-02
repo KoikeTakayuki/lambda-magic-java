@@ -16,4 +16,5 @@ public interface DataProcessor<I, O> extends Closeable, Function<I, O> {
 	default O apply(I input) {
 		return process(input);
 	}
+	
 }

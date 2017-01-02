@@ -6,10 +6,6 @@ public class HttpRestServiceException extends Exception {
 
 	private String className;
 	
-	public String getClassName() {
-		return className;
-	}
-	
 	public HttpRestServiceException(String className, String message) {
 		super(message);
 		
@@ -19,4 +15,9 @@ public class HttpRestServiceException extends Exception {
 	public HttpRestServiceException(String message) {
 		this(null, message);
 	}
+	
+	public String getClassName() {
+		return className;
+	}
+	
 }

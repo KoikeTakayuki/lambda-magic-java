@@ -60,4 +60,5 @@ public final class MergedDataSource<T> implements DataSource<T> {
 			s.close();
 		}
 	}
+	
 }

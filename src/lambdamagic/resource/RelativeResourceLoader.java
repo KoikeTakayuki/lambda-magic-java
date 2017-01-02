@@ -21,13 +21,16 @@ public class RelativeResourceLoader implements ResourceLoader {
 	}
 	
 	public RelativeResourceLoader(ResourceLoader baseObject, String basePath) {
-		if (baseObject == null)
+		if (baseObject == null) {
 			throw new NullArgumentException("baseObject");
+		}
 		
-		if (basePath == null)
+		if (basePath == null) {
 			throw new NullArgumentException("basePath");
+		}
 		
 		this.baseObject = baseObject;
 		this.basePath = basePath;
 	}
+	
 }

@@ -13,17 +13,15 @@ import lambdamagic.io.EndOfStreamException;
 import lambdamagic.text.Characters;
 import lambdamagic.text.TextPosition;
 
-
 public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 
 	private int c;
 	private int lineNumber;
 	private int lineOffset;
-	
-	protected Reader reader;
 	private Map<String, Object> specialMap;
 	private int digitCount;
-
+	protected Reader reader;
+	
 	protected int getCharacter() {
 		return c;
 	}
@@ -65,15 +63,17 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 	}
 
 	protected Map<String, Object> getSpecialMap() {
-		if (specialMap == null)
+		if (specialMap == null) {
 			specialMap = new HashMap<String, Object>();
-
+		}
+		
 		return specialMap;
 	}
 
 	public ParserBase(Reader reader) throws IOException {
-		if (reader == null)
+		if (reader == null) {
 			throw new NullArgumentException("reader");
+		}
 		
 		this.lineNumber = 1;
 		this.reader = reader;
@@ -81,8 +81,9 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 	}
 
 	public ParserBase(String string) throws IOException {
-		if (string == null)
+		if (string == null) {
 			throw new NullArgumentException("string");
+		}
 		
 		this.reader = new StringReader(string);
 		nextCharacter();
@@ -99,21 +100,22 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 		if (Characters.isNewLine(c)) {
 			++lineNumber;
 			lineOffset = 0;
-		}
-		else
+		} else {
 			++lineOffset;
-		
+		}
 		return pc;
 	}
 	
 	protected void skipWhitespacesUntilNewline() throws IOException {
-		while (isWhitespace() && !isEndOfLine())
+		while (isWhitespace() && !isEndOfLine()) {
 			nextCharacter();
+		}
 	}
 	
 	protected void skipWhitespaces() throws IOException {
-		while (isWhitespace())
+		while (isWhitespace()) {
 			nextCharacter();
+		}
 	}
 	
 	protected Either<String, Exception> parseUntil(char[] characters) {	
@@ -124,9 +126,12 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 			loop:
 			while (!isEndOfStream()) {
 				int c = getCharacter();
-				for (char d : characters)
-					if (c == d)
+				
+				for (char d : characters) {
+					if (c == d) {
 						break loop;
+					}
+				}
 
 				sb.append((char)c);
 				nextCharacter();
@@ -144,13 +149,15 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 			
 			StringBuffer sb = new StringBuffer();
 
-			if (!isValidIdFirstCharacter())
+			if (!isValidIdFirstCharacter()) {
 				return Either.right(new ParseException("Invalid first character of ID", getPosition()));
+			}
 			
 			sb.append((char)nextCharacter());
 			
-			while (isValidIdCharacter())
+			while (isValidIdCharacter()) {
 				sb.append((char)nextCharacter());
+			}
 			
 			return Either.left(sb.toString());
 		
@@ -162,14 +169,16 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 	protected Either<String, Exception> parseSpecial() {
 		Either<String, Exception> parseResultOrException = parseId();
 	
-		if (parseResultOrException.isRight())
+		if (parseResultOrException.isRight()) {
 			return Either.right(parseResultOrException.getRight());
-
+		}
+		
 		String key = parseResultOrException.getLeft();
 
-		if (!getSpecialMap().containsKey(key))
+		if (!getSpecialMap().containsKey(key)) {
 			return Either.right(new ParseException("ID: " + key + " isn't special", getPosition()));
-
+		}
+		
 		return Either.left((String)getSpecialMap().get(key));
 	}
 	
@@ -179,12 +188,14 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 			Either<Integer, Exception> integerOrException = parseInteger();
 
 			// parsing integer part failed
-			if (integerOrException.isRight())
+			if (integerOrException.isRight()) {
 				return Either.right(integerOrException.getRight());
-
+			}
+			
 			// has neither decimal part nor normalized notation, finish parsing number
-			if (getCharacter() != '.' && getCharacter() != 'e' && getCharacter() != 'E')
+			if (getCharacter() != '.' && getCharacter() != 'e' && getCharacter() != 'E') {
 				return integerOrException.applyToLeft(i -> (Number)i);
+			}
 			
 			double integerPart = integerOrException.getLeft();
 			double decimalPart = 0;
@@ -198,9 +209,10 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 				Either<Integer, Exception> decimalOrException = parseUnsignedInteger();
 		
 				// parsing decimal part failed
-				if (decimalOrException.isRight())
+				if (decimalOrException.isRight()) {
 					return Either.right(decimalOrException.getRight());
-	
+				}
+				
 				decimalPart = decimalOrException.getLeft();
 				result = integerPart + (decimalPart * Math.pow(10, -digitCount));
 			}
@@ -221,14 +233,16 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 
 				Either<Integer, Exception> exponentOrException = parseUnsignedInteger();
 				
-				if (exponentOrException.isRight())
+				if (exponentOrException.isRight()) {
 					return Either.right(exponentOrException.getRight());
+				}
 				
 				int exponent = exponentOrException.getLeft();
 				
-				if (isNegative)
+				if (isNegative) {
 					exponent *= -1;
-
+				}
+				
 				result = result * Math.pow(10, exponent);
 			}
 	
@@ -251,9 +265,10 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 			
 			Either<Integer, Exception> integerOrException = parseUnsignedInteger();
 
-			if (isNegative)
+			if (isNegative) {
 				return integerOrException.applyToLeft(i -> -i);
-				
+			}
+			
 			return integerOrException;
 
 		} catch (IOException e) {
@@ -294,9 +309,10 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 	
 			while (getCharacter() != delimiterCharacter) {
 
-				if (isEndOfStream())
+				if (isEndOfStream()) {
 					return Either.right(new EndOfStreamException());
-
+				}
+				
 				if (getCharacter() == escapeCharacter) {
 					nextCharacter();
 	
@@ -304,29 +320,24 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 					if (lookahead == delimiterCharacter) {
 						sb.append(delimiterCharacter);
 						nextCharacter();
-					}
-					else if (lookahead == escapeCharacter) {
+					} else if (lookahead == escapeCharacter) {
 						sb.append(escapeCharacter);
 						nextCharacter();
-					}
-					else if (lookahead == 't') {
+					} else if (lookahead == 't') {
 						sb.append('\t');
 						nextCharacter();
-					}
-					else if (lookahead == 'r') {
+					} else if (lookahead == 'r') {
 						sb.append('\r');
 						nextCharacter();
-					}
-					else if (lookahead == 'n') {
+					} else if (lookahead == 'n') {
 						sb.append('\n');
 						nextCharacter();
-					}
-					else {
+					} else {
 						sb.append(escapeCharacter);
 						sb.append((char)lookahead);
 					}
-				}
-				else {
+					
+				} else {
 					sb.append((char)getCharacter());
 					nextCharacter();
 				}

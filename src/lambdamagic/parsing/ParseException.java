@@ -9,4 +9,5 @@ public class ParseException extends Exception {
 	public ParseException(String message, TextPosition position) {
 		super("Failed to parse at " + position + " " + message);
 	}
+	
 }

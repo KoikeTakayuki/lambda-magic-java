@@ -7,6 +7,13 @@ public class ProgressEvent extends Event<ProgressEventListener> {
 	private long count;
 	private long totalCount;
 	
+	public ProgressEvent(Object source, long count, long totalCount) {
+		super(source);
+		
+		this.count = count;
+		this.totalCount = totalCount;
+	}
+	
 	public float getPercentage() {
 		return (count * 100.0f / (float)totalCount);
 	}
@@ -23,16 +30,10 @@ public class ProgressEvent extends Event<ProgressEventListener> {
 	public Type<ProgressEventListener> getType() {
 		return TYPE;
 	}
-	
-	public ProgressEvent(Object source, long count, long totalCount) {
-		super(source);
-		
-		this.count = count;
-		this.totalCount = totalCount;
-	}
 
 	@Override
 	public void dispatch(ProgressEventListener listener) {
 		listener.onProgressChanged(this);
 	}
+	
 }

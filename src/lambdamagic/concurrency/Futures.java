@@ -14,36 +14,41 @@ import lambdamagic.data.Tuple2;
 public class Futures {
 	
 	public static <T> CompletableFuture<T> runAsync(Supplier<T> task) {
-		if (task == null)
+		if (task == null) {
 			throw new NullArgumentException("task");
+		}
 
 		return CompletableFuture.supplyAsync(task);
 	}
 	
 	public static CompletableFuture<Void> runAsync(Runnable task) {
-		if (task == null)
+		if (task == null) {
 			throw new NullArgumentException("task");
+		}
 
 		return runAsync(() -> task.run());
 	}
 	
 	public static <I, O> Function<CompletableFuture<I>, CompletableFuture<O>> lift(Function<I, O> function) {
-		if (function == null)
+		if (function == null) {
 			throw new NullArgumentException("function");
+		}
 		
 		return inputFuture -> inputFuture.thenApply(function);
 	}
 	
 	public static <T> CompletableFuture<T> wrap(T value) {
-		if (value == null)
+		if (value == null) {
 			throw new NullArgumentException("value");
+		}
 		
 		return CompletableFuture.supplyAsync(() -> value);
 	}
 
 	public static <T> CompletableFuture<List<T>> all(Iterable<CompletableFuture<T>> tasks) {
-		if (tasks == null)
+		if (tasks == null) {
 			throw new NullArgumentException("tasks");
+		}
 		
 		return Iterables.foldLeft(tasks, wrap(Arrays.asList()), (acc, e) -> {
 			return acc.thenCombineAsync(e, (values, value) -> {
@@ -56,21 +61,25 @@ public class Futures {
 	}
 
 	public static <T> CompletableFuture<T> any(Iterable<CompletableFuture<T>> tasks) {
-		if (tasks == null)
+		if (tasks == null) {
 			throw new NullArgumentException("tasks");
-		
+		}
+			
 		return Iterables.reduce(tasks, (future1, future2) -> {
 			return future1.applyToEitherAsync(future2, Function.identity());
 		});
 	}
 	
 	public static <T, S> CompletableFuture<Tuple2<T, S>> join(CompletableFuture<T> task1, CompletableFuture<S> task2) {
-		if (task1 == null)
+		if (task1 == null) {
 			throw new NullArgumentException("task1");
+		}
 		
-		if (task2 == null)
+		if (task2 == null) {
 			throw new NullArgumentException("task2");
+		}
 		
 		return task1.thenCombineAsync(task2, (t1, t2) -> new Tuple2<T, S>(t1, t2));
 	}
+	
 }

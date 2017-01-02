@@ -71,9 +71,10 @@ public abstract class Settings implements PropertySet<String> {
 		};
 	}
 	
+	public abstract void save(OutputStream outputStream) throws IOException;
+	
 	public Optional<String> getRequired(String propertyName) {
 		return get(propertyName);
 	}
 	
-	public abstract void save(OutputStream outputStream) throws IOException;
 }

@@ -59,17 +59,6 @@ public class Pipeline<IN, OUT> implements DataSource<OUT> {
 		return new Pipeline<IN, NEW_OUT>(source, compose(processor, newProcessor));
 	}
 
-	private <T> DataProcessor<T, T> toProcessor(Consumer<T> consumer) {
-		if (consumer == null) {
-			throw new NullArgumentException("consumer");
-		}
-
-		return output -> {
-			consumer.accept(output);
-			return output;
-		};
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<OUT> readData() {
@@ -123,19 +112,19 @@ public class Pipeline<IN, OUT> implements DataSource<OUT> {
 
 	@SuppressWarnings("unchecked")
 	public final Pipeline<OUT, OUT> interleave(DataSource<OUT>... sources) {
-		return from(new InterleavedDataSource<OUT>(sources));
+		return from(new InterleavedDataSource<OUT>(construct(this, sources)));
 	}
 
 	@SuppressWarnings("unchecked")
 	public final Pipeline<OUT, OUT> merge(final DataSource<OUT>... sources) {
-		return from(new MergedDataSource<OUT>(sources));
+		return from(new MergedDataSource<OUT>(construct(this, sources)));
 	}
 
 	public <T> Pipeline<Tuple2<OUT, T>, Tuple2<OUT, T>> zip(DataSource<T> other) {
 		return from(new ZippedDataSource<OUT, T>(this, other));
 	}
 
-	public <T> T fold(T seed, BiFunction<T, OUT, T> function) {
+	public <T> T fold(T seed, BiFunction<T, OUT, T> function) throws Exception {
 		T result = seed;
 		Optional<OUT> maybeData = readData();
 
@@ -143,6 +132,8 @@ public class Pipeline<IN, OUT> implements DataSource<OUT> {
 			result = function.apply(result, maybeData.get());
 			maybeData = readData();
 		}
+		
+		close();
 
 		return result;
 	}
@@ -171,4 +162,29 @@ public class Pipeline<IN, OUT> implements DataSource<OUT> {
 		source.close();
 		processor.close();
 	}
+	
+	private <T> DataProcessor<T, T> toProcessor(Consumer<T> consumer) {
+		if (consumer == null) {
+			throw new NullArgumentException("consumer");
+		}
+
+		return output -> {
+			consumer.accept(output);
+			return output;
+		};
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> DataSource<T>[] construct(DataSource<T> first, DataSource<T>[] rest) {
+		DataSource<T>[] newSources = new DataSource[rest.length + 1];
+		
+		newSources[0] = first;
+		
+		for (int i = 0; i < rest.length; ++i) {
+			newSources[i + 1] = rest[i];
+		}
+		
+		return newSources;	
+	}
+	
 }

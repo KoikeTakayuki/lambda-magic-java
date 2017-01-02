@@ -64,10 +64,11 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 					break;
 					
 				default:
-					if (isValidNumberFirstCharacter())
+					if (isValidNumberFirstCharacter()) {
 						resultOrException = parseNumber();
-					else
+					} else {
 						resultOrException = parseBooleanOrNull();
+					}
 			}
 			
 			return resultOrException.applyToLeft(o -> {
@@ -84,19 +85,23 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 
 		Either<String, Exception> valueOrException = parseId();
 
-		if (valueOrException.isRight())
+		if (valueOrException.isRight()) {
 			return Either.right(valueOrException.getRight());
-
+		}
+		
 		String value = valueOrException.getLeft();
 
-		if (value.equals(JSON_TRUE_STRING))
+		if (value.equals(JSON_TRUE_STRING)) {
 			return Either.left(true);
+		}
 
-		if (value.equals(JSON_FALSE_STRING))
+		if (value.equals(JSON_FALSE_STRING)) {
 			return Either.left(false);
+		}
 
-		if (value.equals(JSON_NULL_STRING))
+		if (value.equals(JSON_NULL_STRING)) {
 			return Either.left(null);
+		}
 		
 		return Either.right(new JSONFormatException(getPosition()));
 	}
@@ -113,16 +118,18 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 			
 			skipWhitespaces();
 			
-			if (getCharacter() != JSON_OBJECT_KEY_VALUE_DELIMETER_CHAR)
+			if (getCharacter() != JSON_OBJECT_KEY_VALUE_DELIMETER_CHAR) {
 				return Either.right(new JSONFormatException(getPosition()));
+			}
 			
 			nextCharacter();
 			skipWhitespaces();
 
 			Either<Object, Exception> valueOrException = parseJSON();
 
-			if (valueOrException.isRight())
+			if (valueOrException.isRight()) {
 				return Either.right(new JSONFormatException(getPosition()));
+			}
 			
 			jsonObject.put(key, valueOrException.getLeft());
 			
@@ -136,9 +143,10 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 	private Either<Map<String, Object>, Exception> parseObject() {
 		try {
 
-			if (getCharacter() != JSON_OBJECT_START_CHAR)
+			if (getCharacter() != JSON_OBJECT_START_CHAR) {
 				return Either.right(new JSONFormatException(getPosition()));
-
+			}
+			
 			Map<String, Object> jsonObject = new LinkedHashMap<String, Object>();
 			Either<Map<String, Object>, Exception> jsonObjectOrException;
 
@@ -148,14 +156,16 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 				
 				jsonObjectOrException = parseKeyValue(jsonObject);
 
-				if (jsonObjectOrException.isRight())
+				if (jsonObjectOrException.isRight()) {
 					return jsonObjectOrException;
+				}
 
 			} while (getCharacter() == JSON_OBJECT_SEPARATOR_CHAR);
 
-			if (getCharacter() != JSON_OBJECT_END_CHAR)
+			if (getCharacter() != JSON_OBJECT_END_CHAR) {
 				return Either.right(new JSONFormatException(getPosition()));
-
+			}
+			
 			nextCharacter();
 
 			return jsonObjectOrException;
@@ -168,8 +178,9 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 	private Either<List<Object>, Exception> parseArray() {
 		try {
 		
-			if (getCharacter() != JSON_ARRAY_START_CHAR)
+			if (getCharacter() != JSON_ARRAY_START_CHAR) {
 				return Either.right(new JSONFormatException(getPosition()));
+			}
 			
 			List<Object> array = new ArrayList<Object>();
 			
@@ -180,16 +191,18 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 				
 				Either<Object, Exception> objectOrException = parseJSON();
 	
-				if (objectOrException.isRight())
+				if (objectOrException.isRight()) {
 					return Either.right(objectOrException.getRight());
+				}
 				
 				array.add(objectOrException.getLeft());
 				
 			} while (getCharacter() == JSON_ARRAY_VALUE_SEPARATOR_CHAR);
 
-			if (getCharacter() != JSON_ARRAY_END_CHAR)
+			if (getCharacter() != JSON_ARRAY_END_CHAR) {
 				return Either.right(new JSONFormatException(getPosition()));
-
+			}
+			
 			nextCharacter();
 
 			return Either.left(array);
@@ -203,4 +216,5 @@ public class JSONParser extends ParserBase<Object> implements ObjectReader {
 	public Either<Object, Exception> readObject() {
 		return parse();
 	}
+	
 }

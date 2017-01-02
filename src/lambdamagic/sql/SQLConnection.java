@@ -63,11 +63,6 @@ public abstract class SQLConnection implements AutoCloseable {
 		this.debugOutput = debugOutput;
 	}
 	
-	@Override
-	public void close() throws Exception {
-		connection.close();
-	}
-	
 	public void commit() throws SQLException {
 		connection.commit();
 	}
@@ -206,6 +201,11 @@ public abstract class SQLConnection implements AutoCloseable {
 		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom(tableName).where(condition).build();
 		return executeUpdate(commandBuilder.buildDeleteCommand(query));
 	}
+	
+	@Override
+	public void close() throws Exception {
+		connection.close();
+	}
 
 	private int executeGetLastInsertId() throws SQLException {
 		try (ResultSet resultSet = executeQuery(commandBuilder.buildLastInsertIdCommand())) {
@@ -238,4 +238,5 @@ public abstract class SQLConnection implements AutoCloseable {
 			return connection.createStatement().executeQuery(command);
 		}
 	}
+	
 }

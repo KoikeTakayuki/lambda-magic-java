@@ -20,8 +20,9 @@ public interface DataSource<T> extends AutoCloseable, Supplier<T> {
 		Iterator<T> it = iterable.iterator();
 
 		return () -> {
-			if (it.hasNext())
+			if (it.hasNext()) {
 				return Optional.of(it.next());
+			}
 			
 			return Optional.empty();
 		};
@@ -31,8 +32,9 @@ public interface DataSource<T> extends AutoCloseable, Supplier<T> {
 		Iterator<T> it = stream.iterator();
 
 		return () -> {
-			if (it.hasNext())
+			if (it.hasNext()) {
 				return Optional.of(it.next());
+			}
 			
 			return Optional.empty();
 		};
@@ -40,4 +42,5 @@ public interface DataSource<T> extends AutoCloseable, Supplier<T> {
 	
 	@Override
 	default void close() throws Exception {}
+	
 }

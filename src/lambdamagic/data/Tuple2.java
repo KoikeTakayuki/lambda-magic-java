@@ -34,4 +34,5 @@ public final class Tuple2<T, S> implements Serializable {
 	public String toString() {
 		return "Tuple2(" + firstValue + ", "+ secondValue + ")";
 	}
+	
 }

@@ -10,7 +10,7 @@ import lambdamagic.pipeline.DataSource;
 
 public final class InterleavedDataSource<T> implements DataSource<T> {
 
-	List<DataSource<T>> sources;
+	private List<DataSource<T>> sources;
 	private int currentIndex;
 
 	@SuppressWarnings("unchecked")
@@ -70,4 +70,5 @@ public final class InterleavedDataSource<T> implements DataSource<T> {
 			currentIndex = 0;
 		}
 	}
+	
 }

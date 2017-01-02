@@ -10,8 +10,9 @@ public final class ArrayIterator<T> implements Iterator<T> {
 	private int index;
 	
 	public ArrayIterator(T[] array) {
-		if (array == null)
+		if (array == null) {
 			throw new NullArgumentException("array");
+		}
 		
 		this.array = array;
 	}
@@ -25,5 +26,6 @@ public final class ArrayIterator<T> implements Iterator<T> {
 	public T next() {
 		return array[index++];
 	}
+	
 }
 

@@ -401,10 +401,11 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 		if (value != null) {
 			sb.append(" '");
 			
-			if (value instanceof String)
+			if (value instanceof String) {
 				sb.append(escapeString((String)value));
-			else
+			} else {
 				sb.append(value);
+			}
 			
 			sb.append('\'');
 		}

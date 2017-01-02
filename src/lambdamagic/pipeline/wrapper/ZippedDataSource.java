@@ -46,4 +46,5 @@ public final class ZippedDataSource<T1, T2> implements DataSource<Tuple2<T1, T2>
 		source1.close();
 		source2.close();
 	}
+	
 }

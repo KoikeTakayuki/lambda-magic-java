@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.pipeline.DataProcessor;
 import lambdamagic.text.Encodings;
 import lambdamagic.web.serialization.ObjectWriter;
@@ -21,6 +22,10 @@ public class JSONWriter implements DataProcessor<Object, Object>, ObjectWriter {
 	private boolean writeAsArray;
 	
 	public JSONWriter(Writer writer) {
+		if (writer == null) {
+			throw new NullArgumentException("writer");
+		}
+		
 		this.writer = writer;
 		this.writeAsArray = false;
 	}
@@ -44,8 +49,9 @@ public class JSONWriter implements DataProcessor<Object, Object>, ObjectWriter {
 	private void setWriteAsArray(boolean writeAsArray) throws IOException {
 		this.writeAsArray = writeAsArray;
 		
-		if (writeAsArray)
+		if (writeAsArray) {
 			writer.write(JSONParser.JSON_ARRAY_START_CHAR);
+		}
 	}
 
 	@Override
@@ -62,27 +68,29 @@ public class JSONWriter implements DataProcessor<Object, Object>, ObjectWriter {
 	@SuppressWarnings("unchecked")
 	public void write(Object data) throws IOException {
 		
-		if (data instanceof Boolean)
+		if (data instanceof Boolean) {
 			write((Boolean)data);
-		else if (data instanceof Number)
+		} else if (data instanceof Number) {
 			write((Number)data);
-		else if (data instanceof String)
+		} else if (data instanceof String) {
 			write((String)data);
-		else if (data instanceof List)
+		} else if (data instanceof List) {
 			write((List<Object>)data);
-		else if (data instanceof Map)
+		} else if (data instanceof Map) {
 			write((Map<String, Object>)data);
-		else
+		} else {
 			writer.write(JSONParser.JSON_NULL_STRING);
+		}
 		
 		writer.flush();
 	}
 	
 	public void write(Boolean data) throws IOException {
-		if (data)
+		if (data) {
 			writer.write(JSONParser.JSON_TRUE_STRING);
-		else
+		} else {
 			writer.write(JSONParser.JSON_FALSE_STRING);
+		}
 	}
 	
 	public void write(Number data) throws IOException {
@@ -128,9 +136,10 @@ public class JSONWriter implements DataProcessor<Object, Object>, ObjectWriter {
 	
 	@Override
 	public void close() throws IOException {
-		if (writeAsArray)
+		if (writeAsArray) {
 			writer.write(JSONParser.JSON_ARRAY_END_CHAR);
-			
+		}
+		
 		writer.close();
 	}
 
@@ -143,4 +152,5 @@ public class JSONWriter implements DataProcessor<Object, Object>, ObjectWriter {
 	public void flush() throws IOException {
 		writer.flush();
 	}
+	
 }

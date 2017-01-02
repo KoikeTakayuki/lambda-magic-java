@@ -7,4 +7,5 @@ public final class OutOfRangeArgumentException extends InvalidArgumentException 
 	public OutOfRangeArgumentException(String parameterName, String failedAssertion) {
 		super(parameterName, "parameter is out of range according, failed assertion \"" + failedAssertion + "\".");
 	}
+	
 }

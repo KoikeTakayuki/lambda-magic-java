@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.Writer;
 
 public interface DataSerializer {
-
 	String getMimeType();
 	String getEncoding();
 	ObjectReader createObjectReader(Reader reader) throws IOException;

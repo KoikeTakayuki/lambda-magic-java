@@ -172,4 +172,5 @@ public class MySQLConditionVisitor implements SQLConditionVisitor {
 	private String escapeString(String s) {
 		return s.replaceAll(Pattern.quote("'"), "''").replaceAll(Pattern.quote("\\"), "\\\\");
 	}
+	
 }

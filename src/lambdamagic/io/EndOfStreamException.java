@@ -7,4 +7,5 @@ public class EndOfStreamException extends Exception {
 	public EndOfStreamException() {
 		super("Attempted to read past the end of the stream");
 	}
+	
 }

@@ -65,4 +65,5 @@ public class PlainTextDataSerializer implements DataSerializer {
 			}
 		};
 	}
+	
 }

@@ -36,4 +36,5 @@ public class SQLResult implements Queryable<String, Object> {
 	public InputStream getInputStream(String columnName) throws SQLException {
 		return resultSet.getBinaryStream(columnName);
 	}
+	
 }

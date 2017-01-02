@@ -21,4 +21,5 @@ public abstract class FallibleEvent<T extends EventListener, E extends Exception
 	public void failWith(E exception) {
 		this.exception = exception;
 	}
+	
 }

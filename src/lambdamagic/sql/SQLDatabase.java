@@ -9,6 +9,19 @@ public final class SQLDatabase {
 	private String name;
 	private String collation;
 	
+	public SQLDatabase(String name, String collation) {
+		if (name == null) {
+			throw new NullArgumentException("name");
+		}
+		
+		this.name = name;
+		this.collation = collation;
+	}
+	
+	public SQLDatabase(String name) {
+		this(name, null);
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -21,15 +34,4 @@ public final class SQLDatabase {
 		return Optional.of(collation);
 	}
 	
-	public SQLDatabase(String name, String collation) {
-		if (name == null)
-			throw new NullArgumentException("name");
-		
-		this.name = name;
-		this.collation = collation;
-	}
-	
-	public SQLDatabase(String name) {
-		this(name, null);
-	}
 }

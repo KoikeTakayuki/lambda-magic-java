@@ -15,8 +15,9 @@ public class ServletServiceContext implements ServiceContext {
 	private ServletContext baseObject;
 		
 	public ServletServiceContext(ServletContext baseObject) {
-		if (baseObject == null)
+		if (baseObject == null) {
 			throw new NullArgumentException("baseObject");
+		}
 		
 		this.baseObject = baseObject;
 	}
@@ -42,4 +43,5 @@ public class ServletServiceContext implements ServiceContext {
 
 		return Optional.of(stream);
 	}
+	
 }

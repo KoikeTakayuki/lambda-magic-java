@@ -16,11 +16,13 @@ public final class IOOperations {
 	public static final int CHAR_BUFFER_LENGTH = 1024;
 
 	public static long copy(InputStream inputStream, OutputStream outputStream, long maximumLength) throws IOException {
-		if (inputStream == null)
+		if (inputStream == null) {
 			throw new NullArgumentException("inputStream");
+		}
 		
-		if (outputStream == null)
+		if (outputStream == null) {
 			throw new NullArgumentException("outputStream");
+		}
 		
 		byte[] buffer = new byte[BYTE_BUFFER_LENGTH];
 		int count;
@@ -28,17 +30,20 @@ public final class IOOperations {
 
 		while ((count = inputStream.read(buffer)) != -1) {
 			totalCount += count;
-			if ((maximumLength != -1) && (totalCount > maximumLength))
+			if ((maximumLength != -1) && (totalCount > maximumLength)) {
 				return -1;
+			}
 			
 			outputStream.write(buffer, 0, count);
 		}
+		
 		return totalCount;
 	}
 	
 	public static byte[] readAllBytes(InputStream inputStream) throws IOException {
-		if (inputStream == null)
+		if (inputStream == null) {
 			throw new NullArgumentException("inputStream");
+		}
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		
@@ -48,57 +53,63 @@ public final class IOOperations {
 		finally {
 			inputStream.close();
 		}
+		
 		return outputStream.toByteArray();
 	}
 	
 	public static void writeAllBytes(OutputStream outputStream, byte[] data) throws IOException {
-		if (outputStream == null)
+		if (outputStream == null) {
 			throw new NullArgumentException("outputStream");
+		}
 		
-		if (data == null)
+		if (data == null) {
 			throw new NullArgumentException("data");
+		}
 		
 		try {
 			copy(new ByteArrayInputStream(data), outputStream, -1);
-		}
-		finally {
+		} finally {
 			outputStream.close();
 		}
 	}
 	
 	public static String readAllText(Reader reader) throws IOException {
-		if (reader == null)
+		if (reader == null) {
 			throw new NullArgumentException("reader");
+		}
 		
 		StringBuffer sb = new StringBuffer();
 		char[] buffer = new char[CHAR_BUFFER_LENGTH];
 		int count;		
 		
 		try {
-			while ((count = reader.read(buffer)) != -1)
+			while ((count = reader.read(buffer)) != -1) {
 				sb.append(buffer, 0, count);
-		}
-		finally {
+			}
+			
+		} finally {
 			reader.close();
 		}
+		
 		return sb.toString();
 	}
 	
 	public static void writeAllText(Writer writer, String text) throws IOException {
-		if (writer == null)
+		if (writer == null) {
 			throw new NullArgumentException("writer");
+		}
 		
-		if (text == null)
+		if (text == null) {
 			throw new NullArgumentException("text");
+		}
 		
 		try {
 			writer.write(text);
-		}
-		finally {
+		} finally {
 			writer.close();
 		}
 	}
 	
-	private IOOperations() {
-	}
+	private IOOperations() {}
+	
 }

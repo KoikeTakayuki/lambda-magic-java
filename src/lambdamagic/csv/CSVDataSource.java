@@ -20,12 +20,14 @@ public class CSVDataSource implements DataSource<List<String>> {
 	private CSVParser parser;
 
 	public CSVDataSource(String filePath, String encoding) throws IOException {
-		if (filePath == null)
+		if (filePath == null) {
 			throw new NullArgumentException("filePath");
+		}
 		
-		if (encoding == null)
+		if (encoding == null) {
 			throw new NullArgumentException("encoding");
-
+		}
+		
 		Reader reader = new BufferedReader(
 							new InputStreamReader(
 								new FileInputStream(new File(filePath)), encoding));
@@ -42,9 +44,10 @@ public class CSVDataSource implements DataSource<List<String>> {
 	}
 	
 	public static CSVDataSource fromString(String string) throws IOException {
-		if (string == null)
+		if (string == null) {
 			throw new NullArgumentException("string");
-
+		}
+		
 		return new CSVDataSource(new StringReader(string));
 	}
 
@@ -53,8 +56,9 @@ public class CSVDataSource implements DataSource<List<String>> {
 
 		Either<List<String>, ? extends Exception> resultOrException = parser.parse();
 
-		if (resultOrException.isRight())
+		if (resultOrException.isRight()) {
 			return Optional.empty();
+		}
 
 		return Optional.of(resultOrException.getLeft());
 	}
@@ -63,4 +67,5 @@ public class CSVDataSource implements DataSource<List<String>> {
 	public void close() throws IOException {
 		parser.close();
 	}
+	
 }

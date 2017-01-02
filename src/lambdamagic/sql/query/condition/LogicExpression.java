@@ -13,9 +13,10 @@ public abstract class LogicExpression implements SQLCondition {
 		}
 		
 		AndExpression(SQLCondition... operands) {
-			if (operands == null)
+			if (operands == null) {
 				throw new NullArgumentException("operands");
-				
+			}
+			
 			this.operands = operands;
 		}
 
@@ -23,6 +24,7 @@ public abstract class LogicExpression implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class OrExpression extends LogicExpression {
@@ -34,9 +36,10 @@ public abstract class LogicExpression implements SQLCondition {
 		}
 		
 		OrExpression(SQLCondition... operands) {
-			if (operands == null)
+			if (operands == null) {
 				throw new NullArgumentException("operands");
-				
+			}
+			
 			this.operands = operands;
 		}
 
@@ -44,6 +47,7 @@ public abstract class LogicExpression implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 	public static class NotExpression extends LogicExpression {
@@ -55,9 +59,10 @@ public abstract class LogicExpression implements SQLCondition {
 		}
 		
 		NotExpression(SQLCondition operand) {
-			if (operand == null)
+			if (operand == null) {
 				throw new NullArgumentException("operand");
-				
+			}
+			
 			this.operand = operand;
 		}
 
@@ -65,6 +70,7 @@ public abstract class LogicExpression implements SQLCondition {
 		public StringBuffer accept(SQLConditionVisitor visitor) {
 			return visitor.visit(this);
 		}
+		
 	}
 	
 }

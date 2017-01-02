@@ -13,6 +13,14 @@ public final class FileEventLog implements EventLog {
 	private long maximumFileSize;
 	private File file;
 	
+	public FileEventLog(String filePath, long maximumFileSize) {
+		setFilePath(filePath);
+		setMaximumFileSize(maximumFileSize);
+		
+		this.file = new File(filePath);
+	}
+	
+	
 	public String getFilePath() {
 		return filePath;
 	}
@@ -27,13 +35,6 @@ public final class FileEventLog implements EventLog {
 
 	private void setMaximumFileSize(long maximumFileSize) {
 		this.maximumFileSize = maximumFileSize;
-	}
-	
-	public FileEventLog(String filePath, long maximumFileSize) {
-		setFilePath(filePath);
-		setMaximumFileSize(maximumFileSize);
-		
-		this.file = new File(filePath);
 	}
 	
 	@Override

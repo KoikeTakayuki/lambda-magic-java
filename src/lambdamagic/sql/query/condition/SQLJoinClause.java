@@ -43,4 +43,5 @@ public class SQLJoinClause {
 	public SQLCondition getCondition() {
 		return condition;
 	}
+	
 }

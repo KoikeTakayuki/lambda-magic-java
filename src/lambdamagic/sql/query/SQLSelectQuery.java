@@ -109,4 +109,5 @@ public class SQLSelectQuery implements SQLConditionalQuery {
 	public boolean isCount() {
 		return count;
 	}
+	
 }

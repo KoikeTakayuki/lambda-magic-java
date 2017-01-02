@@ -5,67 +5,14 @@ import java.util.function.Function;
 import lambdamagic.NullArgumentException;
 
 public abstract class Either<L, R> {
-
-	protected L left;
-	protected R right;
-
-	public abstract boolean isLeft();
-
-	public boolean isRight() {
-		return !isLeft();
-	}
-
-	public L getLeft() {
-		if (isRight())
-			throw new UnsupportedOperationException();
-			
-		return left;
-	}
-
-	public R getRight() {
-		if (isLeft())
-			throw new UnsupportedOperationException();
-
-		return right;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> Either<T, R> applyToLeft(Function<L, T> function) {
-		if (function == null)
-			throw new NullArgumentException("function");
-		
-		if (isLeft())
-			return left(function.apply(left));
-		
-		return (Either<T, R>)this;
-	}
 	
-	@SuppressWarnings("unchecked")
-	public <T> Either<L, T> applyToRight(Function<R, T> function) {
-		if (function == null)
-			throw new NullArgumentException("function");
-		
-		if (isRight())
-			return right(function.apply(right));
-
-		return (Either<L, T>)this;
-	}
-
-    public static <L, R> Either<L, R> right(R rightValue) {
-        return new Right<L, R>(rightValue);
-    }
-    
-    public static <L, R> Either<L, R> left(L leftValue) {
-        return new Left<L, R>(leftValue);
-    }
-    
-
     private final static class Left<L, R> extends Either<L, R> {
 
     	private Left(L leftValue) {
-    		if (leftValue == null)
+    		if (leftValue == null) {
     			throw new NullArgumentException("leftValue");
-
+    		}
+    		
     		this.left = leftValue;
     	}
 
@@ -83,9 +30,10 @@ public abstract class Either<L, R> {
     private final static class Right<L, R> extends Either<L, R> {
     		
     	private Right(R rightValue) {
-    		if (rightValue == null)
+    		if (rightValue == null) {
     			throw new NullArgumentException("rightValue");
-    
+    		}
+    		
     		this.right = rightValue;
     	}
 
@@ -99,6 +47,64 @@ public abstract class Either<L, R> {
 			return true;
 		}
     }
+    
+    public static <L, R> Either<L, R> right(R rightValue) {
+        return new Right<L, R>(rightValue);
+    }
+    
+    public static <L, R> Either<L, R> left(L leftValue) {
+        return new Left<L, R>(leftValue);
+    }
 
+	protected L left;
+	protected R right;
 
+	public abstract boolean isLeft();
+
+	public boolean isRight() {
+		return !isLeft();
+	}
+
+	public L getLeft() {
+		if (isRight()) {
+			throw new UnsupportedOperationException("try to get left element, but actual instance is right");
+		}
+			
+		return left;
+	}
+
+	public R getRight() {
+		if (isLeft()) {
+			throw new UnsupportedOperationException("try to get right element, but actual instance is left");
+		}
+
+		return right;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Either<T, R> applyToLeft(Function<L, T> function) {
+		if (function == null) {
+			throw new NullArgumentException("function");
+		}
+		
+		if (isLeft()) {
+			return left(function.apply(left));
+		}
+		
+		return (Either<T, R>)this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> Either<L, T> applyToRight(Function<R, T> function) {
+		if (function == null) {
+			throw new NullArgumentException("function");
+		}
+		
+		if (isRight()) {
+			return right(function.apply(right));
+		}
+		
+		return (Either<L, T>)this;
+	}
+    
 }

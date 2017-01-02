@@ -19,4 +19,5 @@ public abstract class Event<T extends EventListener> {
 	
 	public abstract Type<T> getType();
 	public abstract void dispatch(T listener);
+	
 }

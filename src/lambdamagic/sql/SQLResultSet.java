@@ -11,7 +11,6 @@ public final class SQLResultSet implements DataSource<SQLResult> {
 	
 	@FunctionalInterface
 	public static interface SQLResultSetConstructor {
-
 		ResultSet create() throws SQLException;
 	}
 	

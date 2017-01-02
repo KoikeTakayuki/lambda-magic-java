@@ -44,4 +44,5 @@ public final class MySQLConnection extends SQLConnection {
 	public MySQLConnection(String url, String userName, String password) throws SQLException {
 		this(createDataSource(url, userName, password));
 	}
+	
 }

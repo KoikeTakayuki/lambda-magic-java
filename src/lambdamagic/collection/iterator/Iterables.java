@@ -11,11 +11,11 @@ import lambdamagic.NullArgumentException;
 
 public final class Iterables {
 
-	
 	@SuppressWarnings("unchecked")
 	public static <T> Iterable<T> asIterable(final T... elements) {
-		if (elements == null)
+		if (elements == null) {
 			throw new NullArgumentException("elements");
+		}
 		
 		return new Iterable<T>() {
 
@@ -27,11 +27,13 @@ public final class Iterables {
 	}
 	
 	public static <T, S> Iterable<S> map(Iterable<T> elements, Function<T, S> function) {
-		if (elements == null)
+		if (elements == null) {
 			throw new NullArgumentException("elements");
+		}
 		
-		if (function == null)
+		if (function == null) {
 			throw new NullArgumentException("function");
+		}
 		
 		List<S> result = new ArrayList<S>();
 
@@ -43,31 +45,37 @@ public final class Iterables {
 	}
 	
 	public static <T> Iterable<T> filter(Iterable<T> elements, Predicate<T> predicate) {
-		if (elements == null)
+		if (elements == null) {
 			throw new NullArgumentException("elements");
+		}
 		
-		if (predicate == null)
+		if (predicate == null) {
 			throw new NullArgumentException("predicate");
+		}
 		
 		List<T> result = new ArrayList<T>();
 
 		for (T e : elements) {
-			if (predicate.test(e))
+			if (predicate.test(e)) {
 				result.add(e);
+			}
 		}
 		
 		return result;
 	}
 	
 	public static <T, S> S foldLeft(Iterable<T> elements, S seed, BiFunction<S, T, S> foldingFunction) {
-		if (elements == null)
+		if (elements == null) {
 			throw new NullArgumentException("elements");
+		}
 		
-		if (seed == null)
+		if (seed == null) {
 			throw new NullArgumentException("seed");
+		}
 		
-		if (foldingFunction == null)
+		if (foldingFunction == null) {
 			throw new NullArgumentException("foldingFunction");
+		}
 		
 		S result = seed;
 
@@ -79,20 +87,22 @@ public final class Iterables {
 	}
 	
 	public static <T> T reduce(Iterable<T> elements, BiFunction<T, T, T> reducingFunction) {
-		if (elements == null)
+		if (elements == null) {
 			throw new NullArgumentException("elements");
+		}
 		
-		if (reducingFunction == null)
+		if (reducingFunction == null) {
 			throw new NullArgumentException("reducingFunction");
-
+		}
 
 		T result = null;
 		
 		for (T e : elements) {
-			if (result == null)
+			if (result == null) {
 				result = e;
-			else
+			} else {
 				result = reducingFunction.apply(result, e);
+			}
 		}
 
 		return result;
@@ -100,18 +110,21 @@ public final class Iterables {
 
 	public static <I, O> Function<Iterable<I>, Iterable<O>> lift(Function<I, O> function) {
 		
-		if (function == null)
+		if (function == null) {
 			throw new NullArgumentException("function");
+		}
 
-		return (Iterable<I> iterable) -> {
+		return iterable -> {
 			List<O> result = new ArrayList<O>();
 
-			for (I e : iterable)
+			for (I e : iterable) {
 				result.add(function.apply(e));
+			}
 
 			return result;
 		};
 	}
 	
 	private Iterables() {}
+	
 }

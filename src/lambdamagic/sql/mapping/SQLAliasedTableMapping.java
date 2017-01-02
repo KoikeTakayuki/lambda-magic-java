@@ -16,29 +16,29 @@ public final class SQLAliasedTableMapping<T extends SQLTableMapping> implements 
 	private String alias;
 	private T baseObject;
 	
+	public SQLAliasedTableMapping(String alias, T baseObject) {
+		if (baseObject == null) {
+			throw new NullArgumentException("baseObject");
+		}
+
+		setAlias(alias);
+		this.baseObject = baseObject;
+	}
+	
 	public String getAlias() {
 		return alias;
 	}
+	
 	private void setAlias(String alias) {
-		if (alias == null)
+		if (alias == null) {
 			throw new NullArgumentException("alias");
+		}
 		
 		this.alias = alias + (uidCounter = (uidCounter + 1) % 1000);
 	}
 	
 	public T getBaseObject() {
 		return baseObject;
-	}
-	private void setBaseObject(T baseObject) {
-		if (baseObject == null)
-			throw new NullArgumentException("baseObject");
-		
-		this.baseObject = baseObject;
-	}
-	
-	public SQLAliasedTableMapping(String alias, T baseObject) {
-		setAlias(alias);
-		setBaseObject(baseObject);
 	}
 
 	@Override
@@ -63,3 +63,4 @@ public final class SQLAliasedTableMapping<T extends SQLTableMapping> implements 
 		}).collect(Collectors.toList());
 	}
 }
+

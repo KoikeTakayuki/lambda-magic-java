@@ -21,6 +21,21 @@ public final class HttpResponse implements Closeable {
 	private InputStream inputStream;
 	private String text;
 	
+	public HttpResponse(int statusCode, String statusMessage, Map<String, String> headerFields, InputStream inputStream) {
+		if (inputStream == null) {
+			throw new NullArgumentException("inputStream");
+		}
+		
+		if (headerFields == null) {
+			throw new NullArgumentException("headerFields");
+		}
+		
+		this.statusCode = statusCode;
+		this.statusMessage = statusMessage;
+		this.headerFields = headerFields;
+		this.inputStream = inputStream;
+	}
+	
 	public int getStatusCode() {
 		return statusCode;
 	}
@@ -35,8 +50,9 @@ public final class HttpResponse implements Closeable {
 	
 	
 	public InputStream getInputStream() {
-		if (text != null)
+		if (text != null) {
 			throw new IllegalStateException("input stream has already been read by \"getText\" before invoking \"getInputStream\"");
+		}
 		
 		return inputStream;
 	}
@@ -57,22 +73,10 @@ public final class HttpResponse implements Closeable {
 	public String getText() {
 		return getText(DEFAULT_ENCODING);
 	}
-	
-	public HttpResponse(int statusCode, String statusMessage, Map<String, String> headerFields, InputStream inputStream) {
-		if (inputStream == null)
-			throw new NullArgumentException("inputStream");
-		
-		if (headerFields == null)
-			throw new NullArgumentException("headerFields");
-		
-		this.statusCode = statusCode;
-		this.statusMessage = statusMessage;
-		this.headerFields = headerFields;
-		this.inputStream = inputStream;
-	}
 
 	@Override
 	public void close() throws IOException {
 		getInputStream().close();
 	}
+	
 }

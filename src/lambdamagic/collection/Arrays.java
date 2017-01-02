@@ -12,6 +12,6 @@ public final class Arrays {
 	public static final String[] EMPTY_STRING = new String[0];
 	public static final Object[] EMPTY_OBJECT = new Object[0];
 	
-	private Arrays() {
-	}
+	private Arrays() {}
+	
 }

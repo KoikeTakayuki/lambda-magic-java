@@ -10,6 +10,24 @@ public class TextLocation {
 	private TextPosition startPosition;
 	private TextPosition endPosition;
 	
+	public TextLocation(String sourceName, TextPosition startPosition, TextPosition endPosition) {
+		if (sourceName == null) {
+			throw new NullArgumentException("sourceName");
+		}
+		
+		if (startPosition == null) {
+			throw new NullArgumentException("startPosition");
+		}
+		
+		if (endPosition == null) {
+			throw new NullArgumentException("endPosition");
+		}
+		
+		this.sourceName = sourceName;
+		this.startPosition = startPosition;
+		this.endPosition = endPosition;
+	}
+	
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -21,26 +39,12 @@ public class TextLocation {
 	public TextPosition getEndPosition() {
 		return endPosition;
 	}
-
-	public TextLocation(String sourceName, TextPosition startPosition, TextPosition endPosition) {
-		if (sourceName == null)
-			throw new NullArgumentException("sourceName");
-		
-		if (startPosition == null)
-			throw new NullArgumentException("startPosition");
-		
-		if (endPosition == null)
-			throw new NullArgumentException("endPosition");
-		
-		this.sourceName = sourceName;
-		this.startPosition = startPosition;
-		this.endPosition = endPosition;
-	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if ((obj == null) || (obj.getClass() != TextLocation.class))
+		if ((obj == null) || (obj.getClass() != TextLocation.class)) {
 			return false;
+		}
 		
 		TextLocation other = (TextLocation)obj;
 		return sourceName.equals(other.sourceName) &&
@@ -54,4 +58,5 @@ public class TextLocation {
 			? "[" + sourceName + ", " + startPosition + "]"
 			: "[" + sourceName + ", " + startPosition + ", " + endPosition + "]";
 	}
+	
 }

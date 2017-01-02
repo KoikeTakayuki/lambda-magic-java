@@ -20,16 +20,16 @@ public final class HttpClient {
 	private HttpCookie lastCookie;
 	private boolean forwardCookies;
 	
-	public HttpCookie getLastCookie() {
-		return lastCookie;
-	}
-
 	public HttpClient(boolean forwardCookies) {
 		this.forwardCookies = forwardCookies;
 	}
 	
 	public HttpClient() {
 		this(true);
+	}
+	
+	public HttpCookie getLastCookie() {
+		return lastCookie;
 	}
 
 	public HttpResponse get(String urlString) throws MalformedURLException, IOException {
@@ -61,8 +61,9 @@ public final class HttpClient {
 	}
 	
 	private HttpResponse sendRequest(HttpRequest request) throws MalformedURLException, IOException {
-		if (request == null)
+		if (request == null) {
 			throw new NullArgumentException("request");
+		}
 		
 		HttpURLConnection connection = (HttpURLConnection)new URL(request.getUrlString()).openConnection();
 		
@@ -108,7 +109,9 @@ public final class HttpClient {
 		}
 
 		return createResponse(connection.getResponseCode(), connection.getResponseMessage(),
-				Collections.unmodifiableMap(responseHeaderFields),
-				(errorStream != null) ? errorStream : connection.getInputStream());
+					Collections.unmodifiableMap(responseHeaderFields),
+					(errorStream != null) ? errorStream : connection.getInputStream());
+		
 	}
+	
 }

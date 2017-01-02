@@ -9,14 +9,16 @@ public enum HttpRestMessageFormat {
 	
 	private String mimeType;
 	
+	private HttpRestMessageFormat(String mimeType) {
+		if (mimeType == null) {
+			throw new NullArgumentException("mimeType");
+		}
+		
+		this.mimeType = mimeType;
+	}
+	
 	public String getMimeType() {
 		return mimeType;
 	}
 	
-	private HttpRestMessageFormat(String mimeType) {
-		if (mimeType == null)
-			throw new NullArgumentException("mimeType");
-		
-		this.mimeType = mimeType;
-	}
 }

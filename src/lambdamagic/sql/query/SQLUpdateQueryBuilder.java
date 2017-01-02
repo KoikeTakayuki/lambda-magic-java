@@ -33,4 +33,5 @@ public class SQLUpdateQueryBuilder extends SQLConditionalQueryBuilder<SQLUpdateQ
 		
 		return new SQLUpdateQuery(tableName, joinClauses, condition, updateValues);
 	}
+	
 }

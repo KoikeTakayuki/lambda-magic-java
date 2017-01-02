@@ -11,4 +11,5 @@ public class JSONFormatException extends DataFormatException {
 	public JSONFormatException(TextPosition position) {
 		super("Invalid JSON format at " + position);
 	}
+	
 }

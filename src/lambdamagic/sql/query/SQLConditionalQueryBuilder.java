@@ -70,4 +70,5 @@ public abstract class SQLConditionalQueryBuilder<T extends SQLQuery, S extends S
 		SQLJoinClause joinClause = new SQLJoinClause(joinType, tableName, joinCondition);
 		joinClauses.add(joinClause);
 	}
+	
 }
