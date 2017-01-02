@@ -106,4 +106,5 @@ public class EitherTest {
 		assertThat(left.isRight(), is(false));
 		assertThat(left.getLeft(), is(1));
 	}
+	
 }

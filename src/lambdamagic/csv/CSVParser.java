@@ -2,18 +2,29 @@ package lambdamagic.csv;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.data.functional.Either;
 import lambdamagic.io.EndOfStreamException;
 import lambdamagic.parsing.ParserBase;
+import lambdamagic.text.Strings;
 
 public class CSVParser extends ParserBase<List<String>> {
 
 	public CSVParser(Reader reader) throws IOException {
 		super(reader);
 		ignoreBOM();
+	}
+	
+	public static CSVParser fromString(String string) throws IOException {
+		if (string == null) {
+			throw new NullArgumentException("string");
+		}
+		
+		return new CSVParser(new StringReader(string));
 	}
 
 	@Override
@@ -35,6 +46,10 @@ public class CSVParser extends ParserBase<List<String>> {
 			//empty row
 			if (isEndOfLine()) {
 				nextCharacter();
+				return Either.left(result);
+			}
+			
+			if (isEndOfStream()) {
 				return Either.left(result);
 			}
 
@@ -70,6 +85,7 @@ public class CSVParser extends ParserBase<List<String>> {
 				skipWhitespacesUntilNewline();
 
 				if (isEndOfLine()) {
+					result.add(Strings.EMPTY_STRING);
 					nextCharacter();
 					break;
 				}
@@ -91,10 +107,11 @@ public class CSVParser extends ParserBase<List<String>> {
 	}
 
 	public Either<String, Exception> parseCSVValue() {
-		if (getCharacter() == CSVSpecialCharacter.VALUE_DELIMITER_CHAR)
+		if (getCharacter() == CSVSpecialCharacter.VALUE_DELIMITER_CHAR) {
 			return parseCSVString();
+		}
 
-		return parseUntil(CSVSpecialCharacter.DEFAULT_VALUE_SEPARATORS);
+		return parseUntil(CSVSpecialCharacter.DEFAULT_VALUE_SEPARATORS).applyToLeft(s -> s.trim());
 	}
 
 	private Either<String, Exception> parseCSVString() {
@@ -106,7 +123,7 @@ public class CSVParser extends ParserBase<List<String>> {
 			while (true) {
 
 				if (isEndOfStream()) {
-					return Either.right(new EndOfStreamException());
+					return Either.right(new CSVFormatException("try to read past the end of stream while reading CSV string"));
 				}
 				
 				if (getCharacter() == CSVSpecialCharacter.VALUE_ESCAPE_CHAR) {

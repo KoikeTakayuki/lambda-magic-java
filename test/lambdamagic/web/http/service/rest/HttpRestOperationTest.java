@@ -1,6 +1,7 @@
 package lambdamagic.web.http.service.rest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

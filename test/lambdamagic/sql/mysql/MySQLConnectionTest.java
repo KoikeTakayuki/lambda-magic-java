@@ -1,9 +1,5 @@
 package lambdamagic.sql.mysql;
 
-import static org.junit.Assert.*;
-
-import java.sql.SQLException;
-
 import org.junit.Test;
 
 import lambdamagic.NullArgumentException;

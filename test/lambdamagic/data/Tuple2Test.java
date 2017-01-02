@@ -1,7 +1,7 @@
 package lambdamagic.data;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -31,4 +31,5 @@ public class Tuple2Test {
 		Tuple2<Integer, Integer> t = new Tuple2<Integer, Integer>(1, 2);
 		assertThat(t.getSecondValue(), is(2));
 	}
+	
 }

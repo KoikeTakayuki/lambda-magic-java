@@ -18,6 +18,10 @@ import lambdamagic.text.Encodings;
 public class CSVDataSource implements DataSource<List<String>> {
 
 	private CSVParser parser;
+	
+	public CSVDataSource(Reader reader) throws IOException {
+		parser = new CSVParser(reader);
+	}
 
 	public CSVDataSource(String filePath, String encoding) throws IOException {
 		if (filePath == null) {
@@ -37,10 +41,6 @@ public class CSVDataSource implements DataSource<List<String>> {
 
 	public CSVDataSource(String filePath) throws IOException {
 		this(filePath, Encodings.UTF_8);
-	}
-	
-	public CSVDataSource(Reader reader) throws IOException {
-		parser = new CSVParser(reader);
 	}
 	
 	public static CSVDataSource fromString(String string) throws IOException {

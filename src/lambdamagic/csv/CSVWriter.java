@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
+import lambdamagic.NullArgumentException;
 import lambdamagic.pipeline.DataProcessor;
 import lambdamagic.text.Characters;
 import lambdamagic.text.Encodings;
@@ -17,11 +18,27 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 	private static final String VALUE_DELIMITER_ESCAPE_STRING = "\"\"";
 
 	private Writer writer;
+	
+	public CSVWriter(Writer writer) {
+		if (writer == null) {
+			throw new NullArgumentException("writer");
+		}
+		
+		this.writer = writer;
+	}
 
 	public CSVWriter(String filePath, String encoding) throws IOException {
-		writer = new BufferedWriter(
+		if (filePath == null) {
+			throw new NullArgumentException("filePath");
+		}
+		
+		if (encoding == null) {
+			throw new NullArgumentException("encoding");
+		}
+		
+		this.writer = new BufferedWriter(
 						new OutputStreamWriter(
-								new FileOutputStream(new File(filePath)), encoding));
+							new FileOutputStream(new File(filePath)), encoding));
 	}
 
 	public CSVWriter(String filePath) throws IOException {
@@ -29,12 +46,16 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 	}
 
 	@Override
-	public List<String> process(List<String> data) {
+	public List<String> process(List<String> data) {		
 		writeRow(data);
 		return data;
 	}
 
 	public void writeRow(List<String> data) {
+		if (data == null) {
+			throw new NullArgumentException("data");
+		}
+		
 		try {
 			writer.write(toCSVString(data));
 			writer.flush();

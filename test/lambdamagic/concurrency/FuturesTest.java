@@ -57,7 +57,7 @@ public class FuturesTest {
 		Futures.all(null);
 	}
 	
-	@Test(timeout=4000)
+	@Test(timeout=5000)
 	public void all_returnAllTheResultOfGivenTasks() {
 		Futures.all(
 			Arrays.asList(
@@ -141,10 +141,11 @@ public class FuturesTest {
 	}
 	
 	@Test
-	public void join_joinTwoTasksIntoOne() {
+	public void join_joinTwoTasksIntoOneTuple() {
 		Futures.join(Futures.runAsync(() -> 1), Futures.runAsync(() -> 2)).thenAccept(tuple -> {
 			assertThat(tuple.getFirstValue(), is(1));
 			assertThat(tuple.getSecondValue(), is(2));
 		});
 	}
+	
 }

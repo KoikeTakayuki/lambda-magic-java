@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import lambdamagic.pipeline.Pipeline;
 import lambdamagic.sql.SQLDatabase;
@@ -13,7 +12,6 @@ import lambdamagic.sql.SQLTable.Column;
 import lambdamagic.sql.mysql.MySQLConnection;
 import lambdamagic.sql.mysql.MySQLConstraint;
 import lambdamagic.sql.mysql.MySQLType;
-import lambdamagic.sql.query.SQLSelectQuery;
 import lambdamagic.sql.query.SQLSelectQueryBuilder;
 import lambdamagic.sql.query.condition.SQLCondition;
 

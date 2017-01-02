@@ -11,4 +11,8 @@ public class CSVFormatException extends DataFormatException {
 		super("Invalid CSV format at " + position);
 	}
 	
+	public CSVFormatException(String message) {
+		super(message);
+	}
+	
 }
