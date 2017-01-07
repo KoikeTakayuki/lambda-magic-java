@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lambdamagic.pipeline.Pipeline;
-import lambdamagic.sql.SQLDatabase;
-import lambdamagic.sql.SQLResultSet;
-import lambdamagic.sql.SQLTable;
-import lambdamagic.sql.SQLTable.Column;
-import lambdamagic.sql.mysql.MySQLConnection;
-import lambdamagic.sql.mysql.MySQLConstraint;
-import lambdamagic.sql.mysql.MySQLType;
-import lambdamagic.sql.query.SQLSelectQueryBuilder;
-import lambdamagic.sql.query.condition.SQLCondition;
+import jp.lambdamagic.pipeline.Pipeline;
+import jp.lambdamagic.sql.SQLDatabase;
+import jp.lambdamagic.sql.SQLResultSet;
+import jp.lambdamagic.sql.SQLTable;
+import jp.lambdamagic.sql.SQLTable.Column;
+import jp.lambdamagic.sql.mysql.MySQLConnection;
+import jp.lambdamagic.sql.mysql.MySQLConstraint;
+import jp.lambdamagic.sql.mysql.MySQLType;
+import jp.lambdamagic.sql.query.SQLSelectQueryBuilder;
+import jp.lambdamagic.sql.query.condition.SQLCondition;
 
 public class Main {
 	
@@ -53,9 +53,9 @@ public class Main {
 			SQLResultSet select = connection.select(SQLSelectQueryBuilder.from("user").where(SQLCondition.GREATER_THAN("id", 3)).build());
 			
 			Pipeline.from(select)
-					.to(r -> r.get("id").get())
+					.map(r -> r.get("id").get())
 					.print()
-					.execute();
+					.run();
 		}
 		
 	}

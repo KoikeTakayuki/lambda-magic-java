@@ -1,7 +1,7 @@
-import lambdamagic.web.http.HttpMethod;
-import lambdamagic.web.http.service.rest.HttpRestOperation;
-import lambdamagic.web.http.service.rest.HttpRestParameter;
-import lambdamagic.web.http.service.rest.HttpRestService;
+import jp.lambdamagic.web.http.HttpMethod;
+import jp.lambdamagic.web.http.service.rest.HttpRestOperation;
+import jp.lambdamagic.web.http.service.rest.HttpRestParameter;
+import jp.lambdamagic.web.http.service.rest.HttpRestService;
 
 public class RestAPISample extends HttpRestService {
 
