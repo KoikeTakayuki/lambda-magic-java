@@ -14,13 +14,13 @@ public class InterleavedDataSourceTest {
 
 	@Test(expected=NullArgumentException.class)
 	public void InterleavedDataSource_mustThrowNullArgumentExceptionWhenNullDataSourceIsGiven() throws Exception {
-		InterleavedDataSource<String> interleavedDataSource = new InterleavedDataSource<String>((DataSource<String>[])null);
+		InterleavedDataSource<?> interleavedDataSource = new InterleavedDataSource<>((DataSource<String>[])null);
 		interleavedDataSource.close();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void readData_provideDataSourceElementInParallelOrder() throws Exception {
+	public void readData_provideWrappedDataSourceElementInParallelOrder() throws Exception {
 		DataSource<Integer> source1 = DataSource.asDataSource(1, 2, 3, 4);
 		DataSource<Integer> source2 = DataSource.asDataSource(5, 6);
 		DataSource<Integer> source3 = DataSource.asDataSource(7, 8, 9);
@@ -66,6 +66,15 @@ public class InterleavedDataSourceTest {
 		data = interleavedDataSource.readData();
 		assertThat(data.isPresent(), is(false));
 		
+		interleavedDataSource.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void readData_provideEmptyWhenWrappedDataSourceProvideEmpty() throws Exception {
+		InterleavedDataSource<?> interleavedDataSource = new InterleavedDataSource<>(() -> Optional.empty());
+		Optional<?> readData = interleavedDataSource.readData();
+		assertThat(readData.isPresent(), is(false));
 		interleavedDataSource.close();
 	}
 

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.BaseStream;
 
+import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.collection.iterator.Iterables;
 
 @FunctionalInterface
@@ -23,7 +24,11 @@ public interface DataSource<T> extends Supplier<T>, AutoCloseable {
 		return asDataSource(Iterables.asIterable(elements));
 	}
 
-	static <T> DataSource<T> asDataSource(Iterable<T> iterable) {
+	public static <T> DataSource<T> asDataSource(Iterable<T> iterable) {
+		if (iterable == null) {
+			throw new NullArgumentException("iterable");
+		}
+		
 		Iterator<T> it = iterable.iterator();
 
 		return () -> {
@@ -35,7 +40,11 @@ public interface DataSource<T> extends Supplier<T>, AutoCloseable {
 		};
 	}
 
-	static <T> DataSource<T> asDataSource(BaseStream<T, ?> stream) {
+	public static <T> DataSource<T> asDataSource(BaseStream<T, ?> stream) {
+		if (stream == null) {
+			throw new NullArgumentException("stream");
+		}
+		
 		Iterator<T> it = stream.iterator();
 
 		return () -> {

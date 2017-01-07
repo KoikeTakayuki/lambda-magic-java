@@ -27,8 +27,8 @@ public class FilteredDataSourceTest {
 	
 	@SuppressWarnings("resource")
 	@Test
-	public void readData_provideDataSourceElementFilteredByPredicate() {
-		FilteredDataSource<Integer> filteredDataSource = new FilteredDataSource<Integer>(DataSource.asDataSource(1, 2, 3, 4, 5), number -> (number % 2 == 1));
+	public void readData_provideWrappedDataSourceElementFilteredByPredicate() {
+		FilteredDataSource<Integer> filteredDataSource = new FilteredDataSource<>(DataSource.asDataSource(1, 2, 3, 4, 5), number -> (number % 2 == 1));
 		
 		Optional<Integer> data = filteredDataSource.readData();
 		assertThat(data.isPresent(), is(true));
@@ -44,6 +44,14 @@ public class FilteredDataSourceTest {
 		
 		data = filteredDataSource.readData();
 		assertThat(data.isPresent(), is(false));
+	}
+	
+	@Test
+	public void readData_provideEmptyWhenWrappedDataSourceProvideEmpty() throws Exception {
+		FilteredDataSource<?> filteredDataSource = new FilteredDataSource<>(() -> Optional.empty(), x -> true);
+		Optional<?> data = filteredDataSource.readData();
+		assertThat(data.isPresent(), is(false));
+		filteredDataSource.close();
 	}
 
 }

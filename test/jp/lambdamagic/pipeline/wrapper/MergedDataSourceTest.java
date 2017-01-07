@@ -15,14 +15,14 @@ public class MergedDataSourceTest {
 	
 	@Test(expected=NullArgumentException.class)
 	public void MergedDataSource_mustThrowNullArgumentExceptionWhenNullDataSourceIsGiven() throws Exception {
-		MergedDataSource<String> mergedDataSource = new MergedDataSource<String>((DataSource<String>[])null);
+		MergedDataSource<?> mergedDataSource = new MergedDataSource<>((DataSource<String>[])null);
 		mergedDataSource.close();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void readData_provideDataSourceElementInSequentialOrder() throws Exception {
-		MergedDataSource<Integer> mergedDataSource = new MergedDataSource<Integer>(DataSource.asDataSource(1, 2), DataSource.asDataSource(3, 4));
+	public void readData_provideWrappedDataSourceElementInSequentialOrder() throws Exception {
+		MergedDataSource<Integer> mergedDataSource = new MergedDataSource<>(DataSource.asDataSource(1, 2), DataSource.asDataSource(3, 4));
 		
 		Optional<Integer> data = mergedDataSource.readData();
 		
@@ -44,6 +44,15 @@ public class MergedDataSourceTest {
 		data = mergedDataSource.readData();
 		assertThat(data.isPresent(), is(false));
 		
+		mergedDataSource.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void readData_provideEmptyWhenWrappedDataSourceProvideEmpty() throws Exception {
+		MergedDataSource<?> mergedDataSource = new MergedDataSource<>(() -> Optional.empty());
+		Optional<?> readData = mergedDataSource.readData();
+		assertThat(readData.isPresent(), is(false));
 		mergedDataSource.close();
 	}
 

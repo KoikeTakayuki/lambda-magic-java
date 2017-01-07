@@ -10,6 +10,39 @@ import java.util.function.Predicate;
 import jp.lambdamagic.NullArgumentException;
 
 public final class Iterables {
+	
+	public static <T> Iterable<T> construct(T first, T[] rest) {
+		return construct(first, asIterable(rest));
+	}
+	
+	public static <T> Iterable<T> construct(T first, Iterable<T> rest) {
+		return new Iterable<T>() {
+			
+			@Override
+			public Iterator<T> iterator() {
+				return new Iterator<T>() {
+					
+					private boolean readFirstElement;
+					private Iterator<T> restIterator = rest.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return !readFirstElement || restIterator.hasNext();
+					}
+
+					@Override
+					public T next() {
+						if (!readFirstElement) {
+							readFirstElement = true;
+							return first;
+						}
+						
+						return restIterator.next();
+					}
+				};
+			}
+		};
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> Iterable<T> asIterable(T... elements) {

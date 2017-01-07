@@ -21,13 +21,13 @@ public class TrimmedDataSourceTest {
 	
 	@Test(expected=InvalidArgumentException.class)
 	public void TrimmedDataSource_mustThrowInvalidArgumentExceptionWhenNegativeTrimCountIsGiven() throws Exception {
-		TrimmedDataSource<Integer> trimmedDataSource = new TrimmedDataSource<Integer>(() -> Optional.of(1), -1);
+		TrimmedDataSource<Integer> trimmedDataSource = new TrimmedDataSource<>(() -> Optional.of(1), -1);
 		trimmedDataSource.close();
 	}
 	
 	@Test
-	public void readData_provideDataSourceElementOnlySpecifiedCount() throws Exception {
-		TrimmedDataSource<Integer> trimmedDataSource = new TrimmedDataSource<Integer>(() -> Optional.of(1), 3);
+	public void readData_provideWrappedDataSourceElementOnlySpecifiedCount() throws Exception {
+		TrimmedDataSource<Integer> trimmedDataSource = new TrimmedDataSource<>(() -> Optional.of(1), 3);
 		
 		Optional<Integer> data = trimmedDataSource.readData();
 		assertThat(data.isPresent(), is(true));
@@ -47,4 +47,11 @@ public class TrimmedDataSourceTest {
 		trimmedDataSource.close();
 	}
 	
+	@Test
+	public void readData_provideEmptyWhenWrappedDataSourceProvideEmpty() throws Exception {
+		TrimmedDataSource<?> trimmedDataSource = new TrimmedDataSource<>(() -> Optional.empty(), 10);
+		Optional<?> readData = trimmedDataSource.readData();
+		assertThat(readData.isPresent(), is(false));
+		trimmedDataSource.close();
+	}
 }

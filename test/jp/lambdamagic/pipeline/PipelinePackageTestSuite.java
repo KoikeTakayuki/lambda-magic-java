@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import jp.lambdamagic.pipeline.wrapper.FilteredDataSourceTest;
 import jp.lambdamagic.pipeline.wrapper.InterleavedDataSourceTest;
 import jp.lambdamagic.pipeline.wrapper.MergedDataSourceTest;
+import jp.lambdamagic.pipeline.wrapper.RepetitiveDataSourceTest;
 import jp.lambdamagic.pipeline.wrapper.TrimmedDataSourceTest;
 import jp.lambdamagic.pipeline.wrapper.ZippedDataSourceTest;
 
@@ -17,6 +18,7 @@ import jp.lambdamagic.pipeline.wrapper.ZippedDataSourceTest;
 		FilteredDataSourceTest.class,
 		InterleavedDataSourceTest.class,
 		MergedDataSourceTest.class,
+		RepetitiveDataSourceTest.class,
 		TrimmedDataSourceTest.class,
 		ZippedDataSourceTest.class
 	})
