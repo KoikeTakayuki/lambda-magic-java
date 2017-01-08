@@ -19,7 +19,7 @@ import jp.lambdamagic.pipeline.Pipeline;
 
 public class CSVDataSourceTest {
 	
-	private String TEST_DATA_FILE_PATH = "test/lambdamagic/csv/test_input.csv";
+	private String TEST_DATA_FILE_PATH = "test/jp/lambdamagic/csv/test_input.csv";
 
 	@SuppressWarnings("resource")
 	@Test(expected=NullArgumentException.class)

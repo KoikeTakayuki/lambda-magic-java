@@ -18,7 +18,7 @@ import jp.lambdamagic.csv.CSVWriter;
 
 public class CSVWriterTest {
 	
-	private String TEST_OUTPUT_FILE_PATH = "test/lambdamagic/csv/test_output.csv";
+	private String TEST_OUTPUT_FILE_PATH = "test/jp/lambdamagic/csv/test_output.csv";
 
 	@SuppressWarnings("resource")
 	@Test(expected=NullArgumentException.class)
@@ -43,7 +43,6 @@ public class CSVWriterTest {
 	public void CSVWriter_mustThrowUnsupportedEncodingExceptionWhenUnsupportedEncodingIsGiven() throws IOException {
 		new CSVWriter(TEST_OUTPUT_FILE_PATH, "unknownEncoding");
 	}
-	
 	
 	@Test
 	public void writeRow_writeStringsToFile() throws IOException {

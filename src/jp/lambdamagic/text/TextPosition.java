@@ -1,10 +1,9 @@
 package jp.lambdamagic.text;
 
+import jp.lambdamagic.InvalidArgumentException;
 
 public final class TextPosition {
 
-	public static final TextPosition NULL = new TextPosition(0, 0);
-	
 	private int lineNumber;
 	private int columnNumber;
 	
@@ -13,6 +12,14 @@ public final class TextPosition {
 	}
 	
 	public TextPosition(int lineNumber, int columnNumber) {
+		if (lineNumber < 1) {
+			throw new InvalidArgumentException("lineNumber", "lineNumber < 1");
+		}
+		
+		if (columnNumber < 0) {
+			throw new InvalidArgumentException("columnNumber", "columnNumber < 0");
+		}
+		
 		this.lineNumber = lineNumber;
 		this.columnNumber = columnNumber;
 	}
@@ -32,8 +39,7 @@ public final class TextPosition {
 		}
 		
 		TextPosition other = (TextPosition)obj;
-		return (lineNumber == other.lineNumber) &&
-			   (columnNumber == other.columnNumber);
+		return (lineNumber == other.lineNumber) && (columnNumber == other.columnNumber);
 	}
 
 	@Override

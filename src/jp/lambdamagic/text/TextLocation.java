@@ -4,8 +4,6 @@ import jp.lambdamagic.NullArgumentException;
 
 public class TextLocation {
 
-	public static final TextLocation NULL = new TextLocation("<Unknown Location>", TextPosition.NULL, TextPosition.NULL);
-	
 	private String sourceName;
 	private TextPosition startPosition;
 	private TextPosition endPosition;
@@ -26,6 +24,10 @@ public class TextLocation {
 		this.sourceName = sourceName;
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
+	}
+	
+	public TextLocation(String sourceName, TextPosition position) {
+		this(sourceName, position, position);
 	}
 	
 	public String getSourceName() {
