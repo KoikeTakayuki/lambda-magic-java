@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.data.functional.Either;
 import jp.lambdamagic.pipeline.DataSource;
 import jp.lambdamagic.text.Encodings;
 
@@ -53,14 +52,12 @@ public class CSVDataSource implements DataSource<List<String>> {
 
 	@Override
 	public Optional<List<String>> readData() {
-
-		Either<List<String>, ? extends Exception> resultOrException = parser.parse();
-
-		if (resultOrException.isRight()) {
+		try {
+			List<String> parseResult = parser.parse();
+			return Optional.of(parseResult);
+		} catch (IOException e) {
 			return Optional.empty();
 		}
-
-		return Optional.of(resultOrException.getLeft());
 	}
 
 	@Override

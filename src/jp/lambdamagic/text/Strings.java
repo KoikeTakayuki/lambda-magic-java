@@ -3,7 +3,6 @@ package jp.lambdamagic.text;
 import java.util.Iterator;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.OutOfRangeArgumentException;
 import jp.lambdamagic.collection.iterator.Iterables;
 
 public final class Strings {
@@ -26,7 +25,7 @@ public final class Strings {
 		Iterator<String> it = strings.iterator();
 
 		if (!it.hasNext()) {
-			return "";
+			return EMPTY_STRING;
 		}
 		
 		StringBuilder sb = new StringBuilder();
@@ -77,7 +76,7 @@ public final class Strings {
 		int endIndex = targetString.indexOf(endString, startIndex);
 
 		if (startIndex == -1 || endIndex == -1) {
-			return Strings.EMPTY_STRING;
+			return EMPTY_STRING;
 		}
 
 		return targetString.substring(startIndex, endIndex);

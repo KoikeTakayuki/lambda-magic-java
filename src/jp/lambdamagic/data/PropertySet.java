@@ -1,12 +1,7 @@
-package jp.lambdamagic.settings;
+package jp.lambdamagic.data;
 
 import java.util.Set;
 
-import jp.lambdamagic.data.Queryable;
-import jp.lambdamagic.data.Settable;
-
 public interface PropertySet<T> extends Queryable<String, T>, Settable<String, T> {
-
 	Set<String> propertyNames();
-	boolean save();
 }

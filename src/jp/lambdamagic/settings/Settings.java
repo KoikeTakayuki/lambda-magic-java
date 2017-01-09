@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import jp.lambdamagic.NullArgumentException;
+import jp.lambdamagic.data.PropertySet;
 
 
 public abstract class Settings implements PropertySet<String> {
@@ -63,11 +64,7 @@ public abstract class Settings implements PropertySet<String> {
 			public void save(OutputStream outputStream) throws IOException {
 				properties.store(outputStream, null);
 			}
-
-			@Override
-			public boolean save() {
-				return true;
-			}
+			
 		};
 	}
 	

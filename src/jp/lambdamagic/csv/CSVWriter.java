@@ -9,11 +9,11 @@ import java.io.Writer;
 import java.util.List;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.pipeline.DataProcessor;
+import jp.lambdamagic.pipeline.DataWriter;
 import jp.lambdamagic.text.Characters;
 import jp.lambdamagic.text.Encodings;
 
-public class CSVWriter implements DataProcessor<List<String>, List<String>> {
+public class CSVWriter implements DataWriter<List<String>> {
 	
 	private static final String VALUE_DELIMITER_ESCAPE_STRING = "\"\"";
 
@@ -46,12 +46,7 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 	}
 
 	@Override
-	public List<String> process(List<String> data) {		
-		writeRow(data);
-		return data;
-	}
-
-	public void writeRow(List<String> data) {
+	public void write(List<String> data) {
 		if (data == null) {
 			throw new NullArgumentException("data");
 		}
@@ -88,24 +83,25 @@ public class CSVWriter implements DataProcessor<List<String>, List<String>> {
 			}
 
 			if (length > i) {
-				sb.append(CSVSpecialCharacter.VALUE_SEPARATOR_CHAR);
+				sb.append(CSVParser.VALUE_SEPARATOR_CHAR);
 			}
 		}
 
-		sb.append(CSVSpecialCharacter.ROW_SEPARATOR_CHAR);
+		sb.append(CSVParser.ROW_SEPARATOR_CHAR);
 		return sb.toString();
 	}
 	
-	private static String escape(String string) {
-		return CSVSpecialCharacter.VALUE_DELIMITER_CHAR
-				+ string.replaceAll(String.valueOf(CSVSpecialCharacter.VALUE_DELIMITER_CHAR), VALUE_DELIMITER_ESCAPE_STRING)
-				+ CSVSpecialCharacter.VALUE_DELIMITER_CHAR;
+	private String escape(String string) {
+		return CSVParser.VALUE_DELIMITER_CHAR
+				+ string.replaceAll(String.valueOf(CSVParser.VALUE_DELIMITER_CHAR), VALUE_DELIMITER_ESCAPE_STRING)
+				+ CSVParser.VALUE_DELIMITER_CHAR;
 	}
 	
-	private static boolean hasSpecialCharacter(String s) {
-		return s.indexOf(CSVSpecialCharacter.VALUE_DELIMITER_CHAR) != -1 ||
-				s.indexOf(CSVSpecialCharacter.VALUE_SEPARATOR_CHAR) != -1 ||
-				s.indexOf(CSVSpecialCharacter.ROW_SEPARATOR_CHAR) != -1 ||
+	private boolean hasSpecialCharacter(String s) {
+		return s.indexOf(CSVParser.VALUE_DELIMITER_CHAR) != -1 ||
+				s.indexOf(CSVParser.VALUE_SEPARATOR_CHAR) != -1 ||
+				s.indexOf(CSVParser.ROW_SEPARATOR_CHAR) != -1 ||
 				s.indexOf(Characters.CARRIAGE_RETURN) != -1;
 	}
+	
 }

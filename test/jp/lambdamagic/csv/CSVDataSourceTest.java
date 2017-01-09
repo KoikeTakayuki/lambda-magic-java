@@ -93,7 +93,6 @@ public class CSVDataSourceTest {
 				.toList();
 		
 		assertThat(list, is(Arrays.asList(6, 4, 0, 4)));
-		
 	}
 	
 }

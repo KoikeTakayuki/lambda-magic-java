@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import jp.lambdamagic.NullArgumentException;
+import jp.lambdamagic.data.PropertySet;
 
 public class InMemoryPropertySet<T> implements PropertySet<T> {
 	
@@ -51,8 +52,4 @@ public class InMemoryPropertySet<T> implements PropertySet<T> {
 		getPropertyMap().put(propertyName, value);
 	}
 
-	@Override
-	public boolean save() {
-		return true;
-	}
 }

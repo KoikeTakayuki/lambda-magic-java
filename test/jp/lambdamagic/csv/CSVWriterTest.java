@@ -45,10 +45,10 @@ public class CSVWriterTest {
 	}
 	
 	@Test
-	public void writeRow_writeStringsToFile() throws IOException {
+	public void write_writeStringsToFile() throws IOException {
 		try(CSVWriter csvWriter = new CSVWriter(TEST_OUTPUT_FILE_PATH)) {
-			csvWriter.writeRow(Arrays.asList("test1", "test2", "test3"));
-			csvWriter.writeRow(Arrays.asList("\"test1\"", "test2", "test3"));
+			csvWriter.write(Arrays.asList("test1", "test2", "test3"));
+			csvWriter.write(Arrays.asList("\"test1\"", "test2", "test3"));
 		}
 
 		try(CSVDataSource csvDataSource = new CSVDataSource(TEST_OUTPUT_FILE_PATH)) {

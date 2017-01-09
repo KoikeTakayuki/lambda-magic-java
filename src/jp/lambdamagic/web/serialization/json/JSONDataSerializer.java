@@ -26,12 +26,12 @@ public class JSONDataSerializer implements DataSerializer {
 
 	@Override
 	public ObjectReader createObjectReader(Reader reader) throws IOException {
-		return new JSONParser(reader);
+		return null;
 	}
 
 	@Override
 	public ObjectWriter createObjectWriter(Writer writer) throws IOException {
-		return new JSONWriter(writer);
+		return null;
 	}
 
 }

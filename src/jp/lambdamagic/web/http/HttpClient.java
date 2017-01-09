@@ -86,12 +86,7 @@ public final class HttpClient {
 		String cookieString = connection.getHeaderField(HttpHeaderField.SET_COOKIE);
 		
 		if (cookieString != null) {
-			HttpCookieParser parser = new HttpCookieParser(cookieString);
-			Either<HttpCookie, HttpCookieFormatException> parseResult = parser.parse();
-			
-			if (parseResult.isLeft()) {
-				lastCookie = parseResult.getLeft();
-			}
+			//TODO
 		}
 
 		InputStream errorStream = connection.getErrorStream();

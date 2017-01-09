@@ -10,11 +10,11 @@ import java.io.StringReader;
 import java.util.Optional;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.data.functional.Either;
+import jp.lambdamagic.json.data.JSONData;
 import jp.lambdamagic.pipeline.DataSource;
 import jp.lambdamagic.text.Encodings;
 
-public class JSONDataSource implements DataSource<Object> {
+public class JSONDataSource implements DataSource<JSONData> {
 
 	private JSONParser parser;
 	
@@ -51,14 +51,17 @@ public class JSONDataSource implements DataSource<Object> {
 	}
 
 	@Override
-	public Optional<Object> readData() {
-		Either<Object, Exception> resultOrException = parser.parse();
-		
-		if (resultOrException.isRight()) {
+	public Optional<JSONData> readData() {
+		try {
+			return Optional.of(parser.parse());
+		} catch (IOException e) {
 			return Optional.empty();
 		}
-		
-		return Optional.of(resultOrException.getLeft());
+	}
+	
+	@Override
+	public void close() throws IOException {
+		parser.close();
 	}
 
 }

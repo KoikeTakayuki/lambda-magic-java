@@ -5,11 +5,17 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface DataProcessor<I, O> extends Function<I, O>, AutoCloseable {
 
-	O process(I input);
+	O process(I input) throws Exception;
 
 	@Override
 	default O apply(I input) {
-		return process(input);
+		try {
+			return process(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	@Override
