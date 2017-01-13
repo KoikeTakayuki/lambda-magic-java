@@ -21,7 +21,7 @@ public abstract class LogicExpression implements SQLCondition {
 		}
 
 		@Override
-		public StringBuffer accept(SQLConditionVisitor visitor) {
+		public StringBuffer accept(SQLConditionVisitor<StringBuffer> visitor) {
 			return visitor.visit(this);
 		}
 		
@@ -44,7 +44,7 @@ public abstract class LogicExpression implements SQLCondition {
 		}
 
 		@Override
-		public StringBuffer accept(SQLConditionVisitor visitor) {
+		public StringBuffer accept(SQLConditionVisitor<StringBuffer> visitor) {
 			return visitor.visit(this);
 		}
 		
@@ -67,7 +67,7 @@ public abstract class LogicExpression implements SQLCondition {
 		}
 
 		@Override
-		public StringBuffer accept(SQLConditionVisitor visitor) {
+		public StringBuffer accept(SQLConditionVisitor<StringBuffer> visitor) {
 			return visitor.visit(this);
 		}
 		

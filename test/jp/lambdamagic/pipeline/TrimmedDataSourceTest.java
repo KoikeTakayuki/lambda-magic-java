@@ -1,4 +1,4 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import jp.lambdamagic.InvalidArgumentException;
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.pipeline.wrapper.TrimmedDataSource;
+import jp.lambdamagic.pipeline.TrimmedDataSource;
 
 public class TrimmedDataSourceTest {
 

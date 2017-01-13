@@ -12,15 +12,14 @@ import jp.lambdamagic.collection.iterator.Iterables;
 import jp.lambdamagic.sql.SQLCommandBuilder;
 import jp.lambdamagic.sql.SQLDatabase;
 import jp.lambdamagic.sql.SQLTable;
-import jp.lambdamagic.sql.SQLType;
 import jp.lambdamagic.sql.SQLTable.Column;
 import jp.lambdamagic.sql.SQLTable.Column.Constraint;
+import jp.lambdamagic.sql.SQLType;
 import jp.lambdamagic.sql.query.SQLConditionalQuery;
 import jp.lambdamagic.sql.query.SQLDeleteQuery;
 import jp.lambdamagic.sql.query.SQLInsertQuery;
 import jp.lambdamagic.sql.query.SQLSelectQuery;
 import jp.lambdamagic.sql.query.SQLUpdateQuery;
-import jp.lambdamagic.sql.query.condition.SQLConditionVisitor;
 import jp.lambdamagic.sql.query.condition.SQLJoinClause;
 import jp.lambdamagic.sql.query.condition.SQLJoinClause.JoinType;
 import jp.lambdamagic.text.Strings;
@@ -28,7 +27,7 @@ import jp.lambdamagic.text.Strings;
 
 public class MySQLCommandBuilder implements SQLCommandBuilder {
 	
-	public SQLConditionVisitor getConditionVisitor() {
+	public MySQLConditionVisitor getConditionVisitor() {
 		return new MySQLConditionVisitor();
 	}
 	

@@ -1,10 +1,9 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import java.util.Optional;
 
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.data.Tuple2;
-import jp.lambdamagic.pipeline.DataSource;
 
 public final class ZippedDataSource<T1, T2> implements DataSource<Tuple2<T1, T2>> {
 	

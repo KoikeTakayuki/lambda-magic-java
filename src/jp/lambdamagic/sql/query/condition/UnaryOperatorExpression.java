@@ -9,7 +9,7 @@ public abstract class UnaryOperatorExpression implements SQLCondition {
 		}
 
 		@Override
-		public StringBuffer accept(SQLConditionVisitor visitor) {
+		public StringBuffer accept(SQLConditionVisitor<StringBuffer> visitor) {
 			return visitor.visit(this);
 		}
 		
@@ -22,7 +22,7 @@ public abstract class UnaryOperatorExpression implements SQLCondition {
 		}
 		
 		@Override
-		public StringBuffer accept(SQLConditionVisitor visitor) {
+		public StringBuffer accept(SQLConditionVisitor<StringBuffer> visitor) {
 			return visitor.visit(this);
 		}
 		

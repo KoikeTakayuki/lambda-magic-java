@@ -1,11 +1,10 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.pipeline.DataSource;
 
 public class RepetitiveDataSource<T> implements DataSource<T> {
 	

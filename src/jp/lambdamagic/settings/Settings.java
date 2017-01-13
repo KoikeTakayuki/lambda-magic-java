@@ -1,7 +1,6 @@
 package jp.lambdamagic.settings;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.data.PropertySet;
-
 
 public class Settings implements PropertySet<String> {
 	

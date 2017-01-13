@@ -11,12 +11,6 @@ import java.util.stream.BaseStream;
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.collection.iterator.Iterables;
 import jp.lambdamagic.data.Tuple2;
-import jp.lambdamagic.pipeline.wrapper.FilteredDataSource;
-import jp.lambdamagic.pipeline.wrapper.InterleavedDataSource;
-import jp.lambdamagic.pipeline.wrapper.MergedDataSource;
-import jp.lambdamagic.pipeline.wrapper.RepetitiveDataSource;
-import jp.lambdamagic.pipeline.wrapper.TrimmedDataSource;
-import jp.lambdamagic.pipeline.wrapper.ZippedDataSource;
 
 public class Pipeline<O> implements DataSource<O>, Runnable {
 
@@ -122,7 +116,7 @@ public class Pipeline<O> implements DataSource<O>, Runnable {
 	}
 	
 	public Pipeline<O> trim(int trimCount) {
-		return from(new TrimmedDataSource<O>(this, trimCount));
+		return from(new TrimmedDataSource<>(this, trimCount));
 	}
 	
 	public Pipeline<O> print() {

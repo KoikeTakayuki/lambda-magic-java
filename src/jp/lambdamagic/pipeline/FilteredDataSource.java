@@ -1,10 +1,9 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.pipeline.DataSource;
 
 public final class FilteredDataSource<T> implements DataSource<T> {
 

@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import jp.lambdamagic.data.Queryable;
 
-
 public class SQLResult implements Queryable<String, Object> {
 
 	private ResultSet resultSet;

@@ -1,4 +1,4 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -8,6 +8,7 @@ import org.junit.Test;
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.data.Tuple2;
 import jp.lambdamagic.pipeline.DataSource;
+import jp.lambdamagic.pipeline.ZippedDataSource;
 
 public class ZippedDataSourceTest {
 

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import jp.lambdamagic.NullArgumentException;
@@ -23,7 +24,8 @@ import jp.lambdamagic.text.Encodings;
 public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 
 	private Writer writer;
-	private boolean writeAsArray;
+	private boolean asArray;
+	private boolean isFirstWriting;
 	
 	public JSONWriter(Writer writer) throws IOException {
 		if (writer == null) {
@@ -31,7 +33,7 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 		}
 		
 		this.writer = writer;
-		writer.write(JSONParser.JSON_ARRAY_START_CHAR);
+		this.isFirstWriting = true;
 	}
 
 	public JSONWriter(String filePath, String encoding) throws IOException {
@@ -43,17 +45,36 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 			throw new NullArgumentException("encoding");
 		}
 		
-		writer = new BufferedWriter(
+		this.writer = new BufferedWriter(
 						new OutputStreamWriter(
 								new FileOutputStream(new File(filePath)), encoding));
+		this.isFirstWriting = true;
 	}
 
 	public JSONWriter(String filePath) throws IOException {
 		this(filePath, Encodings.UTF_8);
 	}
 	
+	public void writeAsArray() throws IOException {
+		if (asArray) {
+			throw new IllegalStateException("JSONWriter writeAsArray property has already been true");
+		}
+		
+		writer.write(JSONParser.JSON_ARRAY_START_CHAR);
+		asArray = true;
+	}
+	
 	@Override
 	public void write(JSONData data) throws Exception {
+		if (isFirstWriting) {
+			isFirstWriting = false;
+		} else {
+			
+			if (asArray) {
+				writer.write(JSONParser.JSON_ARRAY_VALUE_SEPARATOR_CHAR);
+			}
+		}
+		
 		data.accept(this);
 		writer.flush();
 	}
@@ -61,11 +82,22 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	@Override
 	public void visit(JSONObject object) throws Exception {
 		writer.write(JSONParser.JSON_OBJECT_START_CHAR);
+		Iterator<Entry<String, JSONData>> it = object.entrySet().iterator();
 		
-		for (Entry<String, JSONData> entry : object.entrySet()) {
+		if (it.hasNext()) {
+			
+			Entry<String, JSONData> entry = it.next();
 			writeString(entry.getKey());
-			writer.write(JSONParser.JSON_OBJECT_SEPARATOR_CHAR);
+			writer.write(JSONParser.JSON_OBJECT_KEY_VALUE_DELIMITER_CHAR);
 			entry.getValue().accept(this);
+			
+			while (it.hasNext()) {
+				writer.write(JSONParser.JSON_OBJECT_SEPARATOR_CHAR);
+				entry = it.next();
+				writeString(entry.getKey());
+				writer.write(JSONParser.JSON_OBJECT_KEY_VALUE_DELIMITER_CHAR);
+				entry.getValue().accept(this);
+			}
 		}
 		
 		writer.write(JSONParser.JSON_OBJECT_END_CHAR);
@@ -75,8 +107,17 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	public void visit(JSONArray array) throws Exception {
 		writer.write(JSONParser.JSON_ARRAY_START_CHAR);
 		
-		for (JSONData data : array) {
+		Iterator<JSONData> it = array.iterator();
+		
+		if (it.hasNext()) {
+			JSONData data = it.next();
 			data.accept(this);
+			
+			while (it.hasNext()) {
+				writer.write(JSONParser.JSON_ARRAY_VALUE_SEPARATOR_CHAR);
+				data = it.next();
+				data.accept(this);
+			}
 		}
 		
 		writer.write(JSONParser.JSON_ARRAY_END_CHAR);
@@ -104,12 +145,17 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	
 	@Override
 	public void close() throws IOException {
+		if (asArray) {
+			writer.write(JSONParser.JSON_ARRAY_END_CHAR);
+		}
+		
+		writer.flush();
 		writer.close();
 	}
 	
 	private void writeString(String string) throws IOException {
 		writer.write(JSONParser.JSON_STRING_DELIMITER_CHAR);
-		writer.write(string);
+		writer.write(string.replace("\r", "\\r").replace("\n", "\\n").replace("\t", "\t"));
 		writer.write(JSONParser.JSON_STRING_DELIMITER_CHAR);
 	}
 

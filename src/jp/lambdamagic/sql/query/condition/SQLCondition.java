@@ -17,7 +17,7 @@ import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNullExpressi
 
 public interface SQLCondition {
 	
-	StringBuffer accept(SQLConditionVisitor visitor);
+	StringBuffer accept(SQLConditionVisitor<StringBuffer> visitor);
 	
 	/* Unary Operator Expression Factories */
 	public static SQLCondition IS_NULL(String firstOperand) {

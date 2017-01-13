@@ -1,10 +1,9 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import java.util.Optional;
 
 import jp.lambdamagic.InvalidArgumentException;
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.pipeline.DataSource;
 
 public final class TrimmedDataSource<T> implements DataSource<T> {
 

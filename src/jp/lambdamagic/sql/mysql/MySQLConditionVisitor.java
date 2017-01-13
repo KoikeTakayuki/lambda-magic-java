@@ -21,7 +21,7 @@ import jp.lambdamagic.sql.query.condition.LogicExpression.OrExpression;
 import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNotNullExpression;
 import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNullExpression;
 
-public class MySQLConditionVisitor implements SQLConditionVisitor {
+public class MySQLConditionVisitor implements SQLConditionVisitor<StringBuffer> {
 	
 	private StringBuffer buffer = new StringBuffer();
 	

@@ -16,26 +16,26 @@ import jp.lambdamagic.sql.query.condition.LogicExpression.OrExpression;
 import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNotNullExpression;
 import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNullExpression;
 
-public interface SQLConditionVisitor {
+public interface SQLConditionVisitor<T> {
 	
 	/* Unary Operator Expression */
-	StringBuffer visit(IsNullExpression expression);
-	StringBuffer visit(IsNotNullExpression expression);
+	T visit(IsNullExpression expression);
+	T visit(IsNotNullExpression expression);
 	
 	/* Comparison Expression */
-	StringBuffer visit(EqualToExpression expression);
-	StringBuffer visit(NotEqualToExpression expression);
-	StringBuffer visit(LessThanExpression expression);
-	StringBuffer visit(GreaterThanExpression expression);
-	StringBuffer visit(LessOrEqualToExpression expression);
-	StringBuffer visit(GreaterOrEqualToExpression expression);
-	StringBuffer visit(ContainStringExpression expression);
-	StringBuffer visit(StartWithExpression expression);
-	StringBuffer visit(EndWithExpression expression);
-	StringBuffer visit(InListExpression expression);
+	T visit(EqualToExpression expression);
+	T visit(NotEqualToExpression expression);
+	T visit(LessThanExpression expression);
+	T visit(GreaterThanExpression expression);
+	T visit(LessOrEqualToExpression expression);
+	T visit(GreaterOrEqualToExpression expression);
+	T visit(ContainStringExpression expression);
+	T visit(StartWithExpression expression);
+	T visit(EndWithExpression expression);
+	T visit(InListExpression expression);
 
 	/* Logic Expression */
-	StringBuffer visit(AndExpression expression);
-	StringBuffer visit(OrExpression expression);
-	StringBuffer visit(NotExpression expression);
+	T visit(AndExpression expression);
+	T visit(OrExpression expression);
+	T visit(NotExpression expression);
 }

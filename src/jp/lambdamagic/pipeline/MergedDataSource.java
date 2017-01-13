@@ -1,11 +1,10 @@
-package jp.lambdamagic.pipeline.wrapper;
+package jp.lambdamagic.pipeline;
 
 import java.util.Iterator;
 import java.util.Optional;
 
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.collection.iterator.Iterables;
-import jp.lambdamagic.pipeline.DataSource;
 
 public final class MergedDataSource<T> implements DataSource<T> {
 	
