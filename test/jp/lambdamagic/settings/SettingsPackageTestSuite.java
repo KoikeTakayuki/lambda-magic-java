@@ -7,8 +7,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
 	{
-		InMemoryPropertySetTest.class,
-		PropertyStringTest.class,
 		SettingsTest.class
 	})
 public class SettingsPackageTestSuite {}
