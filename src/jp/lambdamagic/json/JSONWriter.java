@@ -23,6 +23,7 @@ import jp.lambdamagic.text.Encodings;
 public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 
 	private Writer writer;
+	private boolean writeAsArray;
 	
 	public JSONWriter(Writer writer) throws IOException {
 		if (writer == null) {
@@ -34,6 +35,14 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	}
 
 	public JSONWriter(String filePath, String encoding) throws IOException {
+		if (filePath == null) {
+			throw new NullArgumentException("filePath");
+		}
+		
+		if (encoding == null) {
+			throw new NullArgumentException("encoding");
+		}
+		
 		writer = new BufferedWriter(
 						new OutputStreamWriter(
 								new FileOutputStream(new File(filePath)), encoding));
@@ -46,6 +55,7 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	@Override
 	public void write(JSONData data) throws Exception {
 		data.accept(this);
+		writer.flush();
 	}
 
 	@Override
@@ -98,9 +108,9 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	}
 	
 	private void writeString(String string) throws IOException {
-		writer.write(JSONParser.JSON_STRING_DELIMETER_CHAR);
+		writer.write(JSONParser.JSON_STRING_DELIMITER_CHAR);
 		writer.write(string);
-		writer.write(JSONParser.JSON_STRING_DELIMETER_CHAR);
+		writer.write(JSONParser.JSON_STRING_DELIMITER_CHAR);
 	}
 
 }

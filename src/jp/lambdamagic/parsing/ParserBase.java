@@ -140,7 +140,7 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 		StringBuffer sb = new StringBuffer();
 
 		if (!isValidIdFirstCharacter()) {
-			throw new DataFormatException("Invalid first character of ID", getPosition());
+			throw new DataFormatException("Invalid first ID character '" + (char)getCharacter() + "'", getPosition());
 		}
 			
 		sb.append((char)nextCharacter());
@@ -277,9 +277,10 @@ public abstract class ParserBase<T> implements Parser<T>, Closeable  {
 				nextCharacter();
 			}
 		}
-	
+		
+		// go to next character
 		nextCharacter();
-			
+		
 		return sb.toString();
 	}
 	

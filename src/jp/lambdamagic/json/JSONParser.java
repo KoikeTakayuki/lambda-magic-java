@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.data.functional.Either;
 import jp.lambdamagic.io.DataFormatException;
 import jp.lambdamagic.json.data.JSONArray;
 import jp.lambdamagic.json.data.JSONBoolean;
@@ -20,12 +19,11 @@ import jp.lambdamagic.text.TextPosition;
 public class JSONParser extends ParserBase<JSONData> {
 
 	public static final String JSON_NULL_STRING = "null";
-	public static final char JSON_NULL_STRING_FIRST_CHARACTER = 'n';
 	
 	public static final String JSON_TRUE_STRING = "true";
 	public static final String JSON_FALSE_STRING = "false";
 	
-	public static final char JSON_STRING_DELIMETER_CHAR = '"'; 
+	public static final char JSON_STRING_DELIMITER_CHAR = '"'; 
 	public static final char JSON_STRING_ESCAPE_CHAR = '\\';
 	
 	public static final char JSON_ARRAY_START_CHAR = '[';
@@ -34,9 +32,8 @@ public class JSONParser extends ParserBase<JSONData> {
 	
 	public static final char JSON_OBJECT_START_CHAR = '{';
 	public static final char JSON_OBJECT_END_CHAR = '}';
-	public static final char JSON_OBJECT_KEY_VALUE_DELIMETER_CHAR = ':';
+	public static final char JSON_OBJECT_KEY_VALUE_DELIMITER_CHAR = ':';
 	public static final char JSON_OBJECT_SEPARATOR_CHAR = ',';
-	
 	
 	public static JSONParser fromString(String string) throws IOException {
 		if (string == null) {
@@ -60,83 +57,107 @@ public class JSONParser extends ParserBase<JSONData> {
 	}
 	
 	private JSONData parseJSON() throws IOException {
-		skipWhitespaces();			
-
-		switch (getCharacter()) {
-			case JSON_ARRAY_START_CHAR:
-				return parseJSONArray();
-
-			case JSON_OBJECT_START_CHAR:
-				return parseJSONObject();
-
-			case JSON_STRING_DELIMETER_CHAR:
-				return parseJSONString();
-					
-			case JSON_NULL_STRING_FIRST_CHARACTER:
-				return parseJSONNull();
-					
-			default:
-				if (isValidNumberFirstCharacter()) {
-					return parseJSONNumber();
-				} else {
-					return parseJSONBoolean();
-				}
+		skipWhitespaces();
+		
+		char c = (char)getCharacter();
+		
+		if (c == JSON_ARRAY_START_CHAR) {
+			return parseJSONArray();
 		}
+		
+		if (c == JSON_OBJECT_START_CHAR) {
+			return parseJSONObject();
+		}
+		
+		if (c == JSON_STRING_DELIMITER_CHAR) {
+			return parseJSONString();
+		}
+		
+		if (isValidNumberFirstCharacter()) {
+			return parseJSONNumber();
+		}
+		
+		if (c == JSON_TRUE_STRING.charAt(0) || c == JSON_FALSE_STRING.charAt(0)) {
+			return parseJSONBoolean();
+		}
+		
+		if (c == JSON_NULL_STRING.charAt(0)) {
+			return parseJSONNull();
+		}
+		
+		throw new JSONFormatException("Unknown character '" + c + "' is given", getPosition());
 	}
 	
 	private JSONObject parseJSONObject() throws IOException {	
 		TextPosition positionBeforeParsing = getPosition();
 		JSONObject jsonObject = new JSONObject();
-
-		do {
+		
+		// skip '{'
+		nextCharacter();
+		skipWhitespaces();
+		
+		if (getCharacter() == JSON_OBJECT_END_CHAR) {
+			nextCharacter();
+			return jsonObject;
+		}
+		
+		while (true) {
+			parseKeyValue(jsonObject);
+			skipWhitespaces();
+			
+			if (getCharacter() != JSON_OBJECT_SEPARATOR_CHAR) {
+				break;
+			}
+			
+			// skip ','
 			nextCharacter();
 			skipWhitespaces();
-				
-			if (getCharacter() == JSON_OBJECT_END_CHAR) {
-				return jsonObject;
-			}
-				
-			parseKeyValue(jsonObject);
-
-		} while (getCharacter() == JSON_OBJECT_SEPARATOR_CHAR);
-
-		skipWhitespaces();
+		}
 		
 		if (getCharacter() != JSON_OBJECT_END_CHAR) {
 			throw new JSONFormatException("Unclosed JSON object", positionBeforeParsing);
 		}
-			
+		
+		// skip '}'
 		nextCharacter();
-
+		
 		return jsonObject;
 	}
 	
 	private JSONArray parseJSONArray() throws IOException {
 		TextPosition positionBeforeParsing = getPosition();
 		JSONArray array = new JSONArray();
+		
+		// skip '['
+		nextCharacter();
+		skipWhitespaces();
 			
-		do {
+		if (getCharacter() == JSON_ARRAY_END_CHAR) {
 			nextCharacter();
-			skipWhitespaces();
-				
-			if (getCharacter() == JSON_ARRAY_END_CHAR) {
-				return array;
-			}
-				
+			return array;
+		}
+		
+		while (true) {
 			JSONData data = parseJSON();
 			array.add(data);
 			skipWhitespaces();
-				
-		} while (getCharacter() == JSON_ARRAY_VALUE_SEPARATOR_CHAR);
 
-		skipWhitespaces();
+			if (getCharacter() != JSON_ARRAY_VALUE_SEPARATOR_CHAR) {
+				break;
+			}
 			
+			// skip ','
+			nextCharacter();
+			skipWhitespaces();
+		}
+
 		if (getCharacter() != JSON_ARRAY_END_CHAR) {
 			throw new JSONFormatException("Unclosed JSON array", positionBeforeParsing);
 		}
-			
+		
+		// skip ']'
 		nextCharacter();
-
+		
 		return array;
 	}
 	
@@ -146,7 +167,7 @@ public class JSONParser extends ParserBase<JSONData> {
 	
 	private JSONString parseJSONString() throws IOException {
 		try {
-			return new JSONString(parseString(JSON_STRING_DELIMETER_CHAR, JSON_STRING_ESCAPE_CHAR));
+			return new JSONString(parseString(JSON_STRING_DELIMITER_CHAR, JSON_STRING_ESCAPE_CHAR));
 		} catch (DataFormatException e) {
 			throw new JSONFormatException(e.getMessage());
 		}
@@ -178,20 +199,18 @@ public class JSONParser extends ParserBase<JSONData> {
 		throw new JSONFormatException("Unknown JSON token '" + value + "'", positionBeforeParsing);
 	}
 	
-	private Either<JSONObject, Exception> parseKeyValue(JSONObject jsonObject) throws IOException {
-		String key = parseString(JSON_STRING_DELIMETER_CHAR, JSON_STRING_ESCAPE_CHAR);
+	private void parseKeyValue(JSONObject jsonObject) throws IOException {
+		JSONString key = (JSONString) parseJSON();
 		skipWhitespaces();
-			
-		if (getCharacter() != JSON_OBJECT_KEY_VALUE_DELIMETER_CHAR) {
-			throw new JSONFormatException("JSON object key value delimeter '" + JSON_OBJECT_KEY_VALUE_DELIMETER_CHAR + "' is expected, but actual '" + (char)getCharacter() + "' is given", getPosition());
+
+		if (getCharacter() != JSON_OBJECT_KEY_VALUE_DELIMITER_CHAR) {
+			throw new JSONFormatException("JSON object key value delimiter '" + JSON_OBJECT_KEY_VALUE_DELIMITER_CHAR + "' is expected, but actual '" + (char)getCharacter() + "' is given", getPosition());
 		}
 		
+		// skip ':'
 		nextCharacter();
-		skipWhitespaces();
 		JSONData value = parseJSON();
-		jsonObject.set(key, value);
-		
-		return Either.left(jsonObject);
+		jsonObject.set(key.getValue(), value);
 	}
 	
 }

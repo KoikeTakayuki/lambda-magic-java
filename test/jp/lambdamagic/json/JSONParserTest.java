@@ -224,10 +224,68 @@ public class JSONParserTest {
 		try {
 			JSONParser.fromString("{\"test\"}").parse();
 		} catch (JSONFormatException ok) {
-			assertThat(ok.getMessage(), is("JSON object key value delimeter ':' is expected, but actual '}' is given at (1, 8)"));
+			assertThat(ok.getMessage(), is("JSON object key value delimiter ':' is expected, but actual '}' is given at (1, 8)"));
 		} catch (Exception e) {
 			fail();
 		}
+	}
+	
+	@Test
+	public void parse_parseComplicatedJSONObject() throws IOException {
+		JSONParser parser = JSONParser.fromString("{\"test1\": \"test\", \"test2\": true,\n\"test3\": 1e+10, \"test4\": 0, \"test5\":         null, \"test6\":{\"test7\": [\"test\", \"test\", \"test\"]}\n,\"test8\":[[[]]] }");
+		
+		JSONObject object = (JSONObject)parser.parse();
+		
+		assertThat(object.get("test1").isPresent(), is(true));
+		assertThat(object.get("test1").get(), is(instanceOf(JSONString.class)));
+		JSONString jsonString = (JSONString)object.get("test1").get();
+		assertThat(jsonString.getValue(), is("test"));
+		
+		assertThat(object.get("test2").isPresent(), is(true));
+		assertThat(object.get("test2").get(), is(instanceOf(JSONBoolean.class)));
+		JSONBoolean jsonBool = (JSONBoolean)object.get("test2").get();
+		assertThat(jsonBool.getValue(), is(true));
+		
+		assertThat(object.get("test3").isPresent(), is(true));
+		assertThat(object.get("test3").get(), is(instanceOf(JSONNumber.class)));
+		JSONNumber jsonNumber1 = (JSONNumber)object.get("test3").get();
+		assertThat(jsonNumber1.getValue(), is(1e+10));
+		
+		assertThat(object.get("test4").isPresent(), is(true));
+		assertThat(object.get("test4").get(), is(instanceOf(JSONNumber.class)));
+		JSONNumber jsonNumber2 = (JSONNumber)object.get("test4").get();
+		assertThat(jsonNumber2.getValue(), is(0.0));
+		
+		assertThat(object.get("test5").isPresent(), is(true));
+		assertThat(object.get("test5").get(), is(instanceOf(JSONNull.class)));
+		
+		assertThat(object.get("test6").isPresent(), is(true));
+		assertThat(object.get("test6").get(), is(instanceOf(JSONObject.class)));
+		JSONObject innerObject = (JSONObject)object.get("test6").get();
+		
+		assertThat(innerObject.get("test7").isPresent(), is(true));
+		assertThat(innerObject.get("test7").get(), is(instanceOf(JSONArray.class)));
+		JSONArray jsonArray1 = (JSONArray)innerObject.get("test7").get();
+		assertThat(jsonArray1.size(), is(3));
+		assertThat(jsonArray1.get(0), is(instanceOf(JSONString.class)));
+		assertThat(((JSONString)jsonArray1.get(0)).getValue(), is("test"));
+		assertThat(jsonArray1.get(1), is(instanceOf(JSONString.class)));
+		assertThat(((JSONString)jsonArray1.get(1)).getValue(), is("test"));
+		assertThat(jsonArray1.get(2), is(instanceOf(JSONString.class)));
+		assertThat(((JSONString)jsonArray1.get(2)).getValue(), is("test"));
+
+		assertThat(object.get("test8").isPresent(), is(true));
+		assertThat(object.get("test8").get(), is(instanceOf(JSONArray.class)));
+		JSONArray jsonArray2 = (JSONArray)object.get("test8").get();
+		assertThat(jsonArray2.size(), is(1));
+		assertThat(jsonArray2.get(0), is(instanceOf(JSONArray.class)));
+		
+		JSONArray innerArray1 = (JSONArray)jsonArray2.get(0);
+		assertThat(innerArray1.size(), is(1));
+		assertThat(innerArray1.get(0), is(instanceOf(JSONArray.class)));
+		
+		JSONArray innerArray2 = (JSONArray)innerArray1.get(0);
+		assertThat(innerArray2.size(), is(0));
 	}
 
 }

@@ -35,13 +35,9 @@ public class ServletServiceContext implements ServiceContext {
 	}
 
 	@Override
-	public Optional<InputStream> getResourceAsStream(String path) {
+	public InputStream getResourceAsStream(String path) {
 		InputStream stream = baseObject.getResourceAsStream(path);
-
-		if (stream == null)
-			return Optional.empty();
-
-		return Optional.of(stream);
+		return stream;
 	}
 	
 }

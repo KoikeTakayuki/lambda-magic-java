@@ -4,33 +4,39 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Optional;
+
+import jp.lambdamagic.NullArgumentException;
 
 public class FileResourceLoader implements ResourceLoader {
 	
 	private String basePath;
 	
-	public FileResourceLoader() {
-		this(null);
-	}
-	
 	public FileResourceLoader(String basePath) {
+		if (basePath == null) {
+			throw new NullArgumentException("basePath");
+		}
+		
 		this.basePath = basePath;
 	}
 	
 	@Override
 	public String getResourceAbsolutePath(String path) {
-		return (basePath != null) ? new File(basePath, path).toString() : path;
+		if (path == null) {
+			throw new NullArgumentException("path");
+		}
+		
+		return new File(basePath, path).toString();
 	}
 	
 	@Override
-	public Optional<InputStream> getResourceAsStream(String path) {
-		try {
-			return Optional.of(new FileInputStream(getResourceAbsolutePath(path)));
+	public InputStream getResourceAsStream(String path) throws FileNotFoundException {
+		if (path == null) {
+			throw new NullArgumentException("path");
 		}
-		catch (FileNotFoundException ex) {
-			return Optional.empty();
-		}
+		
+		System.out.println(getResourceAbsolutePath(path));
+		
+		return new FileInputStream(getResourceAbsolutePath(path));
 	}
 	
 }

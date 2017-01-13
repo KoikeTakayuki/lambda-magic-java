@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.Optional;
 
 import jp.lambdamagic.NullArgumentException;
+import jp.lambdamagic.json.data.JSONArray;
 import jp.lambdamagic.json.data.JSONData;
 import jp.lambdamagic.pipeline.DataSource;
 import jp.lambdamagic.text.Encodings;
@@ -17,9 +18,10 @@ import jp.lambdamagic.text.Encodings;
 public class JSONDataSource implements DataSource<JSONData> {
 
 	private JSONParser parser;
+	private DataSource<JSONData> jsonDataSource;
 	
 	public JSONDataSource(Reader reader) throws IOException {
-		parser = new JSONParser(reader);
+		setParser(new JSONParser(reader));
 	}
 
 	public JSONDataSource(String filePath, String encoding) throws IOException {
@@ -35,7 +37,19 @@ public class JSONDataSource implements DataSource<JSONData> {
 							new InputStreamReader(
 								new FileInputStream(new File(filePath)), encoding));
 
-		parser = new JSONParser(reader);
+		setParser(new JSONParser(reader));
+	}
+	
+	
+	private void setParser(JSONParser parser) throws IOException {
+		this.parser = parser;
+		JSONData data = parser.parse();
+		
+		if (data instanceof JSONArray) {
+			this.jsonDataSource = DataSource.asDataSource((JSONArray)data);
+		} else {
+			this.jsonDataSource = DataSource.asDataSource(data);
+		}
 	}
 
 	public JSONDataSource(String filePath) throws IOException {
@@ -52,11 +66,7 @@ public class JSONDataSource implements DataSource<JSONData> {
 
 	@Override
 	public Optional<JSONData> readData() {
-		try {
-			return Optional.of(parser.parse());
-		} catch (IOException e) {
-			return Optional.empty();
-		}
+		return jsonDataSource.readData();
 	}
 	
 	@Override

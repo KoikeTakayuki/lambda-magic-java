@@ -87,7 +87,7 @@ public class JSONDataSourceTest {
 		assertThat(object.get("test4").isPresent(), is(true));
 		assertThat(object.get("test4").get(), is(instanceOf(JSONNumber.class)));
 		JSONNumber jsonNumber2 = (JSONNumber)object.get("test4").get();
-		assertThat(jsonNumber2.getValue(), is(0));
+		assertThat(jsonNumber2.getValue(), is(0.0));
 		
 		assertThat(object.get("test5").isPresent(), is(true));
 		assertThat(object.get("test5").get(), is(instanceOf(JSONNull.class)));
@@ -120,12 +120,60 @@ public class JSONDataSourceTest {
 		JSONArray innerArray2 = (JSONArray)innerArray1.get(0);
 		assertThat(innerArray2.size(), is(0));
 		
+		data = dataSource.readData();
 		assertThat(data.isPresent(), is(false));
 		dataSource.close();
 	}
 	
-	public void readData_provideJSONArrayElement() {
+	@Test
+	public void readData_provideJSONArrayElement() throws IOException {
+		JSONDataSource dataSource = JSONDataSource.fromString("[{\"test\":1}, 2, \"test\" ,  true, null, [1, 2, 3]]");
+		Optional<JSONData> data = dataSource.readData();
 		
+		assertThat(data.isPresent(), is(true));
+		assertThat(data.get(), is(instanceOf(JSONObject.class)));
+		
+		JSONObject object = (JSONObject)data.get();
+		assertThat(object.get("test").isPresent(), is(true));
+		assertThat(object.get("test").get(), is(instanceOf(JSONNumber.class)));
+		assertThat(((JSONNumber)object.get("test").get()).getValue(), is(1.0));
+		
+		data = dataSource.readData();
+		assertThat(data.isPresent(), is(true));
+		assertThat(data.get(), is(instanceOf(JSONNumber.class)));
+		assertThat(((JSONNumber)data.get()).getValue(), is(2.0));
+		
+		data = dataSource.readData();
+		assertThat(data.isPresent(), is(true));
+		assertThat(data.get(), is(instanceOf(JSONString.class)));
+		assertThat(((JSONString)data.get()).getValue(), is("test"));
+		
+		data = dataSource.readData();
+		assertThat(data.isPresent(), is(true));
+		assertThat(data.get(), is(instanceOf(JSONBoolean.class)));
+		assertThat(((JSONBoolean)data.get()).getValue(), is(true));
+		
+		data = dataSource.readData();
+		assertThat(data.isPresent(), is(true));
+		assertThat(data.get(), is(instanceOf(JSONNull.class)));
+		
+		data = dataSource.readData();
+		assertThat(data.isPresent(), is(true));
+		assertThat(data.get(), is(instanceOf(JSONArray.class)));
+		
+		JSONArray array = (JSONArray)data.get();
+		assertThat(array.size(), is (3));
+		assertThat(array.get(0), is(instanceOf(JSONNumber.class)));
+		assertThat(((JSONNumber)array.get(0)).getValue(), is(1.0));
+		assertThat(array.get(1), is(instanceOf(JSONNumber.class)));
+		assertThat(((JSONNumber)array.get(1)).getValue(), is(2.0));
+		assertThat(array.get(2), is(instanceOf(JSONNumber.class)));
+		assertThat(((JSONNumber)array.get(2)).getValue(), is(3.0));
+		
+		data = dataSource.readData();
+		assertThat(data.isPresent(), is(false));
+		
+		dataSource.close();
 	}
 
 }
