@@ -32,13 +32,9 @@ public final class TrimmedDataSource<T> implements DataSource<T> {
 		}
 
 		Optional<T> maybeData = wrapped.readData();
+		maybeData.ifPresent(data -> ++readCount);
 
-		if (maybeData.isPresent()) {
-			++readCount;
-			return maybeData;
-		}
-
-		return Optional.empty();
+		return maybeData;
 	}
 
 	@Override

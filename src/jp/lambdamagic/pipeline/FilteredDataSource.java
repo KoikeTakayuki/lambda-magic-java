@@ -31,7 +31,7 @@ public final class FilteredDataSource<T> implements DataSource<T> {
 			if (!maybeData.isPresent()) {
 				return Optional.empty();
 			}
-
+			
 			T data = maybeData.get();
 
 			if (predicate.test(data)) {

@@ -1,7 +1,5 @@
 package jp.lambdamagic.web.http;
 
-import java.io.IOException;
-
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.data.InMemoryPropertySet;
 
@@ -11,7 +9,7 @@ public final class HttpCookie extends InMemoryPropertySet<String>{
 	private static final String PROPERTY_SEPARATOR = "=";
 	private static final String TRUE_STRING = "true";
 	
-	public static HttpCookie parse(String cookieString) throws IOException {
+	public static HttpCookie parse(String cookieString) {
 		if (cookieString == null) {
 			throw new NullArgumentException("cookieString");
 		}

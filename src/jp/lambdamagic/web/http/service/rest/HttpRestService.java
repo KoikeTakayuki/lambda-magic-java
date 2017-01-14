@@ -129,8 +129,7 @@ public abstract class HttpRestService extends HttpServlet {
 						ex.printStackTrace(debugOutput);
 					}
 				}
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				throw new ServletException(ex);
 			}
 		};
@@ -197,12 +196,10 @@ public abstract class HttpRestService extends HttpServlet {
 						parameterValue = getDataSerializer().deserialize(reader);
 					}
 					
-				}
-				catch (DataFormatException ex) {
+				} catch (DataFormatException ex) {
 					throw new InvalidArgumentException(parameter.getName(), String.format(
 							"Invalid format for parameter \"%s\" with value \"%s\".", parameter.getName(), parameterStringValue));
-				}
-				catch (IOException ex) {
+				} catch (IOException ex) {
 					throw new IllegalStateException(ex);
 				}
 				

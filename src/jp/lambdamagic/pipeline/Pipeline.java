@@ -48,10 +48,10 @@ public class Pipeline<O> implements DataSource<O>, Runnable {
 	
 	@Override
 	public void run() {
-		Optional<O> data = readData();
+		Optional<O> maybeData = readData();
 
-		while (data.isPresent()) {
-			data = readData();
+		while (maybeData.isPresent()) {
+			maybeData = readData();
 		}
 		
 		try {
