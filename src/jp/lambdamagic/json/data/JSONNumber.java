@@ -1,5 +1,7 @@
 package jp.lambdamagic.json.data;
 
+import java.io.IOException;
+
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.json.JSONDataVisitor;
 
@@ -20,7 +22,7 @@ public class JSONNumber implements JSONData {
 	}
 	
 	@Override
-	public void accept(JSONDataVisitor visitor) throws Exception {
+	public void accept(JSONDataVisitor visitor) throws IOException {
 		visitor.visit(this);
 	}
 	

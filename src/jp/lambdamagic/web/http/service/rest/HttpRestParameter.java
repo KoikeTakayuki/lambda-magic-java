@@ -1,15 +1,16 @@
 package jp.lambdamagic.web.http.service.rest;
 
 import jp.lambdamagic.NullArgumentException;
+import jp.lambdamagic.json.data.JSONData;
 
 public class HttpRestParameter {
 
 	private String name;
 	private Class<?> type;
 	private boolean required;
-	private Object defaultValue;
+	private JSONData defaultValue;
 	
-	private HttpRestParameter(String name, Class<?> type, boolean required, Object defaultValue) {
+	private HttpRestParameter(String name, Class<?> type, boolean required, JSONData defaultValue) {
 		if (name == null) {
 			throw new NullArgumentException("name");
 		}
@@ -36,11 +37,11 @@ public class HttpRestParameter {
 		return required;
 	}
 	
-	public Object getDefaultValue() {
+	public JSONData getDefaultValue() {
 		return defaultValue;
 	}
 	
-	public HttpRestParameter(String name, Class<?> type, Object defaultValue) {
+	public HttpRestParameter(String name, Class<?> type, JSONData defaultValue) {
 		this(name, type, false, defaultValue);
 	}
 	

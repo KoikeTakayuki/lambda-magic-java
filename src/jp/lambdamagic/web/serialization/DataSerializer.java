@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-public interface DataSerializer {
+public interface DataSerializer<T> {
 	String getMimeType();
 	String getEncoding();
-	ObjectReader createObjectReader(Reader reader) throws IOException;
-	ObjectWriter createObjectWriter(Writer writer) throws IOException;
+	T deserialize(Reader reader) throws IOException;
+	void serialize(Writer writer, T data) throws IOException;
 }

@@ -2,7 +2,6 @@ package jp.lambdamagic.web.http.service;
 
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Optional;
 
 import javax.servlet.ServletContext;
 
@@ -12,31 +11,31 @@ import jp.lambdamagic.event.log.LoggedEventType;
 
 public class ServletServiceContext implements ServiceContext {
 
-	private ServletContext baseObject;
+	private ServletContext wrapped;
 		
-	public ServletServiceContext(ServletContext baseObject) {
-		if (baseObject == null) {
-			throw new NullArgumentException("baseObject");
+	public ServletServiceContext(ServletContext wrapped) {
+		if (wrapped == null) {
+			throw new NullArgumentException("wrapped");
 		}
 		
-		this.baseObject = baseObject;
+		this.wrapped = wrapped;
 	}
 
 	@Override
 	public void log(LoggedEventType type, String format, Object... args) {
 		String message = String.format("%tc [%s] %s%n", new Date(), type, String.format(format, args));
 		System.err.println(message);
-		baseObject.log(message);
+		wrapped.log(message);
 	}
 
 	@Override
 	public String getResourceAbsolutePath(String path) {
-		return baseObject.getRealPath(path);
+		return wrapped.getRealPath(path);
 	}
 
 	@Override
 	public InputStream getResourceAsStream(String path) {
-		InputStream stream = baseObject.getResourceAsStream(path);
+		InputStream stream = wrapped.getResourceAsStream(path);
 		return stream;
 	}
 	

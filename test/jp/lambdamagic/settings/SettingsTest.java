@@ -40,11 +40,18 @@ public class SettingsTest {
 	public void get_mustThrowNullArgumentExceptionWhenNullPropertyNameIsGiven() throws IOException {
 		Settings settings = Settings.load(TEST_DATA_FILE_PATH);
 		settings.get(null);
-		
 	}
 	
 	@Test
-	public void get_returnPropertyValueIfExists() throws IOException {
+	public void get_returnEmptyIfPropertyValueNotExists() throws IOException {
+		Settings settings = Settings.load(TEST_DATA_FILE_PATH);		
+
+		Optional<String> test3 = settings.get("test3");
+		assertThat(test3.isPresent(), is(false));
+	}
+	
+	@Test
+	public void get_returnPropertyValueIfPropertyValueExists() throws IOException {
 		Settings settings = Settings.load(TEST_DATA_FILE_PATH);
 		
 		Optional<String> test1 = settings.get("test1");
@@ -54,10 +61,6 @@ public class SettingsTest {
 		Optional<String> test2 = settings.get("test2");
 		assertThat(test2.isPresent(), is(true));
 		assertThat(test2.get(), is("test"));
-		
-
-		Optional<String> test3 = settings.get("test3");
-		assertThat(test3.isPresent(), is(false));
 	}
 	
 	@Test(expected=NullArgumentException.class)
@@ -87,7 +90,7 @@ public class SettingsTest {
 	}
 	
 	@Test
-	public void propertyNames_return() throws IOException {
+	public void propertyNames_returnPropertyNamesOfSettings() throws IOException {
 		Settings settings = Settings.load(TEST_DATA_FILE_PATH);
 		assertThat(settings.propertyNames(), hasItem("test1"));
 		assertThat(settings.propertyNames(), hasItem("test2"));

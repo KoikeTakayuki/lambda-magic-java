@@ -1,5 +1,6 @@
 package jp.lambdamagic.json.data;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,7 +51,7 @@ public class JSONObject implements JSONData, PropertySet<JSONData> {
 	}
 	
 	@Override
-	public void accept(JSONDataVisitor visitor) throws Exception {
+	public void accept(JSONDataVisitor visitor) throws IOException {
 		visitor.visit(this);
 	}
 	

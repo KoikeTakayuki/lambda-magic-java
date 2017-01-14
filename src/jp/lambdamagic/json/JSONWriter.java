@@ -65,7 +65,7 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	}
 	
 	@Override
-	public void write(JSONData data) throws Exception {
+	public void write(JSONData data) throws IOException {
 		if (isFirstWriting) {
 			isFirstWriting = false;
 		} else {
@@ -80,7 +80,7 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	}
 
 	@Override
-	public void visit(JSONObject object) throws Exception {
+	public void visit(JSONObject object) throws IOException {
 		writer.write(JSONParser.JSON_OBJECT_START_CHAR);
 		Iterator<Entry<String, JSONData>> it = object.entrySet().iterator();
 		
@@ -104,7 +104,7 @@ public class JSONWriter implements DataWriter<JSONData>, JSONDataVisitor {
 	}
 
 	@Override
-	public void visit(JSONArray array) throws Exception {
+	public void visit(JSONArray array) throws IOException {
 		writer.write(JSONParser.JSON_ARRAY_START_CHAR);
 		
 		Iterator<JSONData> it = array.iterator();

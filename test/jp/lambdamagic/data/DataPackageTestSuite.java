@@ -10,6 +10,7 @@ import jp.lambdamagic.data.functional.EitherTest;
 @SuiteClasses(
 	{
 		Tuple2Test.class,
+		InMemoryPropertySetTest.class,
 		EitherTest.class
 	})
 public class DataPackageTestSuite {}

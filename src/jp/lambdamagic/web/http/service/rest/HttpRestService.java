@@ -23,21 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 import jp.lambdamagic.InvalidArgumentException;
 import jp.lambdamagic.NullArgumentException;
 import jp.lambdamagic.io.DataFormatException;
+import jp.lambdamagic.json.data.JSONData;
 import jp.lambdamagic.web.http.HttpHeaderField;
 import jp.lambdamagic.web.http.HttpHeaderFieldValue;
 import jp.lambdamagic.web.http.HttpMethod;
-import jp.lambdamagic.web.serialization.DataSerializer;
-import jp.lambdamagic.web.serialization.ObjectWriter;
 import jp.lambdamagic.web.serialization.json.JSONDataSerializer;
-import jp.lambdamagic.web.serialization.text.PlainTextDataSerializer;
 
 public abstract class HttpRestService extends HttpServlet {
 
 	private static final long serialVersionUID = 4155762293913898421L;
 
 	public static final String EXCEPTION_CLASS_NAME_MESSAGE_SEPARATOR = "/";
-	public static final DataSerializer DEFAULT_QUERY_PARAMETER_DATA_SERIALIZER = new PlainTextDataSerializer();
-	public static final DataSerializer DEFAULT_DATA_SERIALIZER = new JSONDataSerializer();
+	public static final JSONDataSerializer DEFAULT_QUERY_PARAMETER_DATA_SERIALIZER = null;
+	public static final JSONDataSerializer DEFAULT_DATA_SERIALIZER = new JSONDataSerializer();
 	
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_MAP = new HashMap<Class<?>, Class<?>>() {
 
@@ -61,11 +59,11 @@ public abstract class HttpRestService extends HttpServlet {
 
 	private PrintStream debugOutput;
 	
-	protected DataSerializer getQueryParameterDataSerializer() {
+	protected JSONDataSerializer getQueryParameterDataSerializer() {
 		return DEFAULT_QUERY_PARAMETER_DATA_SERIALIZER;
 	}
 	
-	protected DataSerializer getDataSerializer() {
+	protected JSONDataSerializer getDataSerializer() {
 		return DEFAULT_DATA_SERIALIZER;
 	}
 	
@@ -179,7 +177,7 @@ public abstract class HttpRestService extends HttpServlet {
 			HttpRestParameter parameter = parameters[i];
 			
 			String parameterStringValue = request.getParameter(parameter.getName());
-			Object parameterValue = null;
+			JSONData parameterValue = null;
 			
 			if (parameterStringValue == null) {
 				
@@ -192,9 +190,13 @@ public abstract class HttpRestService extends HttpServlet {
 			else {
 				try {
 					Reader reader = new StringReader(parameterStringValue);
-					parameterValue = ((method == HttpMethod.GET) || (method == HttpMethod.DELETE))
-							? getQueryParameterDataSerializer().createObjectReader(reader).readObject()
-							: getDataSerializer().createObjectReader(reader).readObject(); 
+					
+					if (method == HttpMethod.GET || method == HttpMethod.DELETE) {
+						parameterValue = getQueryParameterDataSerializer().deserialize(reader);
+					} else {
+						parameterValue = getDataSerializer().deserialize(reader);
+					}
+					
 				}
 				catch (DataFormatException ex) {
 					throw new InvalidArgumentException(parameter.getName(), String.format(
@@ -246,16 +248,14 @@ public abstract class HttpRestService extends HttpServlet {
 		response.setContentType(getDataSerializer().getMimeType());
 		
 		try {
-			Object invocationResult = APIMethod.invoke(this, arguments);
+			JSONData invocationResult = (JSONData)APIMethod.invoke(this, arguments);
 			
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			String contentEncoding = response.getHeader(HttpHeaderField.CONTENT_ENCODING);
 			boolean compressed = HttpHeaderFieldValue.CONTENT_ENCODING_GZIP.equals(contentEncoding);
 			OutputStream outputStream = compressed ? new GZIPOutputStream(byteArrayOutputStream, true) : byteArrayOutputStream;
-			ObjectWriter writer =  getDataSerializer().createObjectWriter(new OutputStreamWriter(outputStream, getDataSerializer().getEncoding()));
-
-			writer.writeObject(invocationResult);
-			writer.flush();
+			
+			getDataSerializer().serialize(new OutputStreamWriter(outputStream, getDataSerializer().getEncoding()), invocationResult);
 
 			response.setContentLength(byteArrayOutputStream.size());
 			response.getOutputStream().write(byteArrayOutputStream.toByteArray());

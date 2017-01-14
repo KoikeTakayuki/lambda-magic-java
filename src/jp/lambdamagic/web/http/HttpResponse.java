@@ -22,12 +22,12 @@ public final class HttpResponse implements Closeable {
 	private String text;
 	
 	public HttpResponse(int statusCode, String statusMessage, Map<String, String> headerFields, InputStream inputStream) {
-		if (inputStream == null) {
-			throw new NullArgumentException("inputStream");
-		}
-		
 		if (headerFields == null) {
 			throw new NullArgumentException("headerFields");
+		}
+		
+		if (inputStream == null) {
+			throw new NullArgumentException("inputStream");
 		}
 		
 		this.statusCode = statusCode;
@@ -50,27 +50,24 @@ public final class HttpResponse implements Closeable {
 	
 	
 	public InputStream getInputStream() {
-		if (text != null) {
-			throw new IllegalStateException("input stream has already been read by \"getText\" before invoking \"getInputStream\"");
-		}
-		
 		return inputStream;
 	}
 
 	
-	public String getText(String encoding) {
-		if (text == null) {
-			try {
-				text = IOOperations.readAllText(new InputStreamReader(inputStream, encoding));
-			} catch (Exception e) {
-				text = "";
-			}
+	public String getText(String encoding) throws IOException {
+		if (encoding == null) {
+			throw new NullArgumentException("encoding");
 		}
 		
+		if (text != null) {
+			return text;
+		}
+		
+		text = IOOperations.readAllText(new InputStreamReader(inputStream, encoding));
 		return text;
 	}
 
-	public String getText() {
+	public String getText() throws IOException {
 		return getText(DEFAULT_ENCODING);
 	}
 

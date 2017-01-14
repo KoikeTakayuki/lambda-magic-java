@@ -11,10 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.data.functional.Either;
-
-
 public final class HttpClient {
 
 	private HttpCookie lastCookie;
@@ -37,34 +33,22 @@ public final class HttpClient {
 	}
 
 	public HttpResponse get(String urlString, Map<String, String> requestHeaderFields) throws MalformedURLException, IOException {
-		return sendRequest(createRequest(HttpMethod.GET, urlString, requestHeaderFields, null));
+		return sendRequest(new HttpRequest(HttpMethod.GET, urlString, requestHeaderFields));
 	}
 
 	public HttpResponse post(String urlString, Map<String, String> requestHeaderFields, String data) throws MalformedURLException, IOException {
-		return sendRequest(createRequest(HttpMethod.POST, urlString, requestHeaderFields, data));
+		return sendRequest(new HttpRequest(HttpMethod.POST, urlString, requestHeaderFields, data));
 	}
 
 	public HttpResponse put(String urlString, Map<String, String> requestHeaderFields, String data) throws MalformedURLException, IOException {
-		return sendRequest(createRequest(HttpMethod.PUT, urlString, requestHeaderFields, data));
+		return sendRequest(new HttpRequest(HttpMethod.PUT, urlString, requestHeaderFields, data));
 	}
 
 	public HttpResponse delete(String urlString, Map<String, String> requestHeaderFields, String data) throws MalformedURLException, IOException {
-		return sendRequest(createRequest(HttpMethod.DELETE, urlString, requestHeaderFields, data));
+		return sendRequest(new HttpRequest(HttpMethod.DELETE, urlString, requestHeaderFields, data));
 	}
 	
-	private HttpRequest createRequest(HttpMethod method, String urlString, Map<String, String> requestHeaderFields, String data) {
-		return new HttpRequest(method, urlString, requestHeaderFields, data);
-	}
-	
-	private HttpResponse createResponse(int statusCode, String statusMessage, Map<String, String> headerFields, InputStream inputStream) {
-		return new HttpResponse(statusCode, statusMessage, headerFields, inputStream);
-	}
-	
-	private HttpResponse sendRequest(HttpRequest request) throws MalformedURLException, IOException {
-		if (request == null) {
-			throw new NullArgumentException("request");
-		}
-		
+	private HttpResponse sendRequest(HttpRequest request) throws MalformedURLException, IOException {		
 		HttpURLConnection connection = (HttpURLConnection)new URL(request.getUrlString()).openConnection();
 		
 		for (Entry<String, String> f : request.getHeaderFields().entrySet()) {
@@ -86,10 +70,9 @@ public final class HttpClient {
 		String cookieString = connection.getHeaderField(HttpHeaderField.SET_COOKIE);
 		
 		if (cookieString != null) {
-			//TODO
+			lastCookie = HttpCookie.parse(cookieString);
 		}
 
-		InputStream errorStream = connection.getErrorStream();
 		Map<String, String> responseHeaderFields = new LinkedHashMap<String, String>();
 		
 		for (int i = 0; i < connection.getHeaderFields().size(); ++i) {
@@ -102,10 +85,12 @@ public final class HttpClient {
 			String value = connection.getHeaderField(i);
 			responseHeaderFields.put(key, value);
 		}
+		
+		InputStream errorStream = connection.getErrorStream();
+		InputStream resultStream = (errorStream != null) ? errorStream : connection.getInputStream();
 
-		return createResponse(connection.getResponseCode(), connection.getResponseMessage(),
-					Collections.unmodifiableMap(responseHeaderFields),
-					(errorStream != null) ? errorStream : connection.getInputStream());
+		return new HttpResponse(connection.getResponseCode(), connection.getResponseMessage(),
+					Collections.unmodifiableMap(responseHeaderFields), resultStream);
 		
 	}
 	

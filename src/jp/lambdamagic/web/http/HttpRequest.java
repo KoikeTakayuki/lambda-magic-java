@@ -32,6 +32,14 @@ public class HttpRequest {
 		this.headerFields = headerFields;
 		this.data = data;
 	}
+	
+	public HttpRequest(HttpMethod method, String urlString, Map<String, String> headerFields, String data) {
+		this(method, urlString, headerFields, (data == null ? null : data.getBytes()));
+	}
+
+	public HttpRequest(HttpMethod method, String urlString, Map<String, String> headerFields) {
+		this(method, urlString, headerFields, (byte[])null);
+	}
 
 	public HttpMethod getMethod() {
 		return method;
@@ -44,14 +52,6 @@ public class HttpRequest {
 	public Map<String, String> getHeaderFields() {
 		return headerFields;
 	};
-
-	public HttpRequest(HttpMethod method, String urlString, Map<String, String> headerFields, String data) {
-		this(method, urlString, headerFields, (data == null ? null : data.getBytes()));
-	}
-
-	public HttpRequest(HttpMethod method, String urlString, Map<String, String> headerFields) {
-		this(method, urlString, headerFields, (byte[])null);
-	}
 
 	protected void writeData(OutputStream outputStream) throws IOException {
 		if (data == null) {

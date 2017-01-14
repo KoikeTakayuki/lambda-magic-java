@@ -14,7 +14,6 @@ public class HttpRestOperationInvocationContext {
 	private boolean compressed;
 	private boolean longPolling;
 	
-	
 	public HttpRestOperationInvocationContext(HttpMethod method, String name, Map<String, Object> arguments, boolean compressed, boolean longPolling) {
 		if (method == null) {
 			throw new NullArgumentException("method");
