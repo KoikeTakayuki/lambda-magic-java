@@ -51,7 +51,7 @@ public class SettingsTest {
 	}
 	
 	@Test
-	public void get_returnPropertyValueIfPropertyValueExists() throws IOException {
+	public void get_returnPropertyValueIfExists() throws IOException {
 		Settings settings = Settings.load(TEST_DATA_FILE_PATH);
 		
 		Optional<String> test1 = settings.get("test1");

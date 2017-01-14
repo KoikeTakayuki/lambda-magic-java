@@ -22,7 +22,7 @@ public class InMemoryPropertySetTest {
 	}
 	
 	@Test
-	public void get_returnEmptyValueIfPropertyValueNotExists() throws IOException {
+	public void get_returnEmptyIfPropertyValueNotExists() throws IOException {
 		PropertySet<String> propertySet = new InMemoryPropertySet<String>();
 		Optional<String> test = propertySet.get("test");
 		assertThat(test.isPresent(), is(false));

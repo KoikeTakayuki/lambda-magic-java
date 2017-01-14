@@ -28,7 +28,7 @@ public class SQLUpdateQueryBuilder extends SQLConditionalQueryBuilder<SQLUpdateQ
 	@Override
 	public SQLUpdateQuery build() {
 		if (updateValues == null || updateValues.size() < 1) {
-			throw new IllegalStateException("updateValues should not be null or empty map");
+			throw new IllegalStateException("updateValues is null or empty");
 		}
 		
 		return new SQLUpdateQuery(tableName, joinClauses, condition, updateValues);

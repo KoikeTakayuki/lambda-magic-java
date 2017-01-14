@@ -7,19 +7,19 @@ import jp.lambdamagic.NullArgumentException;
 public class SQLInsertQuery implements SQLQuery {
 	
 	private String tableName;
-	private Map<String, Object> values;
+	private Map<String, Object> insertValues;
 	
-	SQLInsertQuery(String tableName, Map<String, Object> values) {
+	SQLInsertQuery(String tableName, Map<String, Object> insertValues) {
 		if (tableName == null) {
 			throw new NullArgumentException("tableName");
 		}
 		
-		if (values == null) {
-			throw new NullArgumentException("values");
+		if (insertValues == null) {
+			throw new NullArgumentException("insertValues");
 		}
 		
 		this.tableName = tableName;
-		this.values = values;
+		this.insertValues = insertValues;
 	}
 
 	@Override
@@ -27,8 +27,8 @@ public class SQLInsertQuery implements SQLQuery {
 		return tableName;
 	}
 	
-	public Map<String, Object> getValues() {
-		return values;
+	public Map<String, Object> getInsertValues() {
+		return insertValues;
 	}
 	
 }

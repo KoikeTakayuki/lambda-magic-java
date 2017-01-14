@@ -245,8 +245,8 @@ public class MySQLCommandBuilderTest {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		SQLSelectQuery query = SQLSelectQueryBuilder.from("test")
 													.select("id", "name")
-													.rightJoin("other_table", SQLCondition.EQUAL_TO("test.id", "other_table.test_id"))
-													.where(SQLCondition.CONTAIN("other_table.name", "test"))
+													.rightJoin("other_table", SQLCondition.equalTo("test.id", "other_table.test_id"))
+													.where(SQLCondition.contain("other_table.name", "test"))
 													.orderBy("test.name", true)
 													.build();
 
@@ -260,7 +260,7 @@ public class MySQLCommandBuilderTest {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		SQLSelectQuery query = SQLSelectQueryBuilder.from("test")
 													.select("id", "name")
-													.where(SQLCondition.EQUAL_TO("name", "test"))
+													.where(SQLCondition.equalTo("name", "test"))
 													.orderBy("name", true)
 													.build();
 
@@ -298,8 +298,8 @@ public class MySQLCommandBuilderTest {
 		updateValues.put("name", "test");
 		SQLUpdateQuery query = SQLUpdateQueryBuilder.update("test")
 													.set(updateValues)
-													.leftJoin("other_table", SQLCondition.EQUAL_TO("test.id", "other_table.test_id"))
-													.where(SQLCondition.GREATER_OR_EQUAL_TO("other_table.id", 3))
+													.leftJoin("other_table", SQLCondition.equalTo("test.id", "other_table.test_id"))
+													.where(SQLCondition.greaterOrEqualTo("other_table.id", 3))
 													.build();
 		String result = commandBuilder.buildUpdateCommand(query);
 		
@@ -315,7 +315,7 @@ public class MySQLCommandBuilderTest {
 
 		SQLUpdateQuery query = SQLUpdateQueryBuilder.update("test")
 													.set(updateValues)
-													.where(SQLCondition.GREATER_THAN("id", 3))
+													.where(SQLCondition.greaterThan("id", 3))
 													.build();
 		String result = commandBuilder.buildUpdateCommand(query);
 		
@@ -341,7 +341,7 @@ public class MySQLCommandBuilderTest {
 	public void buildDeleteCommand_buildMySQLDeleteCommandWithJoinClause() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom("test")
-													.innerJoin("other_table", SQLCondition.EQUAL_TO("test.id", "other_table.test_id"))
+													.innerJoin("other_table", SQLCondition.equalTo("test.id", "other_table.test_id"))
 													.build();
 		String result = commandBuilder.buildDeleteCommand(query);
 		
@@ -352,7 +352,7 @@ public class MySQLCommandBuilderTest {
 	public void buildDeleteCommand_buildMySQLDeleteCommandWithCondition() {
 		MySQLCommandBuilder commandBuilder = new MySQLCommandBuilder();
 		SQLDeleteQuery query = SQLDeleteQueryBuilder.deleteFrom("test")
-													.where(SQLCondition.END_WITH("name", "a"))
+													.where(SQLCondition.endWith("name", "a"))
 													.build();
 		String result = commandBuilder.buildDeleteCommand(query);
 		

@@ -174,7 +174,7 @@ public class MySQLCommandBuilder implements SQLCommandBuilder {
 			throw new NullArgumentException("query");
 		}
 		
-		Map<String, Object> values = query.getValues();
+		Map<String, Object> values = query.getInsertValues();
 		int valueCount = 0;
 		
 		StringBuffer sb = new StringBuffer();

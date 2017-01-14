@@ -1,6 +1,5 @@
 package jp.lambdamagic.sql;
 
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -32,8 +31,4 @@ public class SQLResult implements Queryable<String, Object> {
 		}
 	}
 
-	public InputStream getInputStream(String columnName) throws SQLException {
-		return resultSet.getBinaryStream(columnName);
-	}
-	
 }

@@ -176,7 +176,7 @@ public abstract class SQLConnection implements AutoCloseable {
 	}
 	
 	public int update(String tableName, String columnName, Object value, Map<String, Object> values) throws SQLException {
-		return update(tableName, SQLCondition.EQUAL_TO(columnName, value), values);
+		return update(tableName, SQLCondition.equalTo(columnName, value), values);
 	}
 	
 	private String replaceJokerValues(String command, Collection<?> values) {

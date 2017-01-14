@@ -5,37 +5,42 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
 
 import jp.lambdamagic.NullArgumentException;
-import jp.lambdamagic.sql.query.SQLDeleteQuery;
 import jp.lambdamagic.sql.query.condition.SQLCondition;
 import jp.lambdamagic.sql.query.condition.SQLJoinClause;
 import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNullExpression;
 
-public class SQLDeleteQueryTest {
+public class SQLUpdateQueryTest {
 
 	@Test(expected=NullArgumentException.class)
 	public void SQLDeleteQuery_mustThrowNullArgumentExceptionWhenNullTableNameIsGiven() {
-		new SQLDeleteQuery(null, new ArrayList<>(), SQLCondition.isNull("name"));
+		Map<String, Object> updateValues = new HashMap<>();
+		new SQLUpdateQuery(null, new ArrayList<>(), SQLCondition.isNull("name"), updateValues);
 	}
 	
 	@Test
 	public void SQLDeleteQuery_acceptNullJoinClauses() {
-		new SQLDeleteQuery("test", null, SQLCondition.isNull("name"));
+		Map<String, Object> updateValues = new HashMap<>();
+		new SQLUpdateQuery("test", null, SQLCondition.isNull("name"), updateValues);
 	}
 	
 	@Test
 	public void SQLDeleteQuery_acceptNullCondition() {
-		new SQLDeleteQuery("test", new ArrayList<>(), null);
+		Map<String, Object> updateValues = new HashMap<>();
+		new SQLUpdateQuery("test", new ArrayList<>(), null, updateValues);
 	}
 	
 	@Test
 	public void getTableName_returnGivenTableName() {
-		SQLDeleteQuery query = new SQLDeleteQuery("test", new ArrayList<>(), SQLCondition.isNull("name"));
+		Map<String, Object> updateValues = new HashMap<>();
+		SQLUpdateQuery query = new SQLUpdateQuery("test", new ArrayList<>(), SQLCondition.isNull("name"), updateValues);
 		String tableName = query.getTableName();
 		
 		assertThat(tableName, is("test"));
@@ -43,7 +48,8 @@ public class SQLDeleteQueryTest {
 	
 	@Test
 	public void getJoinClauses_returnJoinClausesIfExists() {
-		SQLDeleteQuery query = new SQLDeleteQuery("test", new ArrayList<>(), SQLCondition.isNull("name"));
+		Map<String, Object> updateValues = new HashMap<>();
+		SQLUpdateQuery query = new SQLUpdateQuery("test", new ArrayList<>(), SQLCondition.isNull("name"), updateValues);
 		Optional<List<SQLJoinClause>> joinClauses = query.getJoinClauses();
 		
 		assertThat(joinClauses.isPresent(), is(true));
@@ -51,8 +57,9 @@ public class SQLDeleteQueryTest {
 	}
 	
 	@Test
-	public void getJoinClauses_returnEmptyIfNotExists() {
-		SQLDeleteQuery query = new SQLDeleteQuery("test", null, SQLCondition.isNull("name"));
+	public void getJoinClauses_returnEmptyIfNotExist() {
+		Map<String, Object> updateValues = new HashMap<>();
+		SQLUpdateQuery query = new SQLUpdateQuery("test", null, SQLCondition.isNull("name"), updateValues);
 		Optional<List<SQLJoinClause>> joinClauses = query.getJoinClauses();
 		
 		assertThat(joinClauses.isPresent(), is(false));
@@ -60,7 +67,8 @@ public class SQLDeleteQueryTest {
 	
 	@Test
 	public void getCondition_returnConditionIfExists() {
-		SQLDeleteQuery query = new SQLDeleteQuery("test", new ArrayList<>(), SQLCondition.isNull("name"));
+		Map<String, Object> updateValues = new HashMap<>();
+		SQLUpdateQuery query = new SQLUpdateQuery("test", new ArrayList<>(), SQLCondition.isNull("name"), updateValues);
 		Optional<SQLCondition> condition = query.getCondition();
 		
 		assertThat(condition.isPresent(), is(true));
@@ -69,10 +77,19 @@ public class SQLDeleteQueryTest {
 	
 	@Test
 	public void getCondition_returnEmptyIfNotExists() {
-		SQLDeleteQuery query = new SQLDeleteQuery("test", new ArrayList<>(), null);
+		Map<String, Object> updateValues = new HashMap<>();
+		SQLUpdateQuery query = new SQLUpdateQuery("test", new ArrayList<>(), null, updateValues);
 		Optional<SQLCondition> condition = query.getCondition();
 		
 		assertThat(condition.isPresent(), is(false));
+	}
+	
+	@Test
+	public void getUpdateValues_returnGivenUpdateValues() {
+		Map<String, Object> updateValues = new HashMap<>();
+		SQLUpdateQuery query = new SQLUpdateQuery("test", new ArrayList<>(), null, updateValues);
+		
+		assertThat(query.getUpdateValues(), is(updateValues));
 	}
 
 }
