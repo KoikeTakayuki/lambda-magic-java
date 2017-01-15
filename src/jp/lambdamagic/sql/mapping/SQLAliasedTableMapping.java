@@ -1,10 +1,9 @@
 package jp.lambdamagic.sql.mapping;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import jp.lambdamagic.NullArgumentException;
-
 
 public final class SQLAliasedTableMapping<T extends SQLTableMapping> implements SQLTableMapping {
 
@@ -14,15 +13,15 @@ public final class SQLAliasedTableMapping<T extends SQLTableMapping> implements 
 	private static int uidCounter;
 	
 	private String alias;
-	private T baseObject;
+	private T wrapped;
 	
-	public SQLAliasedTableMapping(String alias, T baseObject) {
-		if (baseObject == null) {
+	public SQLAliasedTableMapping(String alias, T wrapped) {
+		if (wrapped == null) {
 			throw new NullArgumentException("baseObject");
 		}
 
 		setAlias(alias);
-		this.baseObject = baseObject;
+		this.wrapped = wrapped;
 	}
 	
 	public String getAlias() {
@@ -36,29 +35,25 @@ public final class SQLAliasedTableMapping<T extends SQLTableMapping> implements 
 		
 		this.alias = alias + (uidCounter = (uidCounter + 1) % 1000);
 	}
-	
-	public T getBaseObject() {
-		return baseObject;
-	}
 
 	@Override
 	public String getDeclarationTableName() {
-		return baseObject.getTableName() + ALIAS_DECLARATION_SEPARATOR + getAlias();
+		return wrapped.getTableName() + ALIAS_DECLARATION_SEPARATOR + getAlias();
 	}
 	
 	@Override
 	public String getTableName() {
-		return getAlias() + ALIAS_SEPARATOR + baseObject.getTableName();
+		return getAlias() + ALIAS_SEPARATOR + wrapped.getTableName();
 	}
 
 	@Override
 	public String getColumnName(String id) {
-		return getAlias() + ALIAS_SEPARATOR + baseObject.getColumnName(id);
+		return getAlias() + ALIAS_SEPARATOR + wrapped.getColumnName(id);
 	}
 	
 	@Override
-	public Collection<String> getColumnNames() {
-		return baseObject.getColumnNames().stream().map(columnName -> {
+	public List<String> getColumnNames() {
+		return wrapped.getColumnNames().stream().map(columnName -> {
 			return getAlias() + ALIAS_SEPARATOR + columnName;
 		}).collect(Collectors.toList());
 	}

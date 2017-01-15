@@ -1,8 +1,8 @@
 package jp.lambdamagic.sql.mapping;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface SQLColumnSetMapping {
-	Collection<String> getColumnNames();
+	List<String> getColumnNames();
 	String getColumnName(String id);
 }
