@@ -56,6 +56,24 @@ public interface DataSource<T> extends Supplier<T>, AutoCloseable {
 		};
 	}
 	
+	public static <T> DataSource<T> asDataSource(T object) {
+		return new DataSource<T>() {
+
+			private boolean isFirstRead = true;
+			
+			@Override
+			public Optional<T> readData() {
+				if (isFirstRead) {
+					isFirstRead  = false;
+					return Optional.of(object);
+				}
+				
+				return Optional.empty();
+			}
+			
+		};
+	}
+	
 	@Override
 	default void close() throws Exception {}
 	

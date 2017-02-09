@@ -40,6 +40,10 @@ public class JSONObject implements JSONData, PropertySet<JSONData> {
 		
 		map.put(propertyName, value);
 	}
+	
+	public void set(String propertyName, String value) {
+		set(propertyName, new JSONString(value));
+	}
 
 	@Override
 	public Set<String> propertyNames() {

@@ -81,7 +81,7 @@ public final class Strings {
 
 		return targetString.substring(startIndex, endIndex);
 	}
-
+	
 	private Strings() {}
 	
 }

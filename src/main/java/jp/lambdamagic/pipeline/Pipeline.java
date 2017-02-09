@@ -61,7 +61,7 @@ public class Pipeline<O> implements DataSource<O>, Runnable {
 		}
 	}
 
-	public <T> Pipeline<T> map(DataProcessor<O, T> processor) {
+	public <T> Pipeline<T> map(DataProcessor<? super O, ? extends T> processor) {
 		if (processor == null) {
 			throw new NullArgumentException("processor");
 		}
