@@ -6,8 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        FileResourceLoaderTest.class,
-        RelativeResourceLoaderTest.class
-    })
+  {
+    FileResourceLoaderTest.class,
+    RelativeResourceLoaderTest.class
+  })
 public class ResourcePackageTestSuite {}

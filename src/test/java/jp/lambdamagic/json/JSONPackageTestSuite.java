@@ -11,13 +11,13 @@ import jp.lambdamagic.json.data.JSONStringTest;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        JSONDataSourceTest.class,
-        JSONParserTest.class,
-        JSONWriterTest.class,
-        JSONObjectTest.class,
-        JSONStringTest.class,
-        JSONNumberTest.class,
-        JSONBooleanTest.class
-    })
+  {
+    JSONDataSourceTest.class,
+    JSONParserTest.class,
+    JSONWriterTest.class,
+    JSONObjectTest.class,
+    JSONStringTest.class,
+    JSONNumberTest.class,
+    JSONBooleanTest.class
+  })
 public class JSONPackageTestSuite {}

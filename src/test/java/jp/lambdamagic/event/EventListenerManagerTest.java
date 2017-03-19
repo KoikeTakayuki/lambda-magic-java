@@ -15,32 +15,32 @@ import jp.lambdamagic.event.NotificationEvent;
 
 public class EventListenerManagerTest {
 
-    @Test(expected=NullArgumentException.class)
-    public void addEventListener_mustThrowNullArgumentExceptionWhenNullTypeIsGiven() {
-        EventListenerManager eventListenerManager = new EventListenerManager();
-        eventListenerManager.addEventListener(null, e -> {});
-    }
+  @Test(expected=NullArgumentException.class)
+  public void addEventListener_mustThrowNullArgumentExceptionWhenNullTypeIsGiven() {
+    EventListenerManager eventListenerManager = new EventListenerManager();
+    eventListenerManager.addEventListener(null, e -> {});
+  }
+  
+  @Test(expected=NullArgumentException.class)
+  public void addEventListener_mustThrowNullArgumentExceptionWhenNullListenerIsGiven() {
+    EventListenerManager eventListenerManager = new EventListenerManager();
+    eventListenerManager.addEventListener(NotificationEvent.TYPE, null);
+  }
+  
+  @Test
+  public void fireEvent_executeRegisteredEventListener() {
+    EventListenerManager eventListenerManager = new EventListenerManager();
     
-    @Test(expected=NullArgumentException.class)
-    public void addEventListener_mustThrowNullArgumentExceptionWhenNullListenerIsGiven() {
-        EventListenerManager eventListenerManager = new EventListenerManager();
-        eventListenerManager.addEventListener(NotificationEvent.TYPE, null);
-    }
+    List<Integer> list = new ArrayList<>();
     
-    @Test
-    public void fireEvent_executeRegisteredEventListener() {
-        EventListenerManager eventListenerManager = new EventListenerManager();
-        
-        List<Integer> list = new ArrayList<>();
-        
-        eventListenerManager.addEventListener(NotificationEvent.TYPE, e -> {
-            list.add(100);
-            list.add(200);
-        });
-        
-        assertThat(list, is(Arrays.asList()));
-        eventListenerManager.fireEvent(new NotificationEvent(100, "test"));
-        assertThat(list, is(Arrays.asList(100, 200)));
-    }
+    eventListenerManager.addEventListener(NotificationEvent.TYPE, e -> {
+      list.add(100);
+      list.add(200);
+    });
+    
+    assertThat(list, is(Arrays.asList()));
+    eventListenerManager.fireEvent(new NotificationEvent(100, "test"));
+    assertThat(list, is(Arrays.asList(100, 200)));
+  }
 
 }

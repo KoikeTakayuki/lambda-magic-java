@@ -8,9 +8,9 @@ import jp.lambdamagic.data.functional.EitherTest;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        Tuple2Test.class,
-        InMemoryPropertySetTest.class,
-        EitherTest.class
-    })
+  {
+    Tuple2Test.class,
+    InMemoryPropertySetTest.class,
+    EitherTest.class
+  })
 public class DataPackageTestSuite {}

@@ -9,10 +9,10 @@ import jp.lambdamagic.sql.query.QueryPackageTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        SQLTypeTest.class,
-        SQLDatabaseTest.class,
-        MySQLCommandBuilderTest.class,
-        QueryPackageTestSuite.class
-    })
+  {
+    SQLTypeTest.class,
+    SQLDatabaseTest.class,
+    MySQLCommandBuilderTest.class,
+    QueryPackageTestSuite.class
+  })
 public class SQLPackageTestSuite {}

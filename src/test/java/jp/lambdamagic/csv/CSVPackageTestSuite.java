@@ -6,9 +6,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        CSVDataSourceTest.class,
-        CSVParserTest.class,
-        CSVWriterTest.class,
-    })
+  {
+    CSVDataSourceTest.class,
+    CSVParserTest.class,
+    CSVWriterTest.class,
+  })
 public class CSVPackageTestSuite {}

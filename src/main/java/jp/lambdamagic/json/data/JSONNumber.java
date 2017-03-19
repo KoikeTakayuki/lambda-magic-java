@@ -7,23 +7,23 @@ import jp.lambdamagic.json.JSONDataVisitor;
 
 public class JSONNumber implements JSONData {
 
-    private Number value;
+  private Number value;
 
-    public JSONNumber(Number value) {
-        if (value == null) {
-            throw new NullArgumentException("value");
-        }
-        
-        this.value = value;
+  public JSONNumber(Number value) {
+    if (value == null) {
+      throw new NullArgumentException("value");
     }
     
-    public Number getValue() {
-        return value;
-    }
-    
-    @Override
-    public void accept(JSONDataVisitor visitor) throws IOException {
-        visitor.visit(this);
-    }
-    
+    this.value = value;
+  }
+  
+  public Number getValue() {
+    return value;
+  }
+  
+  @Override
+  public void accept(JSONDataVisitor visitor) throws IOException {
+    visitor.visit(this);
+  }
+  
 }

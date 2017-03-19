@@ -6,9 +6,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-    {
-        CharactersTest.class,
-        TextLocationTest.class,
-        TextPositionTest.class
-    })
+  {
+    CharactersTest.class,
+    TextLocationTest.class,
+    TextPositionTest.class
+  })
 public class TextPackageTestSuite {}
