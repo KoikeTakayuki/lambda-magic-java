@@ -9,8 +9,8 @@ import jp.lambdamagic.collection.iterator.IterablesTest;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-	{
-		ArrayIteratorTest.class,
-		IterablesTest.class
-	})
+    {
+        ArrayIteratorTest.class,
+        IterablesTest.class
+    })
 public class CollectionPackageTestSuite {}

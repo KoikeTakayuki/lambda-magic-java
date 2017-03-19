@@ -19,7 +19,7 @@ dependencies {
 }
 
 eclipse {
-	classpath {
-		containers 'org.springsource.ide.eclipse.gradle.classpathcontainer'
-	}
+    classpath {
+        containers 'org.springsource.ide.eclipse.gradle.classpathcontainer'
+    }
 }

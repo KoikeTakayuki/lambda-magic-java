@@ -6,5 +6,5 @@ import javax.servlet.http.HttpServletResponse;
 
 @FunctionalInterface
 public interface HttpRestHandler {
-	void process(HttpServletRequest request, HttpServletResponse response) throws ServletException;
+    void process(HttpServletRequest request, HttpServletResponse response) throws ServletException;
 }

@@ -1,6 +1,6 @@
 package jp.lambdamagic.data;
 
 public interface Cancellable {
-	boolean isCancelled();
-	void cancel();
+    boolean isCancelled();
+    void cancel();
 }

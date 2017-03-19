@@ -9,8 +9,8 @@ import jp.lambdamagic.web.http.service.rest.HttpRestParameterTest;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-	{
-		HttpRestOperationTest.class,
-		HttpRestParameterTest.class
-	})
+    {
+        HttpRestOperationTest.class,
+        HttpRestParameterTest.class
+    })
 public class WebPackageTestSuite {}

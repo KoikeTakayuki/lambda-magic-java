@@ -17,25 +17,25 @@ import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNotNullExpre
 import jp.lambdamagic.sql.query.condition.UnaryOperatorExpression.IsNullExpression;
 
 public interface SQLConditionVisitor<T> {
-	
-	/* Unary Operator Expression */
-	T visit(IsNullExpression expression);
-	T visit(IsNotNullExpression expression);
-	
-	/* Comparison Expression */
-	T visit(EqualToExpression expression);
-	T visit(NotEqualToExpression expression);
-	T visit(LessThanExpression expression);
-	T visit(GreaterThanExpression expression);
-	T visit(LessOrEqualToExpression expression);
-	T visit(GreaterOrEqualToExpression expression);
-	T visit(ContainStringExpression expression);
-	T visit(StartWithExpression expression);
-	T visit(EndWithExpression expression);
-	T visit(InListExpression expression);
+    
+    /* Unary Operator Expression */
+    T visit(IsNullExpression expression);
+    T visit(IsNotNullExpression expression);
+    
+    /* Comparison Expression */
+    T visit(EqualToExpression expression);
+    T visit(NotEqualToExpression expression);
+    T visit(LessThanExpression expression);
+    T visit(GreaterThanExpression expression);
+    T visit(LessOrEqualToExpression expression);
+    T visit(GreaterOrEqualToExpression expression);
+    T visit(ContainStringExpression expression);
+    T visit(StartWithExpression expression);
+    T visit(EndWithExpression expression);
+    T visit(InListExpression expression);
 
-	/* Logic Expression */
-	T visit(AndExpression expression);
-	T visit(OrExpression expression);
-	T visit(NotExpression expression);
+    /* Logic Expression */
+    T visit(AndExpression expression);
+    T visit(OrExpression expression);
+    T visit(NotExpression expression);
 }

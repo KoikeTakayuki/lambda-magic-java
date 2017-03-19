@@ -20,19 +20,19 @@ import jp.lambdamagic.web.WebPackageTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-	{
-		CollectionPackageTestSuite.class,
-		ConcurrencyPackageTestSuite.class,
-		CSVPackageTestSuite.class,
-		DataPackageTestSuite.class,
-		EventPackageTestSuite.class,
-		IOPackageTestSuite.class,
-		JSONPackageTestSuite.class,
-		PipelinePackageTestSuite.class,
-		ResourcePackageTestSuite.class,
-		SettingsPackageTestSuite.class,
-		SQLPackageTestSuite.class,
-		TextPackageTestSuite.class,
-		WebPackageTestSuite.class,
-	})
+    {
+        CollectionPackageTestSuite.class,
+        ConcurrencyPackageTestSuite.class,
+        CSVPackageTestSuite.class,
+        DataPackageTestSuite.class,
+        EventPackageTestSuite.class,
+        IOPackageTestSuite.class,
+        JSONPackageTestSuite.class,
+        PipelinePackageTestSuite.class,
+        ResourcePackageTestSuite.class,
+        SettingsPackageTestSuite.class,
+        SQLPackageTestSuite.class,
+        TextPackageTestSuite.class,
+        WebPackageTestSuite.class,
+    })
 public class AllTestSuite {}

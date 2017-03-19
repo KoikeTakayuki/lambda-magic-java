@@ -11,18 +11,18 @@ import jp.lambdamagic.sql.query.condition.UnaryOperatorExpressionTest;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-	{
-		SQLInsertQueryTest.class,
-		SQLSelectQueryTest.class,
-		SQLUpdateQueryTest.class,
-		SQLDeleteQueryTest.class,
-		SQLInsertQueryBuilderTest.class,
-		SQLSelectQueryBuilderTest.class,
-		SQLUpdateQueryBuilderTest.class,
-		SQLDeleteQueryBuilderTest.class,
-		UnaryOperatorExpressionTest.class,
-		ComparisonExpressionTest.class,
-		LogicExpressionTest.class,
-		SQLJoinClauseTest.class
-	})
+    {
+        SQLInsertQueryTest.class,
+        SQLSelectQueryTest.class,
+        SQLUpdateQueryTest.class,
+        SQLDeleteQueryTest.class,
+        SQLInsertQueryBuilderTest.class,
+        SQLSelectQueryBuilderTest.class,
+        SQLUpdateQueryBuilderTest.class,
+        SQLDeleteQueryBuilderTest.class,
+        UnaryOperatorExpressionTest.class,
+        ComparisonExpressionTest.class,
+        LogicExpressionTest.class,
+        SQLJoinClauseTest.class
+    })
 public class QueryPackageTestSuite {}

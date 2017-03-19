@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-	{
-		SettingsTest.class
-	})
+    {
+        SettingsTest.class
+    })
 public class SettingsPackageTestSuite {}

@@ -10,10 +10,10 @@ import jp.lambdamagic.json.data.JSONObject;
 import jp.lambdamagic.json.data.JSONString;
 
 public interface JSONDataVisitor {
-	void visit(JSONObject object) throws IOException;
-	void visit(JSONArray array) throws IOException;
-	void visit(JSONNumber number) throws IOException;
-	void visit(JSONString string) throws IOException;
-	void visit(JSONBoolean bool) throws IOException;
-	void visit(JSONNull empty) throws IOException;
+    void visit(JSONObject object) throws IOException;
+    void visit(JSONArray array) throws IOException;
+    void visit(JSONNumber number) throws IOException;
+    void visit(JSONString string) throws IOException;
+    void visit(JSONBoolean bool) throws IOException;
+    void visit(JSONNull empty) throws IOException;
 }
